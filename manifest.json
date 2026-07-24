@@ -1,0 +1,22 @@
+{
+  "name": "수하모니카 연주 감상실",
+  "short_name": "수하모니카",
+  "start_url": "/music/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8b3a42",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
