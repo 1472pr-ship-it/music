@@ -342,14 +342,16 @@
     const GH_USER = "1472pr-ship-it";
     const GH_REPO = "music";
 
+    // 스크린샷에 표시된 선생님의 변경된 실제 MP3 파일명 정확히 매칭 완료!
     const sampleTitles = [
         { title: "눈물의연평도 C 최숙자", cat: "가요/트롯", mood: "정통트롯", fileName: "눈물의연평도_C_최숙자.mp3" },
-        { title: "대화자 DF# 임영웅", cat: "가요/트롯", mood: "경쾌한", fileName: "대화자_DF#_임영웅.mp3" },
-        { title: "별빛같은나의사랑아 F# 임영웅", cat: "가요/트롯", mood: "서정/슬로우", fileName: "별빛같은나의사랑아_F#_임영웅.mp3" }
+        { title: "대화자 DF# 임영웅", cat: "가요/트롯", mood: "경쾌한", fileName: "축하자_DF샵_임영웅.mp3" },
+        { title: "별빛같은나의사랑아 F# 임영웅", cat: "가요/트롯", mood: "서정/슬로우", fileName: "별빛같은나의사랑아_F샵_임영웅.mp3" }
     ];
 
     const masterPlaylist = sampleTitles.map((item, index) => {
-        let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/music/main/${encodeURIComponent(item.fileName)}`;
+        // 한글 파일명을 깃허브 절대 경로로 정확히 연결
+        let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/${encodeURIComponent(item.fileName)}`;
         return {
             id: index + 1,
             mainCategory: item.cat,
@@ -555,7 +557,7 @@
         });
     }
 
-    // 오디오 끝났을 때 확실하게 다음 선택곡 불러오기
+    // 곡이 끝나면 무조건 실행되는 다음 곡 재생 트리거
     audioPlayer.onended = function() {
         if (isRepeatSingleMode) {
             startPlayback();
