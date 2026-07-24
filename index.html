@@ -279,7 +279,6 @@
         <h1>하모니카 연주 감상실</h1>
     </div>
 
-    <!-- 분위기 필터 행에 '트로트' 세분화 버튼 추가 -->
     <div class="filter-section">
         <div class="filter-row">
             <span class="filter-label">🎼 장르</span>
@@ -302,13 +301,11 @@
         </div>
     </div>
 
-    <!-- 순수 오디오 플레이어 바 -->
     <div class="player-section">
         <div class="now-playing" id="now-playing-title">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
         <audio id="audio-player" controls autoplay></audio>
     </div>
 
-    <!-- 조작 바 -->
     <div class="control-bar">
         <div class="btn-group">
             <button class="btn" onclick="toggleSelectAll()">전체선택</button>
@@ -345,14 +342,12 @@
     const GH_USER = "1472pr-ship-it";
     const GH_REPO = "music";
 
-    // 데이터 구조 개선 (3번 조회수 초기화, 4번 분위기 세분화 적용)
     const sampleTitles = [
         { title: "눈물의연평도 C 최숙자", cat: "가요/트롯", mood: "정통트롯", fileName: "눈물의연평도_C_최숙자.mp3" },
         { title: "대화자 DF# 임영웅", cat: "가요/트롯", mood: "경쾌한", fileName: "대화자_DF#_임영웅.mp3" },
         { title: "별빛같은나의사랑아 F# 임영웅", cat: "가요/트롯", mood: "서정/슬로우", fileName: "별빛같은나의사랑아_F#_임영웅.mp3" }
     ];
 
-    // 초기 조회수 0으로 변경
     const masterPlaylist = sampleTitles.map((item, index) => {
         let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/music/main/${encodeURIComponent(item.fileName)}`;
         return {
@@ -375,7 +370,7 @@
 
     let playlistQueue = [];
     let currentQueueIndex = 0;
-    let isRepeatSingleMode = false; // 1곡 반복 상태 여부
+    let isRepeatSingleMode = false;
 
     const audioPlayer = document.getElementById('audio-player');
     const nowPlayingTitle = document.getElementById('now-playing-title');
@@ -502,18 +497,16 @@
         chks.forEach(chk => chk.checked = mainChk.checked);
     }
 
-    // 단일 듣기 버튼 클릭 (해당 곡부터 이후 곡 연속 재생)
     function playSingle(id) {
         const songIndex = currentFilteredPlaylist.findIndex(s => s.id === id);
         if (songIndex !== -1) {
-            isRepeatSingleMode = false; // 일반 연속 재생 모드
+            isRepeatSingleMode = false;
             playlistQueue = currentFilteredPlaylist.slice(songIndex);
             currentQueueIndex = 0;
             startPlayback();
         }
     }
 
-    // 선택듣기 (1개 선택 시 무한 반복, 2개 이상 선택 시 선택 곡 순차 연속 재생)
     function playSelected() {
         const selectedChks = document.querySelectorAll('.song-chk:checked');
         if (selectedChks.length === 0) {
@@ -528,7 +521,6 @@
             if (song) playlistQueue.push(song);
         });
 
-        // 1개만 선택 시 무한 반복 모드 활성화
         if (playlistQueue.length === 1) {
             isRepeatSingleMode = true;
         } else {
@@ -544,7 +536,6 @@
 
         const song = playlistQueue[currentQueueIndex];
         
-        // 3번 요청: 실제로 곡이 재생을 시작할 때 조회수 1 증가
         song.views++;
         renderPlaylist();
 
@@ -552,7 +543,6 @@
         const activeRow = document.getElementById('row-' + song.id);
         if (activeRow) activeRow.classList.add('active-row');
 
-        // 상태 표시 문구 (1곡 반복 상태일 경우 표시)
         if (isRepeatSingleMode) {
             nowPlayingTitle.innerText = `🔂 [1곡 무한반복] ${song.title} - ${song.artist}`;
         } else {
@@ -565,13 +555,11 @@
         });
     }
 
-    // 곡이 종료되었을 때 다음 동작 처리 (1번, 2번 요청 완벽 해결)
-    audioPlayer.addEventListener('ended', function() {
+    // 오디오 끝났을 때 확실하게 다음 선택곡 불러오기
+    audioPlayer.onended = function() {
         if (isRepeatSingleMode) {
-            // 2번: 1곡만 선택된 상태라면 그 곡 무한 재재생
             startPlayback();
         } else {
-            // 1번: 선택된 다음 곡으로 넘어가서 연속 재생
             currentQueueIndex++;
             if (currentQueueIndex < playlistQueue.length) {
                 startPlayback();
@@ -579,7 +567,7 @@
                 nowPlayingTitle.innerText = "✅ 준비된 연주곡 연속 재생이 완료되었습니다.";
             }
         }
-    });
+    };
 </script>
 
 </body>
