@@ -352,12 +352,36 @@
     const GH_REPO = "music";
 
     // 데이터 구조 (DOM 재렌더링 시 체크박스 상태 보존 기능 및 재생 안정성 강화)
-    const sampleTitles = [
-        { id: 1, title: "눈물의연평도 C 최숙자", cat: "가요/트롯", mood: "정통트롯", fileName: "눈물의연평도_C_최숙자.mp3" },
-        { id: 2, title: "배신자 D.F# 임영웅", cat: "가요/트롯", mood: "경쾌한", fileName: "배신자_D.F샵_임영웅.mp3" },
-        { id: 3, title: "별빛같은나의사랑아 F# 임영웅", cat: "가요/트롯", mood: "서정/슬로우", fileName: "별빛같은나의사랑아_F샵_임영웅.mp3" }
-    ];
+let masterPlaylist = [];
 
+    // songs.json 파일에서 곡 데이터를 자동으로 읽어오는 함수
+    async function loadSongs() {
+        try {
+            const response = await fetch('songs.json');
+            const songData = await response.json();
+            
+            masterPlaylist = songData.map((item) => {
+                let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/${encodeURIComponent(item.fileName)}`;
+                return {
+                    id: item.id,
+                    mainCategory: item.cat,
+                    mood: item.mood,
+                    title: item.title,
+                    artist: "수지기",
+                    views: 0,
+                    src: streamUrl
+                };
+            });
+
+            applyFilters();
+        } catch (error) {
+            console.error("곡 목록을 불러오는데 실패했습니다:", error);
+        }
+    }
+
+    window.onload = function() {
+        loadSongs();
+    };
     const masterPlaylist = sampleTitles.map((item) => {
         let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/${encodeURIComponent(item.fileName)}`;
         return {
