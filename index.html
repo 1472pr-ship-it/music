@@ -586,14 +586,18 @@
     // 곡이 끝났을 때 자동으로 다음 선택곡으로 안전하게 전환
     audioPlayer.onended = function() {
         if (isRepeatSingleMode) {
+            // 1곡 선택 시: 해당 곡 무한 반복
             startPlayback();
         } else {
+            // 여러 곡 선택 시: 다음 곡으로 이동
             currentQueueIndex++;
-            if (currentQueueIndex < playlistQueue.length) {
-                startPlayback();
-            } else {
-                nowPlayingTitle.innerText = "✅ 준비된 연주곡 연속 재생이 완료되었습니다.";
+            
+            // ★ 모든 곡이 다 끝나면 다시 0번(첫 곡)으로 돌려서 무한 반복!
+            if (currentQueueIndex >= playlistQueue.length) {
+                currentQueueIndex = 0; 
             }
+            
+            startPlayback();
         }
     };
 </script>
