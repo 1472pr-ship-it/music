@@ -342,17 +342,17 @@
     const GH_USER = "1472pr-ship-it";
     const GH_REPO = "music";
 
-    // 선생님 깃허브의 실제 MP3 파일명과 100% 동일하게 매칭 완료!
+    // 데이터 구조 (DOM 재렌더링 시 체크박스 상태 보존 기능 및 재생 안정성 강화)
     const sampleTitles = [
-        { title: "눈물의연평도 C 최숙자", cat: "가요/트롯", mood: "정통트롯", fileName: "눈물의연평도_C_최숙자.mp3" },
-        { title: "대화자 DF# 임영웅", cat: "가요/트롯", mood: "경쾌한", fileName: "대화자_DF샵_임영웅.mp3" },
-        { title: "별빛같은나의사랑아 F# 임영웅", cat: "가요/트롯", mood: "서정/슬로우", fileName: "별빛같은나의사랑아_F샵_임영웅.mp3" }
+        { id: 1, title: "눈물의연평도 C 최숙자", cat: "가요/트롯", mood: "정통트롯", fileName: "눈물의연평도_C_최숙자.mp3" },
+        { id: 2, title: "대화자 DF# 임영웅", cat: "가요/트롯", mood: "경쾌한", fileName: "대화자_DF샵_임영웅.mp3" },
+        { id: 3, title: "별빛같은나의사랑아 F# 임영웅", cat: "가요/트롯", mood: "서정/슬로우", fileName: "별빛같은나의사랑아_F샵_임영웅.mp3" }
     ];
 
-    const masterPlaylist = sampleTitles.map((item, index) => {
+    const masterPlaylist = sampleTitles.map((item) => {
         let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/${encodeURIComponent(item.fileName)}`;
         return {
-            id: index + 1,
+            id: item.id,
             mainCategory: item.cat,
             mood: item.mood,
             title: item.title,
@@ -421,7 +421,24 @@
         renderPlaylist();
     }
 
+    // 체크 상태를 기록해두는 배열
+    let checkedSongIds = new Set();
+
+    function updateCheckedSet() {
+        document.querySelectorAll('.song-chk').forEach(chk => {
+            const val = parseInt(chk.value);
+            if (chk.checked) {
+                checkedSongIds.add(val);
+            } else {
+                checkedSongIds.delete(val);
+            }
+        });
+    }
+
     function renderPlaylist() {
+        // 기존 체크상태 백업
+        updateCheckedSet();
+
         const tbody = document.getElementById('playlist-body');
         tbody.innerHTML = '';
 
@@ -442,11 +459,12 @@
             const displayNum = totalItems - (startIndex + index);
             const numStr = String(displayNum).padStart(2, '0');
             const displayTitle = truncateTitle(song.title);
+            const isChecked = checkedSongIds.has(song.id) ? 'checked' : '';
 
             const tr = document.createElement('tr');
             tr.id = `row-${song.id}`;
             tr.innerHTML = `
-                <td class="col-chk"><input type="checkbox" class="song-chk" value="${song.id}"></td>
+                <td class="col-chk"><input type="checkbox" class="song-chk" value="${song.id}" ${isChecked} onchange="updateCheckedSet()"></td>
                 <td class="col-num">${numStr}</td>
                 <td class="col-cat"><span class="badge-main">${song.mainCategory}</span></td>
                 <td class="col-title" title="${song.title}">${displayTitle}</td>
@@ -495,7 +513,15 @@
     function toggleSelectAll() {
         const mainChk = document.getElementById('chk-all');
         const chks = document.querySelectorAll('.song-chk');
-        chks.forEach(chk => chk.checked = mainChk.checked);
+        chks.forEach(chk => {
+            chk.checked = mainChk.checked;
+            const val = parseInt(chk.value);
+            if (mainChk.checked) {
+                checkedSongIds.add(val);
+            } else {
+                checkedSongIds.delete(val);
+            }
+        });
     }
 
     function playSingle(id) {
@@ -509,17 +535,18 @@
     }
 
     function playSelected() {
-        const selectedChks = document.querySelectorAll('.song-chk:checked');
-        if (selectedChks.length === 0) {
+        updateCheckedSet();
+        if (checkedSongIds.size === 0) {
             alert('재생할 곡을 선택해 주세요.');
             return;
         }
 
         playlistQueue = [];
-        selectedChks.forEach(chk => {
-            const songId = parseInt(chk.value);
-            const song = masterPlaylist.find(s => s.id === songId);
-            if (song) playlistQueue.push(song);
+        // 아이디 순서대로 재생 목록 구성
+        masterPlaylist.forEach(song => {
+            if (checkedSongIds.has(song.id)) {
+                playlistQueue.push(song);
+            }
         });
 
         if (playlistQueue.length === 1) {
@@ -552,11 +579,11 @@
 
         audioPlayer.src = song.src;
         audioPlayer.play().catch(e => {
-            console.log("자동 재생이 차단되었거나 터치가 필요합니다.");
+            console.log("자동 재생이 차단되었거나 사용자 터치가 필요합니다.");
         });
     }
 
-    // 곡이 끝나면 무조건 실행되는 다음 곡 연속 재생 처리
+    // 곡이 끝났을 때 자동으로 다음 선택곡으로 안전하게 전환
     audioPlayer.onended = function() {
         if (isRepeatSingleMode) {
             startPlayback();
