@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>하모니카 연주 감상실</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background-color: #ffffff;
+            color: #332d29;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #5c2028, #8b3a42);
+            color: #ffffff;
+            padding: 10px 14px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #fcf8f2;
+        }
+
+        /* 2-Tier Filter Section */
+        .filter-section {
+            background-color: #f5efe6;
+            border-bottom: 1px solid #e5dccf;
+            padding: 5px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: nowrap;
+            width: 100%;
+        }
+        .filter-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #4a382c;
+            min-width: 50px;
+            background: #e6dacb;
+            padding: 3px 4px;
+            border-radius: 4px;
+            text-align: center;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 3px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 1px;
+            flex-grow: 1;
+        }
+        .filter-buttons::-webkit-scrollbar {
+            display: none;
+        }
+        .btn-filter {
+            padding: 3px 6px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #54473e;
+            background: #ffffff;
+            border: 1px solid #d9ccbc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .btn-filter:hover {
+            background-color: #ebdcd0;
+        }
+        .btn-filter.active {
+            background-color: #8b3a42;
+            color: #ffffff;
+            border-color: #8b3a42;
+        }
+
+        .btn-filter-sub.active {
+            background-color: #8c6d3f;
+            color: #ffffff;
+            border-color: #8c6d3f;
+        }
+
+        /* Player Section */
+        .player-section {
+            background: #f0e6df;
+            border-bottom: 2px solid #8b3a42;
+            color: #4a2c2a;
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .now-playing {
+            font-size: 13.5px;
+            font-weight: bold;
+            color: #8b3a42;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        audio {
+            width: 100%;
+            height: 38px;
+            outline: none;
+            border-radius: 6px;
+        }
+
+        /* Control Bar */
+        .control-bar {
+            background-color: #fcf9f5;
+            border-bottom: 1px solid #eee5da;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .btn-group {
+            display: flex;
+            gap: 6px;
+        }
+        .btn {
+            background-color: #ffffff;
+            border: 1px solid #d1c2b1;
+            color: #4a3d34;
+            padding: 5px 12px;
+            font-size: 13px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #8b3a42;
+            color: #ffffff;
+            border-color: #8b3a42;
+        }
+
+        /* Table Area */
+        .table-responsive {
+            width: 100%;
+            flex: 1;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14.5px;
+            text-align: left;
+            table-layout: fixed;
+        }
+        thead {
+            background-color: #f2e9de;
+            border-bottom: 2px solid #8b3a42;
+        }
+        th, td {
+            padding: 7px 4px;
+            border-bottom: 1px solid #ede3d8;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        th {
+            color: #4a3a2f;
+            font-weight: 700;
+            font-size: 13.5px;
+        }
+        tr:hover {
+            background-color: #faf5ef;
+        }
+        tr.active-row {
+            background-color: #f7ede2;
+        }
+        
+        .col-chk { width: 30px; text-align: center; }
+        .col-chk input { transform: scale(1.15); }
+        .col-num { width: 28px; text-align: center; color: #8c7b6e; font-size: 12.5px; }
+        .col-cat { width: 62px; text-align: center; }
+        .col-title { font-weight: 700; color: #2e2621; font-size: 14.5px; }
+        .col-artist { width: 62px; color: #59493e; text-align: center; font-size: 13px; }
+        .col-views { width: 45px; color: #78675a; text-align: center; font-size: 11.5px; }
+        .col-action { width: 45px; text-align: center; }
+
+        @media (max-width: 600px) {
+            .col-views { display: none; }
+            .col-artist { width: 48px; }
+            .col-cat { width: 58px; }
+            .header h1 { font-size: 17px; }
+            th, td { padding: 6px 3px; }
+        }
+
+        .badge-main {
+            display: inline-block;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 10.5px;
+            background-color: #ebdcd0;
+            color: #4a3427;
+            font-weight: bold;
+        }
+
+        .btn-play-single {
+            padding: 4px 8px;
+            font-size: 12px;
+            background-color: #f2e7dc;
+            border: 1px solid #d1bfac;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #3b2f27;
+            font-weight: bold;
+        }
+        .btn-play-single:hover {
+            background-color: #8b3a42;
+            color: #ffffff;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background-color: #fbf6ef;
+            border-top: 2px solid #8b3a42;
+            margin-top: auto;
+        }
+        .page-btn {
+            padding: 6px 14px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #54473e;
+            background: #ffffff;
+            border: 1px solid #d1c2b1;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .page-btn.active {
+            background-color: #8b3a42;
+            color: #ffffff;
+            border-color: #8b3a42;
+        }
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>하모니카 연주 감상실</h1>
+    </div>
+
+    <!-- 분위기 필터 행에 '트로트' 세분화 버튼 추가 -->
+    <div class="filter-section">
+        <div class="filter-row">
+            <span class="filter-label">🎼 장르</span>
+            <div class="filter-buttons">
+                <button class="btn-filter btn-main active" onclick="setMainCategory('전체', this)">전체</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('가요/트롯', this)">가요/트롯</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('동요/가곡', this)">동요/가곡</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('팝/외국곡', this)">팝/외국곡</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('클래식', this)">클래식</button>
+            </div>
+        </div>
+        <div class="filter-row">
+            <span class="filter-label">🎶 분위기</span>
+            <div class="filter-buttons">
+                <button class="btn-filter btn-filter-sub btn-sub active" onclick="setMoodCategory('전체', this)">전체</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('서정/슬로우', this)">☕ 서정/슬로우</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('정통트롯', this)">📻 정통트롯</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('경쾌한', this)">🎷 경쾌한</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 순수 오디오 플레이어 바 -->
+    <div class="player-section">
+        <div class="now-playing" id="now-playing-title">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
+        <audio id="audio-player" controls autoplay></audio>
+    </div>
+
+    <!-- 조작 바 -->
+    <div class="control-bar">
+        <div class="btn-group">
+            <button class="btn" onclick="toggleSelectAll()">전체선택</button>
+            <button class="btn btn-primary" onclick="playSelected()">선택듣기</button>
+        </div>
+        <div style="font-size: 13px; color: #78675a; font-weight: bold;" id="total-count">
+            총 0곡
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-chk"><input type="checkbox" id="chk-all" onclick="toggleSelectAll()"></th>
+                    <th class="col-num">No</th>
+                    <th class="col-cat">장르</th>
+                    <th class="col-title">연주 곡명</th>
+                    <th class="col-artist">연주자</th>
+                    <th class="col-views">조회</th>
+                    <th class="col-action">듣기</th>
+                </tr>
+            </thead>
+            <tbody id="playlist-body">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-container" id="pagination-box">
+    </div>
+</div>
+
+<script>
+    const GH_USER = "1472pr-ship-it";
+    const GH_REPO = "music";
+
+    // 데이터 구조 개선 (3번 조회수 초기화, 4번 분위기 세분화 적용)
+    const sampleTitles = [
+        { title: "눈물의연평도 C 최숙자", cat: "가요/트롯", mood: "정통트롯", fileName: "눈물의연평도_C_최숙자.mp3" },
+        { title: "대화자 DF# 임영웅", cat: "가요/트롯", mood: "경쾌한", fileName: "대화자_DF#_임영웅.mp3" },
+        { title: "별빛같은나의사랑아 F# 임영웅", cat: "가요/트롯", mood: "서정/슬로우", fileName: "별빛같은나의사랑아_F#_임영웅.mp3" }
+    ];
+
+    // 초기 조회수 0으로 변경
+    const masterPlaylist = sampleTitles.map((item, index) => {
+        let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/music/main/${encodeURIComponent(item.fileName)}`;
+        return {
+            id: index + 1,
+            mainCategory: item.cat,
+            mood: item.mood,
+            title: item.title,
+            artist: "수쌤",
+            views: 0,
+            src: streamUrl
+        };
+    });
+
+    let currentMainFilter = '전체';
+    let currentMoodFilter = '전체';
+    let currentFilteredPlaylist = [];
+
+    let currentPage = 1;
+    const itemsPerPage = 30; 
+
+    let playlistQueue = [];
+    let currentQueueIndex = 0;
+    let isRepeatSingleMode = false; // 1곡 반복 상태 여부
+
+    const audioPlayer = document.getElementById('audio-player');
+    const nowPlayingTitle = document.getElementById('now-playing-title');
+
+    window.onload = function() {
+        applyFilters();
+    };
+
+    function truncateTitle(title) {
+        const isMobile = window.innerWidth <= 600;
+
+        if (isMobile && title.length > 12) {
+            return title.substring(0, 12) + '...';
+        }
+        return title;
+    }
+
+    window.onresize = function() {
+        renderPlaylist();
+    };
+
+    function setMainCategory(categoryName, btn) {
+        document.querySelectorAll('.btn-main').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        currentMainFilter = categoryName;
+        currentPage = 1;
+        applyFilters();
+    }
+
+    function setMoodCategory(moodName, btn) {
+        document.querySelectorAll('.btn-sub').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        currentMoodFilter = moodName;
+        currentPage = 1;
+        applyFilters();
+    }
+
+    function applyFilters() {
+        document.getElementById('chk-all').checked = false;
+
+        currentFilteredPlaylist = masterPlaylist.filter(song => {
+            const matchMain = (currentMainFilter === '전체') || (song.mainCategory === currentMainFilter);
+            const matchMood = (currentMoodFilter === '전체') || (song.mood === currentMoodFilter);
+            return matchMain && matchMood;
+        });
+
+        renderPlaylist();
+    }
+
+    function renderPlaylist() {
+        const tbody = document.getElementById('playlist-body');
+        tbody.innerHTML = '';
+
+        const totalItems = currentFilteredPlaylist.length;
+        document.getElementById('total-count').innerText = `총 ${totalItems}곡`;
+
+        if (totalItems === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#78675a; font-size:14px;">곡이 없습니다.</td></tr>`;
+            document.getElementById('pagination-box').innerHTML = '';
+            return;
+        }
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+        const pageData = currentFilteredPlaylist.slice(startIndex, endIndex);
+
+        pageData.forEach((song, index) => {
+            const displayNum = totalItems - (startIndex + index);
+            const numStr = String(displayNum).padStart(2, '0');
+            const displayTitle = truncateTitle(song.title);
+
+            const tr = document.createElement('tr');
+            tr.id = `row-${song.id}`;
+            tr.innerHTML = `
+                <td class="col-chk"><input type="checkbox" class="song-chk" value="${song.id}"></td>
+                <td class="col-num">${numStr}</td>
+                <td class="col-cat"><span class="badge-main">${song.mainCategory}</span></td>
+                <td class="col-title" title="${song.title}">${displayTitle}</td>
+                <td class="col-artist">${song.artist}</td>
+                <td class="col-views">${song.views}</td>
+                <td class="col-action">
+                    <button class="btn-play-single" onclick="playSingle(${song.id})">듣기</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        renderPagination(totalItems);
+    }
+
+    function renderPagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const pageBox = document.getElementById('pagination-box');
+        pageBox.innerHTML = '';
+
+        if (totalPages <= 1) return;
+
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'page-btn';
+        prevBtn.innerText = '◀';
+        prevBtn.disabled = (currentPage === 1);
+        prevBtn.onclick = () => { currentPage--; renderPlaylist(); };
+        pageBox.appendChild(prevBtn);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const numBtn = document.createElement('button');
+            numBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+            numBtn.innerText = i;
+            numBtn.onclick = () => { currentPage = i; renderPlaylist(); };
+            pageBox.appendChild(numBtn);
+        }
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'page-btn';
+        nextBtn.innerText = '▶';
+        nextBtn.disabled = (currentPage === totalPages);
+        nextBtn.onclick = () => { currentPage++; renderPlaylist(); };
+        pageBox.appendChild(nextBtn);
+    }
+
+    function toggleSelectAll() {
+        const mainChk = document.getElementById('chk-all');
+        const chks = document.querySelectorAll('.song-chk');
+        chks.forEach(chk => chk.checked = mainChk.checked);
+    }
+
+    // 단일 듣기 버튼 클릭 (해당 곡부터 이후 곡 연속 재생)
+    function playSingle(id) {
+        const songIndex = currentFilteredPlaylist.findIndex(s => s.id === id);
+        if (songIndex !== -1) {
+            isRepeatSingleMode = false; // 일반 연속 재생 모드
+            playlistQueue = currentFilteredPlaylist.slice(songIndex);
+            currentQueueIndex = 0;
+            startPlayback();
+        }
+    }
+
+    // 선택듣기 (1개 선택 시 무한 반복, 2개 이상 선택 시 선택 곡 순차 연속 재생)
+    function playSelected() {
+        const selectedChks = document.querySelectorAll('.song-chk:checked');
+        if (selectedChks.length === 0) {
+            alert('재생할 곡을 선택해 주세요.');
+            return;
+        }
+
+        playlistQueue = [];
+        selectedChks.forEach(chk => {
+            const songId = parseInt(chk.value);
+            const song = masterPlaylist.find(s => s.id === songId);
+            if (song) playlistQueue.push(song);
+        });
+
+        // 1개만 선택 시 무한 반복 모드 활성화
+        if (playlistQueue.length === 1) {
+            isRepeatSingleMode = true;
+        } else {
+            isRepeatSingleMode = false;
+        }
+
+        currentQueueIndex = 0;
+        startPlayback();
+    }
+
+    function startPlayback() {
+        if (playlistQueue.length === 0 || currentQueueIndex >= playlistQueue.length) return;
+
+        const song = playlistQueue[currentQueueIndex];
+        
+        // 3번 요청: 실제로 곡이 재생을 시작할 때 조회수 1 증가
+        song.views++;
+        renderPlaylist();
+
+        document.querySelectorAll('tr').forEach(r => r.classList.remove('active-row'));
+        const activeRow = document.getElementById('row-' + song.id);
+        if (activeRow) activeRow.classList.add('active-row');
+
+        // 상태 표시 문구 (1곡 반복 상태일 경우 표시)
+        if (isRepeatSingleMode) {
+            nowPlayingTitle.innerText = `🔂 [1곡 무한반복] ${song.title} - ${song.artist}`;
+        } else {
+            nowPlayingTitle.innerText = `▶️ [재생 중 ${currentQueueIndex + 1}/${playlistQueue.length}] ${song.title} - ${song.artist}`;
+        }
+
+        audioPlayer.src = song.src;
+        audioPlayer.play().catch(e => {
+            console.log("자동 재생이 차단되었거나 터치가 필요합니다.");
+        });
+    }
+
+    // 곡이 종료되었을 때 다음 동작 처리 (1번, 2번 요청 완벽 해결)
+    audioPlayer.addEventListener('ended', function() {
+        if (isRepeatSingleMode) {
+            // 2번: 1곡만 선택된 상태라면 그 곡 무한 재재생
+            startPlayback();
+        } else {
+            // 1번: 선택된 다음 곡으로 넘어가서 연속 재생
+            currentQueueIndex++;
+            if (currentQueueIndex < playlistQueue.length) {
+                startPlayback();
+            } else {
+                nowPlayingTitle.innerText = "✅ 준비된 연주곡 연속 재생이 완료되었습니다.";
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
