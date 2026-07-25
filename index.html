@@ -312,7 +312,8 @@
 
     <div class="player-section">
         <div class="now-playing" id="now-playing-title">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
-        <audio id="audio-player" controls autoplay></audio>
+        <!-- 다운로드 옵션 제외 및 우클릭 금지 적용 -->
+        <audio id="audio-player" controls controlsList="nodownload" oncontextmenu="return false;" autoplay></audio>
     </div>
 
     <div class="control-bar">
@@ -329,7 +330,7 @@
         <table>
             <thead>
                 <tr>
-                    <th class="col-chk"><input type="checkbox" id="chk-all" onclick="toggleSelectAll()"></th>
+                    <th class="col-chk"><input type="checkbox" id="chk-all" onclick="toggleHeaderCheckbox()"></th>
                     <th class="col-num">No</th>
                     <th class="col-cat">장르</th>
                     <th class="col-title">연주 곡명</th>
@@ -438,7 +439,7 @@
         renderPlaylist();
     }
 
-    // 체크 상태를 기록해두는 배열
+    // 체크 상태를 기록해두는 집합
     let checkedSongIds = new Set();
 
     function updateCheckedSet() {
@@ -526,13 +527,40 @@
         pageBox.appendChild(nextBtn);
     }
 
+    // [전체선택] 버튼 기능
     function toggleSelectAll() {
+        const chks = document.querySelectorAll('.song-chk');
+        const mainChk = document.getElementById('chk-all');
+        
+        // 하나라도 선택 해제되어 있으면 전체 선택, 모두 선택된 상태면 전체 해제
+        let shouldSelectAll = false;
+        chks.forEach(chk => {
+            if (!chk.checked) shouldSelectAll = true;
+        });
+
+        if (mainChk) mainChk.checked = shouldSelectAll;
+
+        chks.forEach(chk => {
+            chk.checked = shouldSelectAll;
+            const val = parseInt(chk.value);
+            if (shouldSelectAll) {
+                checkedSongIds.add(val);
+            } else {
+                checkedSongIds.delete(val);
+            }
+        });
+    }
+
+    // 헤더 체크박스 클릭 기능
+    function toggleHeaderCheckbox() {
         const mainChk = document.getElementById('chk-all');
         const chks = document.querySelectorAll('.song-chk');
+        const isChecked = mainChk.checked;
+
         chks.forEach(chk => {
-            chk.checked = mainChk.checked;
+            chk.checked = isChecked;
             const val = parseInt(chk.value);
-            if (mainChk.checked) {
+            if (isChecked) {
                 checkedSongIds.add(val);
             } else {
                 checkedSongIds.delete(val);
