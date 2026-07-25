@@ -12,7 +12,7 @@
     <meta name="theme-color" content="#5c2028">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <title>수하모니카</title>
+    <title>평생 곁을 지켜줄 가장 따뜻한 친구, 하모니카</title>
     <style>
         * {
             box-sizing: border-box;
@@ -141,12 +141,6 @@
             height: 38px;
             outline: none;
             border-radius: 6px;
-        }
-        .bg-notice {
-            font-size: 11px;
-            color: #7a6058;
-            letter-spacing: -0.3px;
-            margin-top: 1px;
         }
 
         /* Control Bar */
@@ -318,8 +312,8 @@
 
     <div class="player-section">
         <div class="now-playing" id="now-playing-title">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
+        <!-- 다운로드 옵션 제외 및 우클릭 금지 적용 -->
         <audio id="audio-player" controls controlsList="nodownload" oncontextmenu="return false;" autoplay></audio>
-        <div class="bg-notice">💡 화면이 꺼진 후 음악이 멈추면 스마트폰 [배터리 절전 모드]를 해제해 주세요.</div>
     </div>
 
     <div class="control-bar">
@@ -373,7 +367,7 @@
                     mainCategory: item.cat,
                     mood: item.mood,
                     title: item.title,
-                    artist: "수하모",
+                    artist: "수지기",
                     views: 0,
                     src: streamUrl
                 };
@@ -445,6 +439,7 @@
         renderPlaylist();
     }
 
+    // 체크 상태를 기록해두는 집합
     let checkedSongIds = new Set();
 
     function updateCheckedSet() {
@@ -532,10 +527,12 @@
         pageBox.appendChild(nextBtn);
     }
 
+    // [전체선택] 버튼 기능
     function toggleSelectAll() {
         const chks = document.querySelectorAll('.song-chk');
         const mainChk = document.getElementById('chk-all');
         
+        // 하나라도 선택 해제되어 있으면 전체 선택, 모두 선택된 상태면 전체 해제
         let shouldSelectAll = false;
         chks.forEach(chk => {
             if (!chk.checked) shouldSelectAll = true;
@@ -554,6 +551,7 @@
         });
     }
 
+    // 헤더 체크박스 클릭 기능
     function toggleHeaderCheckbox() {
         const mainChk = document.getElementById('chk-all');
         const chks = document.querySelectorAll('.song-chk');
@@ -623,33 +621,7 @@
         }
 
         audioPlayer.src = song.src;
-        audioPlayer.play().then(() => {
-            // 백그라운드 및 잠금화면 오디오 컨트롤 연동 (Media Session API)
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: song.title,
-                    artist: song.artist,
-                    album: "수하모니카 연주 감상실",
-                    artwork: [
-                        { src: 'https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png', sizes: '512x512', type: 'image/png' }
-                    ]
-                });
-
-                navigator.mediaSession.setActionHandler('play', () => { audioPlayer.play(); });
-                navigator.mediaSession.setActionHandler('pause', () => { audioPlayer.pause(); });
-                navigator.mediaSession.setActionHandler('previoustrack', () => {
-                    if (currentQueueIndex > 0) {
-                        currentQueueIndex--;
-                        startPlayback();
-                    }
-                });
-                navigator.mediaSession.setActionHandler('nexttrack', () => {
-                    currentQueueIndex++;
-                    if (currentQueueIndex >= playlistQueue.length) currentQueueIndex = 0;
-                    startPlayback();
-                });
-            }
-        }).catch(e => {
+        audioPlayer.play().catch(e => {
             console.log("자동 재생이 차단되었거나 사용자 터치가 필요합니다.");
         });
     }
