@@ -76,7 +76,7 @@
         .page-btn { padding: 6px 14px; font-size: 14px; font-weight: bold; color: #54473e; background: #ffffff; border: 1px solid #d1c2b1; border-radius: 5px; cursor: pointer; }
         .page-btn.active { background-color: #8b3a42; color: #ffffff; border-color: #8b3a42; }
 
-        /* --- [넓고 시원한 모바일 맞춤 댓글 스타일] --- */
+        /* --- [시원하고 넓은 멀티라인 댓글 작성 영역] --- */
         .comment-section { background-color: #fcfbf9; border-top: 3px solid #8b3a42; padding: 16px 12px; margin-top: 10px; }
         .comment-header { font-size: 15px; font-weight: bold; color: #5c2028; margin-bottom: 12px; }
         .comment-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; background: #fff; padding: 12px; border: 1px solid #e5dccf; border-radius: 6px; }
@@ -165,13 +165,13 @@
     <div class="pagination-container" id="pagination-box">
     </div>
 
-    <!-- --- [시원하고 넓은 멀티라인 댓글 작성 영역] --- -->
+    <!-- --- [성함 필수 입력 적용 댓글 영역] --- -->
     <div class="comment-section">
         <div class="comment-header">💬 연주 감상 한줄평 & 응원 한마디</div>
         
         <div class="comment-form">
             <div>
-                <input type="text" id="c-name" class="comment-input-name" placeholder="성함/닉네임" maxlength="10">
+                <input type="text" id="c-name" class="comment-input-name" placeholder="성함/닉네임 (필수)" maxlength="10">
             </div>
             <div>
                 <textarea id="c-text" class="comment-input-textarea" placeholder="따뜻한 감상평이나 응원 한마디를 남겨주세요^^" oninput="autoResizeTextarea(this)"></textarea>
@@ -209,7 +209,6 @@
         return spamKeywords.some(keyword => lowerText.includes(keyword));
     }
 
-    // 입력 내용 길이에 따라 입력창 높이 자동 조절
     window.autoResizeTextarea = function(textarea) {
         textarea.style.height = 'auto';
         textarea.style.height = (textarea.scrollHeight) + 'px';
@@ -218,11 +217,20 @@
     window.addComment = async function() {
         const nameInput = document.getElementById('c-name');
         const textInput = document.getElementById('c-text');
-        const name = nameInput.value.trim() || '수강생';
+        const name = nameInput.value.trim();
         const text = textInput.value.trim();
 
+        // 성함/닉네임 필수 검사
+        if (!name) {
+            alert('성함이나 닉네임을 입력해 주세요^^');
+            nameInput.focus();
+            return;
+        }
+
+        // 감상평 내용 필수 검사
         if (!text) {
             alert('감상평 내용을 입력해 주세요^^');
+            textInput.focus();
             return;
         }
 
@@ -240,7 +248,7 @@
                 replies: []
             });
             textInput.value = '';
-            textInput.style.height = '70px'; // 입력창 높이 초기화
+            textInput.style.height = '70px';
         } catch (e) {
             console.error("댓글 저장 실패:", e);
             alert("댓글 저장에 실패했습니다.");
@@ -251,9 +259,19 @@
         const replyInput = document.getElementById(`reply-input-${commentId}`);
         const replyNameInput = document.getElementById(`reply-name-${commentId}`);
         const text = replyInput.value.trim();
-        const name = replyNameInput.value.trim() || '선생님';
+        const name = replyNameInput.value.trim();
 
-        if (!text) return;
+        if (!name) {
+            alert('성함을 입력해 주세요.');
+            replyNameInput.focus();
+            return;
+        }
+
+        if (!text) {
+            alert('답글 내용을 입력해 주세요.');
+            replyInput.focus();
+            return;
+        }
 
         if (isSpamText(text) || isSpamText(name)) {
             alert('광고성 문구는 입력할 수 없습니다.');
