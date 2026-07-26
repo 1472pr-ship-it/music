@@ -76,7 +76,7 @@
         .page-btn { padding: 6px 14px; font-size: 14px; font-weight: bold; color: #54473e; background: #ffffff; border: 1px solid #d1c2b1; border-radius: 5px; cursor: pointer; }
         .page-btn.active { background-color: #8b3a42; color: #ffffff; border-color: #8b3a42; }
 
-        /* --- [모바일 반응형 댓글 게시판 스타일 개선] --- */
+        /* --- [모바일 최적화 및 Firebase 연동 댓글 영역] --- */
         .comment-section { background-color: #fcfbf9; border-top: 3px solid #8b3a42; padding: 16px 12px; margin-top: 10px; }
         .comment-header { font-size: 15px; font-weight: bold; color: #5c2028; margin-bottom: 12px; }
         .comment-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; background: #fff; padding: 10px; border: 1px solid #e5dccf; border-radius: 6px; }
@@ -166,7 +166,7 @@
     <div class="pagination-container" id="pagination-box">
     </div>
 
-    <!-- --- [모바일 반응형 간편 댓글 작성 영역] --- -->
+    <!-- --- [Firebase 실시간 연동 한줄평 댓글 영역] --- -->
     <div class="comment-section">
         <div class="comment-header">💬 연주 감상 한줄평 & 응원 한마디</div>
         
@@ -179,15 +179,189 @@
         </div>
 
         <div class="comment-list" id="comment-list-box">
-            <!-- 댓글 목록 영역 -->
+            <!-- 댓글 데이터 실시간 로딩 영역 -->
         </div>
     </div>
 </div>
 
+<!-- Firebase SDK 모듈 로드 -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // 구글 Firebase 설정값 (발급받으신 키 완벽 연동)
+    const firebaseConfig = {
+        apiKey: "AIzaSyAw8hem90scCf0X_NNpvQxXdaTy1XIiE84",
+        authDomain: "suharmo.firebaseapp.com",
+        projectId: "suharmo",
+        storageBucket: "suharmo.firebasestorage.app",
+        messagingSenderId: "479461638228",
+        appId: "1:479461638228:web:0c6665c9aa659cc7d62dc1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const ADMIN_PW = "1472"; // 삭제 비밀번호
+
+    // 스팸 방지 검사 함수
+    function isSpamText(text) {
+        const spamKeywords = ['http://', 'https://', 'www.', '카지노', '바카라', '대출', '토토', '성인'];
+        const lowerText = text.toLowerCase();
+        return spamKeywords.some(keyword => lowerText.includes(keyword));
+    }
+
+    // 전역 함수로 등록하여 HTML 버튼에서 호출 가능하도록 설정
+    window.addComment = async function() {
+        const nameInput = document.getElementById('c-name');
+        const textInput = document.getElementById('c-text');
+        const name = nameInput.value.trim() || '수강생';
+        const text = textInput.value.trim();
+
+        if (!text) {
+            alert('감상평 내용을 입력해 주세요^^');
+            return;
+        }
+
+        if (isSpamText(text) || isSpamText(name)) {
+            alert('광고성 문구나 인터넷 주소는 입력할 수 없습니다.');
+            return;
+        }
+
+        try {
+            await addDoc(collection(db, "comments"), {
+                name: name,
+                text: text,
+                createdAt: new Date(),
+                dateStr: new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                replies: []
+            });
+            textInput.value = '';
+        } catch (e) {
+            console.error("댓글 저장 실패:", e);
+            alert("댓글 저장에 실패했습니다. Firebase 데이터베이스 생성을 확인해 주세요.");
+        }
+    };
+
+    window.addReply = async function(commentId) {
+        const replyInput = document.getElementById(`reply-input-${commentId}`);
+        const replyNameInput = document.getElementById(`reply-name-${commentId}`);
+        const text = replyInput.value.trim();
+        const name = replyNameInput.value.trim() || '선생님';
+
+        if (!text) return;
+
+        if (isSpamText(text) || isSpamText(name)) {
+            alert('광고성 문구는 입력할 수 없습니다.');
+            return;
+        }
+
+        try {
+            const commentRef = doc(db, "comments", commentId);
+            const replyData = {
+                id: String(Date.now()),
+                name: name,
+                text: text,
+                dateStr: new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+            await updateDoc(commentRef, {
+                replies: arrayUnion(replyData)
+            });
+        } catch (e) {
+            console.error("답글 저장 실패:", e);
+        }
+    };
+
+    window.deleteComment = async function(commentId, replyObject = null) {
+        const inputPw = prompt('선생님 전용 비밀번호를 입력해 주세요:');
+        if (inputPw !== ADMIN_PW) {
+            alert('비밀번호가 올바르지 않습니다.');
+            return;
+        }
+
+        try {
+            if (replyObject) {
+                // 답글 삭제
+                const commentRef = doc(db, "comments", commentId);
+                await updateDoc(commentRef, {
+                    replies: arrayRemove(replyObject)
+                });
+            } else {
+                // 댓글 삭제
+                await deleteDoc(doc(db, "comments", commentId));
+            }
+        } catch (e) {
+            console.error("삭제 실패:", e);
+        }
+    };
+
+    window.toggleReplyForm = function(commentId) {
+        const form = document.getElementById(`reply-form-box-${commentId}`);
+        if (form) form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+    };
+
+    // Firebase 실시간 리스너 (최신글 상단 자동 정렬 및 PC↔모바일 자동 동기화)
+    const q = query(collection(db, "comments"), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+        const box = document.getElementById('comment-list-box');
+        if (snapshot.empty) {
+            box.innerHTML = `<div style="text-align:center; padding:20px; color:#8c7b6e; font-size:13px;">아직 작성된 감상평이 없습니다. 첫 소감을 남겨보세요!</div>`;
+            return;
+        }
+
+        box.innerHTML = '';
+        snapshot.forEach((docSnap) => {
+            const item = docSnap.data();
+            const id = docSnap.id;
+
+            const div = document.createElement('div');
+            div.className = 'comment-item';
+
+            let repliesHtml = '';
+            if (item.replies && item.replies.length > 0) {
+                repliesHtml += `<div class="reply-list">`;
+                item.replies.forEach(r => {
+                    const rJson = JSON.stringify(r).replace(/"/g, '&quot;');
+                    repliesHtml += `
+                        <div class="reply-item">
+                            <div class="comment-author">
+                                <span>↪ ${r.name} <span class="comment-date">${r.dateStr}</span></span>
+                                <button class="del-btn" onclick="deleteComment('${id}', ${rJson})">삭제</button>
+                            </div>
+                            <div class="comment-body">${r.text}</div>
+                        </div>
+                    `;
+                });
+                repliesHtml += `</div>`;
+            }
+
+            div.innerHTML = `
+                <div class="comment-author">
+                    <span>👤 ${item.name} <span class="comment-date">${item.dateStr}</span></span>
+                    <button class="del-btn" onclick="deleteComment('${id}')">삭제</button>
+                </div>
+                <div class="comment-body">${item.text}</div>
+                
+                <div class="action-btns">
+                    <button class="reply-btn" onclick="toggleReplyForm('${id}')">답글 달기</button>
+                </div>
+
+                <div id="reply-form-box-${id}" class="reply-form" style="display:none;">
+                    <div style="display:flex; gap:6px;">
+                        <input type="text" id="reply-name-${id}" class="comment-input-name" style="width:80px;" value="선생님">
+                        <input type="text" id="reply-input-${id}" class="comment-input-text" placeholder="답글 작성...">
+                    </div>
+                    <button class="btn-submit-comment" style="padding:6px; font-size:12px; width:100%;" onclick="addReply('${id}')">답글 등록</button>
+                </div>
+                ${repliesHtml}
+            `;
+            box.appendChild(div);
+        });
+    });
+</script>
+
 <script>
     const GH_USER = "1472pr-ship-it";
     const GH_REPO = "music";
-    const ADMIN_PW = "1472"; // 선생님 전용 삭제 비밀번호
 
     let masterPlaylist = [];
     let wakeLock = null;
@@ -241,7 +415,6 @@
 
     window.onload = function() {
         loadSongs();
-        renderComments();
     };
 
     function truncateTitle(title) {
@@ -471,163 +644,6 @@
             startPlayback();
         }
     };
-
-    // --- [스팸 방지 & 댓글 관리 로직] ---
-    function getStoredComments() {
-        const data = localStorage.getItem('su_harmonica_comments');
-        return data ? JSON.parse(data) : [];
-    }
-
-    function saveStoredComments(comments) {
-        localStorage.setItem('su_harmonica_comments', JSON.stringify(comments));
-    }
-
-    function isSpamText(text) {
-        const spamKeywords = ['http://', 'https://', 'www.', '카지노', '바카라', '대출', '토토', '성인'];
-        const lowerText = text.toLowerCase();
-        return spamKeywords.some(keyword => lowerText.includes(keyword));
-    }
-
-    function addComment() {
-        const nameInput = document.getElementById('c-name');
-        const textInput = document.getElementById('c-text');
-        const name = nameInput.value.trim() || '수강생';
-        const text = textInput.value.trim();
-
-        if (!text) {
-            alert('감상평 내용을 입력해 주세요^^');
-            return;
-        }
-
-        if (isSpamText(text) || isSpamText(name)) {
-            alert('광고성 문구는 입력할 수 없습니다.');
-            return;
-        }
-
-        const comments = getStoredComments();
-        const newComment = {
-            id: Date.now(),
-            name: name,
-            text: text,
-            date: new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-            replies: []
-        };
-
-        comments.unshift(newComment);
-        saveStoredComments(comments);
-
-        textInput.value = '';
-        renderComments();
-    }
-
-    function addReply(commentId) {
-        const replyInput = document.getElementById(`reply-input-${commentId}`);
-        const replyNameInput = document.getElementById(`reply-name-${commentId}`);
-        const text = replyInput.value.trim();
-        const name = replyNameInput.value.trim() || '선생님';
-
-        if (!text) return;
-
-        if (isSpamText(text) || isSpamText(name)) {
-            alert('광고성 문구는 입력할 수 없습니다.');
-            return;
-        }
-
-        const comments = getStoredComments();
-        const parent = comments.find(c => c.id === commentId);
-        if (parent) {
-            parent.replies.push({
-                id: Date.now(),
-                name: name,
-                text: text,
-                date: new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-            });
-            saveStoredComments(comments);
-            renderComments();
-        }
-    }
-
-    function deleteComment(commentId, replyId = null) {
-        const inputPw = prompt('선생님 전용 비밀번호를 입력해 주세요:');
-        if (inputPw !== ADMIN_PW) {
-            alert('비밀번호가 올바르지 않습니다.');
-            return;
-        }
-
-        let comments = getStoredComments();
-
-        if (replyId) {
-            const parent = comments.find(c => c.id === commentId);
-            if (parent) {
-                parent.replies = parent.replies.filter(r => r.id !== replyId);
-            }
-        } else {
-            comments = comments.filter(c => c.id !== commentId);
-        }
-
-        saveStoredComments(comments);
-        renderComments();
-    }
-
-    function toggleReplyForm(commentId) {
-        const form = document.getElementById(`reply-form-box-${commentId}`);
-        if (form) form.style.display = form.style.display === 'none' ? 'flex' : 'none';
-    }
-
-    function renderComments() {
-        const box = document.getElementById('comment-list-box');
-        const comments = getStoredComments();
-
-        if (comments.length === 0) {
-            box.innerHTML = `<div style="text-align:center; padding:20px; color:#8c7b6e; font-size:13px;">아직 작성된 감상평이 없습니다. 첫 소감을 남겨보세요!</div>`;
-            return;
-        }
-
-        box.innerHTML = '';
-        comments.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'comment-item';
-
-            let repliesHtml = '';
-            if (item.replies && item.replies.length > 0) {
-                repliesHtml += `<div class="reply-list">`;
-                item.replies.forEach(r => {
-                    repliesHtml += `
-                        <div class="reply-item">
-                            <div class="comment-author">
-                                <span>↪ ${r.name} <span class="comment-date">${r.date}</span></span>
-                                <button class="del-btn" onclick="deleteComment(${item.id}, ${r.id})">삭제</button>
-                            </div>
-                            <div class="comment-body">${r.text}</div>
-                        </div>
-                    `;
-                });
-                repliesHtml += `</div>`;
-            }
-
-            div.innerHTML = `
-                <div class="comment-author">
-                    <span>👤 ${item.name} <span class="comment-date">${item.date}</span></span>
-                    <button class="del-btn" onclick="deleteComment(${item.id})">삭제</button>
-                </div>
-                <div class="comment-body">${item.text}</div>
-                
-                <div class="action-btns">
-                    <button class="reply-btn" onclick="toggleReplyForm(${item.id})">답글 달기</button>
-                </div>
-
-                <div id="reply-form-box-${item.id}" class="reply-form" style="display:none;">
-                    <div style="display:flex; gap:6px;">
-                        <input type="text" id="reply-name-${item.id}" class="comment-input-name" style="width:80px;" value="선생님">
-                        <input type="text" id="reply-input-${item.id}" class="comment-input-text" placeholder="답글 작성...">
-                    </div>
-                    <button class="btn-submit-comment" style="padding:6px; font-size:12px; width:100%;" onclick="addReply(${item.id})">답글 등록</button>
-                </div>
-                ${repliesHtml}
-            `;
-            box.appendChild(div);
-        });
-    }
 </script>
 
 </body>
