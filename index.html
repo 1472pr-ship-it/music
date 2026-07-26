@@ -365,17 +365,8 @@
 
     let masterPlaylist = [];
 
-    // --- [백그라운드 연속 재생 및 절전 방지 통합 보완] ---
+    // --- [안전한 백그라운드 절전 방지 (Wake Lock 표준)] ---
     let wakeLock = null;
-    let silentAudio = null;
-
-    function initSilentAudio() {
-        if (!silentAudio) {
-            silentAudio = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
-            silentAudio.loop = true;
-        }
-        silentAudio.play().catch(err => console.log('무음 오디오 재생 대기중'));
-    }
 
     async function requestWakeLock() {
         try {
@@ -653,8 +644,6 @@
 
         audioPlayer.src = song.src;
         audioPlayer.play().then(() => {
-            // ⭐ 백그라운드 끊김 방지 기능 가동
-            initSilentAudio();
             requestWakeLock();
 
             // 백그라운드 및 잠금화면 오디오 컨트롤 연동 (Media Session API)
