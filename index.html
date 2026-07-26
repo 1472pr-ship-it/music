@@ -212,7 +212,6 @@
             background-color: #f7ede2;
         }
         
-        /* 기본 상태 (PC 및 넓은 화면) */
         .col-chk { width: 30px; text-align: center; }
         .col-chk input { transform: scale(1.15); }
         .col-num { width: 28px; text-align: center; color: #8c7b6e; font-size: 12.5px; }
@@ -278,7 +277,7 @@
             border-color: #8b3a42;
         }
 
-        /* --- [댓글 게시판 스타일 추가] --- */
+        /* --- [노로그인 간편 댓글 게시판 영역] --- */
         .comment-section {
             background-color: #fcfbf9;
             border-top: 3px solid #8b3a42;
@@ -290,12 +289,6 @@
             font-weight: bold;
             color: #5c2028;
             margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        #disqus_thread {
-            min-height: 120px;
         }
     </style>
 </head>
@@ -366,10 +359,17 @@
     <div class="pagination-container" id="pagination-box">
     </div>
 
-    <!-- --- [하단 감상평 / 댓글 한줄소감 영역] --- -->
+    <!-- --- [시니어 친화형 노로그인 간편 댓글 창] --- -->
     <div class="comment-section">
         <div class="comment-header">💬 연주 감상 한줄평 & 응원 한마디</div>
-        <div id="disqus_thread"></div>
+        <div id="cusdis_thread"
+          data-host="https://cusdis.com"
+          data-app-id="92db97d3-0570-4bc3-a859-9069d30c0c11"
+          data-page-id="suharmonica-main"
+          data-page-url="https://1472pr-ship-it.github.io/music/"
+          data-page-title="수하모니카 연주 감상실"
+        ></div>
+        <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
     </div>
 </div>
 
@@ -379,7 +379,6 @@
 
     let masterPlaylist = [];
 
-    // --- [안전한 백그라운드 절전 방지 (Wake Lock 표준)] ---
     let wakeLock = null;
 
     async function requestWakeLock() {
@@ -392,7 +391,6 @@
         }
     }
 
-    // songs.json 파일에서 곡 데이터를 읽어오는 함수
     async function loadSongs() {
         try {
             const response = await fetch('songs.json');
@@ -434,7 +432,6 @@
 
     window.onload = function() {
         loadSongs();
-        initDisqusComments(); // 댓글 엔진 초기화
     };
 
     function truncateTitle(title) {
@@ -701,14 +698,6 @@
             startPlayback();
         }
     };
-
-    // --- [무료 공개 댓글 시스템 연동] ---
-    function initDisqusComments() {
-        var d = document, s = d.createElement('script');
-        s.src = 'https://suharmonica.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    }
 </script>
 
 </body>
