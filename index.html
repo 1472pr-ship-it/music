@@ -76,26 +76,27 @@
         .page-btn { padding: 6px 14px; font-size: 14px; font-weight: bold; color: #54473e; background: #ffffff; border: 1px solid #d1c2b1; border-radius: 5px; cursor: pointer; }
         .page-btn.active { background-color: #8b3a42; color: #ffffff; border-color: #8b3a42; }
 
-        /* --- [스팸 방지 & 댓글 게시판 스타일] --- */
+        /* --- [모바일 반응형 댓글 게시판 스타일 개선] --- */
         .comment-section { background-color: #fcfbf9; border-top: 3px solid #8b3a42; padding: 16px 12px; margin-top: 10px; }
         .comment-header { font-size: 15px; font-weight: bold; color: #5c2028; margin-bottom: 12px; }
-        .comment-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; background: #fff; padding: 12px; border: 1px solid #e5dccf; border-radius: 6px; }
-        .comment-input-group { display: flex; gap: 8px; }
-        .comment-input-name { width: 120px; padding: 8px; font-size: 13px; border: 1px solid #d1c2b1; border-radius: 4px; }
-        .comment-input-text { flex: 1; padding: 8px; font-size: 13px; border: 1px solid #d1c2b1; border-radius: 4px; }
-        .btn-submit-comment { padding: 8px 16px; background-color: #8b3a42; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .comment-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; background: #fff; padding: 10px; border: 1px solid #e5dccf; border-radius: 6px; }
+        
+        .comment-input-row { display: flex; gap: 6px; width: 100%; }
+        .comment-input-name { width: 95px; padding: 8px; font-size: 13px; border: 1px solid #d1c2b1; border-radius: 4px; flex-shrink: 0; }
+        .comment-input-text { flex: 1; min-width: 0; padding: 8px; font-size: 13px; border: 1px solid #d1c2b1; border-radius: 4px; }
+        .btn-submit-comment { width: 100%; padding: 10px; background-color: #8b3a42; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 4px; }
+        
         .comment-list { display: flex; flex-direction: column; gap: 10px; }
         .comment-item { background: #ffffff; border: 1px solid #eee5da; border-radius: 6px; padding: 10px 12px; }
         .comment-author { font-size: 13px; font-weight: bold; color: #5c2028; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
         .comment-date { font-size: 11px; color: #8c7b6e; font-weight: normal; margin-left: 6px; }
-        .comment-body { font-size: 13.5px; color: #332d29; line-height: 1.4; word-break: break-all; }
+        .comment-body { font-size: 13.5px; color: #332d29; line-height: 1.4; word-break: break-all; margin-top: 2px; }
         .action-btns { display: flex; gap: 8px; margin-top: 6px; }
-        .reply-btn, .del-btn { font-size: 11px; background: none; border: none; cursor: pointer; text-decoration: underline; font-weight: bold; }
-        .reply-btn { color: #8c6d3f; }
-        .del-btn { color: #b33939; }
-        .reply-list { margin-top: 8px; padding-left: 14px; border-left: 2px solid #ebdcd0; display: flex; flex-direction: column; gap: 6px; }
+        .reply-btn { font-size: 11px; background: none; border: none; cursor: pointer; text-decoration: underline; font-weight: bold; color: #8c6d3f; }
+        .del-btn { font-size: 11px; background: #f2d7d7; color: #900; border: 1px solid #e0b0b0; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-weight: bold; }
+        .reply-list { margin-top: 8px; padding-left: 10px; border-left: 2px solid #ebdcd0; display: flex; flex-direction: column; gap: 6px; }
         .reply-item { background: #faf5ef; padding: 6px 10px; border-radius: 4px; }
-        .reply-form { margin-top: 8px; display: flex; gap: 6px; }
+        .reply-form { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
     </style>
 </head>
 <body>
@@ -165,16 +166,16 @@
     <div class="pagination-container" id="pagination-box">
     </div>
 
-    <!-- --- [간편 한줄 감상평 / 댓글 작성 영역] --- -->
+    <!-- --- [모바일 반응형 간편 댓글 작성 영역] --- -->
     <div class="comment-section">
         <div class="comment-header">💬 연주 감상 한줄평 & 응원 한마디</div>
         
         <div class="comment-form">
-            <div class="comment-input-group">
-                <input type="text" id="c-name" class="comment-input-name" placeholder="성함 / 닉네임" maxlength="10">
-                <input type="text" id="c-text" class="comment-input-text" placeholder="감상평이나 응원글을 작성해 주세요^^" onkeypress="if(event.key==='Enter') addComment();">
-                <button class="btn-submit-comment" onclick="addComment()">등록</button>
+            <div class="comment-input-row">
+                <input type="text" id="c-name" class="comment-input-name" placeholder="성함/닉네임" maxlength="10">
+                <input type="text" id="c-text" class="comment-input-text" placeholder="감상평이나 응원글 작성^^" onkeypress="if(event.key==='Enter') addComment();">
             </div>
+            <button class="btn-submit-comment" onclick="addComment()">등록하기</button>
         </div>
 
         <div class="comment-list" id="comment-list-box">
@@ -481,7 +482,6 @@
         localStorage.setItem('su_harmonica_comments', JSON.stringify(comments));
     }
 
-    // 스팸 및 인터넷 주소 필터링 함수
     function isSpamText(text) {
         const spamKeywords = ['http://', 'https://', 'www.', '카지노', '바카라', '대출', '토토', '성인'];
         const lowerText = text.toLowerCase();
@@ -500,7 +500,7 @@
         }
 
         if (isSpamText(text) || isSpamText(name)) {
-            alert('광고성 문구나 인터넷 주소(링크)는 입력할 수 없습니다.');
+            alert('광고성 문구는 입력할 수 없습니다.');
             return;
         }
 
@@ -513,7 +513,7 @@
             replies: []
         };
 
-        comments.unshift(newComment); // 최신글이 최상단에 올 배치
+        comments.unshift(newComment);
         saveStoredComments(comments);
 
         textInput.value = '';
@@ -547,7 +547,6 @@
         }
     }
 
-    // 선생님 전용 댓글 삭제 함수
     function deleteComment(commentId, replyId = null) {
         const inputPw = prompt('선생님 전용 비밀번호를 입력해 주세요:');
         if (inputPw !== ADMIN_PW) {
@@ -558,14 +557,12 @@
         let comments = getStoredComments();
 
         if (replyId) {
-            // 답글 삭제
             const parent = comments.find(c => c.id === commentId);
             if (parent) {
                 parent.replies = parent.replies.filter(r => r.id !== replyId);
             }
         } else {
-            // 메인 댓글 삭제
-            comments = comments.filter(c => c.id === commentId);
+            comments = comments.filter(c => c.id !== commentId);
         }
 
         saveStoredComments(comments);
@@ -620,9 +617,11 @@
                 </div>
 
                 <div id="reply-form-box-${item.id}" class="reply-form" style="display:none;">
-                    <input type="text" id="reply-name-${item.id}" class="comment-input-name" style="width:80px;" value="선생님">
-                    <input type="text" id="reply-input-${item.id}" class="comment-input-text" placeholder="답글을 남겨주세요...">
-                    <button class="btn-submit-comment" style="padding:4px 10px; font-size:12px;" onclick="addReply(${item.id})">등록</button>
+                    <div style="display:flex; gap:6px;">
+                        <input type="text" id="reply-name-${item.id}" class="comment-input-name" style="width:80px;" value="선생님">
+                        <input type="text" id="reply-input-${item.id}" class="comment-input-text" placeholder="답글 작성...">
+                    </div>
+                    <button class="btn-submit-comment" style="padding:6px; font-size:12px; width:100%;" onclick="addReply(${item.id})">답글 등록</button>
                 </div>
                 ${repliesHtml}
             `;
