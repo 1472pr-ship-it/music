@@ -78,7 +78,8 @@
 
         /* --- [시원하고 넓은 멀티라인 댓글 작성 영역] --- */
         .comment-section { background-color: #fcfbf9; border-top: 3px solid #8b3a42; padding: 16px 12px; margin-top: 10px; }
-        .comment-header { font-size: 15px; font-weight: bold; color: #5c2028; margin-bottom: 12px; }
+        .comment-header { font-size: 15px; font-weight: bold; color: #5c2028; margin-bottom: 6px; }
+        .comment-notice { font-size: 12px; color: #78675a; margin-bottom: 12px; line-height: 1.4; }
         .comment-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; background: #fff; padding: 12px; border: 1px solid #e5dccf; border-radius: 6px; }
         
         .comment-input-name { width: 140px; padding: 8px 10px; font-size: 13.5px; border: 1px solid #d1c2b1; border-radius: 4px; }
@@ -166,11 +167,11 @@
     </div>
 
     <!-- --- [성함 필수 입력 적용 댓글 영역] --- -->
-<div class="comment-section">
-    <div class="comment-header">💬 연주 감상 한줄평 & 응원 한마디</div>
-    <div style="font-size: 12px; color: #78675a; margin-top: -6px; margin-bottom: 12px; line-height: 1.4;">
-        💡익히고 배워가는 '성장 과정'의 연주입니다. 도움이 되길 바랍니다.
-    </div>
+    <div class="comment-section">
+        <div class="comment-header">💬 연주 감상 한줄평 & 응원 한마디</div>
+        <div class="comment-notice">
+            💡 익히고 배워가는 '성장 과정'의 연주입니다. 도움이 되길 바랍니다.
+        </div>
         
         <div class="comment-form">
             <div>
@@ -223,14 +224,12 @@
         const name = nameInput.value.trim();
         const text = textInput.value.trim();
 
-        // 성함/닉네임 필수 검사
         if (!name) {
             alert('성함이나 닉네임을 입력해 주세요^^');
             nameInput.focus();
             return;
         }
 
-        // 감상평 내용 필수 검사
         if (!text) {
             alert('감상평 내용을 입력해 주세요^^');
             textInput.focus();
