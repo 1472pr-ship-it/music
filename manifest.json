@@ -1,7 +1,7 @@
 {
   "name": "수하모니카 연주 감상실",
   "short_name": "수하모니카",
-  "start_url": "/music/",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#8b3a42",
