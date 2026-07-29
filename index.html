@@ -847,6 +847,26 @@
             if (playlistQueue.length > 0) startPlayback();
         }, 1000);
     };
+
+    // 🚀 --- [PWA 설치 중복 팝업 제어 및 감춤 제어 로직] ---
+    let deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // 이미 앱으로 접속했거나 설치 완료 기록이 있으면 설치 팝업 취소
+        if (window.matchMedia('(display-mode: standalone)').matches || localStorage.getItem('pwaInstalled') === 'true') {
+            e.preventDefault();
+            return false;
+        }
+
+        e.preventDefault();
+        deferredPrompt = e;
+    });
+
+    window.addEventListener('appinstalled', () => {
+        // 설치가 완료되면 로컬 저장소에 기록하여 다음 접속 시 팝업을 방지
+        localStorage.setItem('pwaInstalled', 'true');
+        deferredPrompt = null;
+    });
 </script>
 
 </body>
