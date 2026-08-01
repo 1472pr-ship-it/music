@@ -27,5 +27,5 @@
   { "id": 4, "title": "아리랑 C 분산화음", "cat": "가요/트롯", "mood": "서정/슬로우", "period": "1년11월", "fileName": "아리랑_C_분산화음.mp3" },
   { "id": 3, "title": "등대지기 G", "cat": "동요/가곡", "mood": "서정/슬로우", "period": "1년11월", "fileName": "등대지기_G.mp3" },
   { "id": 2, "title": "희망가 Bb 채규엽", "cat": "가요/트롯", "mood": "서정/슬로우", "period": "1년01월", "fileName": "희망가_Bb_채규엽.mp3" },
-  { "id": 1, "title": "고향의봄 C", "cat": "동요/가곡", "mood": "서정/슬로우", "period": "05월", "fileName": "고향의봄_C.mp3" }
+  { "id": 1, "title": "고향의봄 G", "cat": "동요/가곡", "mood": "서정/슬로우", "period": "05월", "fileName": "고향의봄_G.mp3" }
 ]
