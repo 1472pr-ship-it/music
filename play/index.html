@@ -239,13 +239,19 @@
     };
 
     // 2. 곡 재생 시 Firebase에 +1 증가 시키기
-    window.incrementSongView = async function(songId) {
+    window.incrementSongView = async function(songId, defaultViews = 0) {
         try {
             const viewRef = doc(db, "song_views", String(songId));
-            await setDoc(viewRef, { count: increment(1) }, { merge: true });
             
-            // 메모리 내 조회수 즉시 반영
-            window.dbViews[songId] = (window.dbViews[songId] || 0) + 1;
+            // 만약 Firebase에 데이터가 아예 없다면 songs.json 기본값 + 1 로 시작
+            if (window.dbViews[songId] === undefined && defaultViews > 0) {
+                await setDoc(viewRef, { count: defaultViews + 1 }, { merge: true });
+                window.dbViews[songId] = defaultViews + 1;
+            } else {
+                await setDoc(viewRef, { count: increment(1) }, { merge: true });
+                window.dbViews[songId] = (window.dbViews[songId] || 0) + 1;
+            }
+            
             if (typeof window.applyViewsToPlaylist === 'function') {
                 window.applyViewsToPlaylist();
             }
@@ -565,6 +571,11 @@
             
             masterPlaylist = songData.map((item) => {
                 let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/${encodeURIComponent(item.fileName)}`;
+                
+                // 🔥 [핵심 수정] Firebase 조회수가 있으면 그 값을 가져오고, 없으면 songs.json의 views 기본값 사용!
+                const initialViews = item.views !== undefined ? item.views : 0;
+                const finalViews = window.dbViews[item.id] !== undefined ? window.dbViews[item.id] : initialViews;
+
                 return {
                     id: item.id,
                     mainCategory: item.cat,
@@ -572,7 +583,8 @@
                     title: item.title,
                     period: item.period || "-",
                     artist: "수하모",
-                    views: window.dbViews[item.id] || 0,
+                    defaultViews: initialViews,
+                    views: finalViews,
                     src: streamUrl
                 };
             });
@@ -793,9 +805,9 @@
 
         const song = playlistQueue[currentQueueIndex];
 
-        // 🔥 직접 재생 시 및 연속 자동 재생 시 무조건 Firebase 조회수 +1 저장!
+        // 🔥 직접 재생 및 연속 재생 시 Firebase 조회수 +1 저장
         if (typeof window.incrementSongView === 'function') {
-            window.incrementSongView(song.id);
+            window.incrementSongView(song.id, song.defaultViews);
         }
 
         document.querySelectorAll('tr').forEach(r => r.classList.remove('active-row'));
@@ -869,4 +881,3 @@
 
 </body>
 </html>
-
