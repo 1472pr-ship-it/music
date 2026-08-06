@@ -7,7 +7,7 @@
 
     <!-- PWA 기본 설정 -->
     <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#5c2028">
+    <meta name="theme-color" content="#2b4162">
     <link rel="apple-touch-icon" href="/icon-192.png">
 
     <!-- Pretendard 폰트 (시니어 가독성 최적화) -->
@@ -15,14 +15,17 @@
 
     <style>
         :root {
-            --primary-burgundy: #5c2028;
-            --secondary-burgundy: #8b3a42;
-            --accent-gold: #d4af37;
-            --bg-cream: #f5efe6;
+            /* 메인페이지 '수하모 반주 연습실' 버튼과 동일한 네이비 테마 */
+            --primary-navy: #2b4162;
+            --secondary-navy: #1e2c45;
+            --accent-blue: #4a6fa5;
+            --bg-cream: #f7f4ee;
             --card-bg: #fcfbf9;
-            --text-dark: #2c2223;
-            --text-muted: #6e6566;
-            --border-color: #e5ded6;
+            --text-dark: #222831;
+            --text-muted: #667085;
+            --border-color: #e2ddd5;
+            --pill-bg: #eae3d9;
+            --pill-text: #4a423a;
         }
 
         * {
@@ -36,144 +39,213 @@
             background-color: var(--bg-cream);
             color: var(--text-dark);
             line-height: 1.6;
-            padding-bottom: 140px; /* 하단 재생바 공간 확보 */
+            padding-bottom: 150px; /* 하단 오디오 공간 */
         }
 
-        /* 헤더 디자인 */
+        /* 1. 헤더 (수하모 메인페이지 반주연습실 버튼 색상 적용) */
         header {
-            background: linear-gradient(135deg, var(--primary-burgundy), var(--secondary-burgundy));
+            background: linear-gradient(135deg, var(--primary-navy), var(--secondary-navy));
             color: #ffffff;
-            padding: 24px 16px;
+            padding: 20px 16px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
             position: relative;
         }
 
         header h1 {
-            font-size: 1.8rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             letter-spacing: -0.5px;
         }
 
         header p {
-            font-size: 1.05rem;
+            font-size: 1rem;
             opacity: 0.9;
         }
 
-        /* 앱 설치 버튼 (PWA) */
         .btn-install {
             display: none;
             position: absolute;
             right: 16px;
-            top: 20px;
-            background: var(--accent-gold);
-            color: #000;
+            top: 18px;
+            background: #ffffff;
+            color: var(--primary-navy);
             border: none;
-            padding: 8px 14px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
         }
 
         .container {
             max-width: 1000px;
-            margin: 20px auto;
-            padding: 0 16px;
+            margin: 16px auto;
+            padding: 0 12px;
         }
 
-        /* 컨트롤 패널 (검색, 정렬, 보기 개수, 재생 옵션) */
-        .control-card {
+        /* 2. 장르 / 분위기 알약(Pill) 필터 영역 (suhamo.com/play 이식) */
+        .filter-section {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-
-        .search-bar {
-            display: flex;
-            gap: 10px;
+            padding: 16px;
             margin-bottom: 14px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
         }
 
-        .search-bar input {
-            flex: 1;
-            padding: 12px 16px;
-            font-size: 1.1rem;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            outline: none;
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
         }
 
-        .search-bar input:focus {
-            border-color: var(--secondary-burgundy);
+        .filter-row:last-child {
+            margin-bottom: 0;
         }
 
-        .filter-group {
+        .filter-label {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--primary-navy);
+            min-width: 55px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pill-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 6px;
+        }
+
+        .pill-btn {
+            background: var(--pill-bg);
+            color: var(--pill-text);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pill-btn.active {
+            background: var(--primary-navy);
+            color: #ffffff;
+        }
+
+        /* 3. 플레이어 및 상단 컨트롤 카드 */
+        .player-card {
+            background: #f0f4f8;
+            border: 1px solid #d0dce8;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .player-status-text {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-navy);
+            margin-bottom: 8px;
+        }
+
+        audio {
+            width: 100%;
+            height: 42px;
+            margin-bottom: 8px;
+        }
+
+        .battery-notice {
+            font-size: 0.85rem;
+            color: #d9534f;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 4. 도구 모음 (선택, 검색, 정렬) */
+        .toolbar {
+            display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 0 4px;
         }
 
-        .filter-selects {
+        .toolbar-left, .toolbar-right {
             display: flex;
-            gap: 8px;
-        }
-
-        select {
-            padding: 10px 12px;
-            font-size: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: #fff;
-            color: var(--text-dark);
-            cursor: pointer;
-        }
-
-        .play-controls {
-            display: flex;
+            align-items: center;
             gap: 8px;
         }
 
         .btn {
-            padding: 10px 16px;
-            font-size: 1rem;
-            font-weight: 600;
-            border: none;
+            padding: 8px 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
             border-radius: 8px;
+            border: 1px solid var(--border-color);
             cursor: pointer;
-            transition: background 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
-        .btn-primary {
-            background-color: var(--primary-burgundy);
-            color: #fff;
+        .btn-navy {
+            background-color: var(--primary-navy);
+            color: #ffffff;
+            border: none;
         }
 
-        .btn-primary:hover {
-            background-color: var(--secondary-burgundy);
+        .btn-navy:hover {
+            background-color: var(--secondary-navy);
         }
 
-        .btn-secondary {
-            background-color: #e2d9cd;
+        .btn-outline {
+            background-color: #ffffff;
             color: var(--text-dark);
         }
 
-        /* 음원 목록 테이블 */
+        .total-count {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-left: 6px;
+        }
+
+        .search-input {
+            padding: 8px 12px;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            width: 160px;
+        }
+
+        select {
+            padding: 8px 10px;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        /* 5. 음원 목록 테이블 */
         .table-wrapper {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-top: 2px solid var(--primary-navy);
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         table {
@@ -183,34 +255,55 @@
         }
 
         th, td {
-            padding: 14px 16px;
+            padding: 12px 14px;
             border-bottom: 1px solid var(--border-color);
-            font-size: 1.05rem;
+            font-size: 1rem;
         }
 
         th {
-            background-color: #efe8dc;
-            color: var(--primary-burgundy);
+            background-color: #eae3d9;
+            color: var(--primary-navy);
             font-weight: 700;
         }
 
         tr:hover {
-            background-color: #f7f2ea;
+            background-color: #f2ede4;
         }
 
         tr.active-play {
-            background-color: #f0e4d5;
+            background-color: #e4ecf5;
             font-weight: bold;
         }
 
-        .btn-play-sm {
-            background: var(--secondary-burgundy);
-            color: #fff;
-            border: none;
-            padding: 6px 12px;
+        .badge-genre {
+            background: #e2ded8;
+            color: #4a423a;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .key-tag {
+            color: var(--primary-navy);
+            font-weight: 800;
+            margin-left: 4px;
+        }
+
+        .btn-listen {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            color: var(--text-dark);
+            padding: 4px 10px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .btn-listen:hover {
+            background: var(--primary-navy);
+            color: #ffffff;
         }
 
         /* 페이지네이션 */
@@ -222,66 +315,23 @@
         }
 
         .pagination button {
-            padding: 8px 14px;
+            padding: 6px 12px;
             border: 1px solid var(--border-color);
             background: var(--card-bg);
             border-radius: 6px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .pagination button.active {
-            background: var(--primary-burgundy);
+            background: var(--primary-navy);
             color: #fff;
-            border-color: var(--primary-burgundy);
+            border-color: var(--primary-navy);
         }
 
-        /* 고정 하단 오디오 플레이어 */
-        .player-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--primary-burgundy);
-            color: #fff;
-            padding: 12px 20px;
-            box-shadow: 0 -4px 16px rgba(0,0,0,0.2);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .player-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .player-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 70%;
-        }
-
-        .player-mode {
-            font-size: 0.85rem;
-            background: rgba(255,255,255,0.2);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        audio {
-            width: 100%;
-            height: 40px;
-        }
-
-        /* 실시간 댓글 영역 */
+        /* 댓글 영역 */
         .comment-section {
-            margin-top: 40px;
+            margin-top: 36px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
@@ -289,27 +339,28 @@
         }
 
         .comment-section h3 {
-            color: var(--primary-burgundy);
-            margin-bottom: 16px;
+            color: var(--primary-navy);
+            margin-bottom: 14px;
+            font-size: 1.15rem;
         }
 
         .comment-form {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 20px;
         }
 
         .comment-inputs {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .comment-inputs input {
-            padding: 10px;
+            padding: 8px 12px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .comment-form textarea {
@@ -317,8 +368,8 @@
             border: 1px solid var(--border-color);
             border-radius: 6px;
             resize: vertical;
-            min-height: 70px;
-            font-size: 1rem;
+            min-height: 60px;
+            font-size: 0.95rem;
         }
 
         .comment-list {
@@ -326,7 +377,7 @@
         }
 
         .comment-item {
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
@@ -335,13 +386,13 @@
 
         .comment-author {
             font-weight: bold;
-            color: var(--secondary-burgundy);
+            color: var(--primary-navy);
         }
 
         .comment-date {
             font-size: 0.8rem;
             color: var(--text-muted);
-            margin-left: 8px;
+            margin-left: 6px;
         }
 
         .comment-btn-del {
@@ -352,66 +403,93 @@
             font-size: 0.85rem;
         }
 
-        /* 반응형 스타일 (모바일 최적화: 600px 이하) */
+        /* 반응형 스타일 (모바일 최적화) */
         @media (max-width: 600px) {
             header h1 { font-size: 1.4rem; }
             .col-mobile-hide { display: none; }
-            th, td { padding: 10px 8px; font-size: 0.95rem; }
-            .filter-group { flex-direction: column; align-items: stretch; }
-            .filter-selects, .play-controls { width: 100%; justify-content: space-between; }
+            th, td { padding: 10px 8px; font-size: 0.9rem; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar-left, .toolbar-right { justify-content: space-between; width: 100%; }
+            .search-input { width: 100px; }
             .comment-inputs { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
+    <!-- 네이비 테마 헤더 -->
     <header>
         <h1>🎶 수하모 반주 연습실</h1>
-        <p>하모니카 맞춤형 반주음악(MR)과 함께 즐겁게 연습하세요</p>
+        <p>C, A, Am 키별로 틀어놓고 혼자서도 신나게 연습하는 명품 MR 모음</p>
         <button id="pwaInstallBtn" class="btn-install">앱 설치</button>
     </header>
 
     <div class="container">
-        <!-- 검색 및 조작 패널 -->
-        <div class="control-card">
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="곡명 또는 장르를 검색하세요...">
-                <button class="btn btn-primary" id="searchBtn">검색</button>
-            </div>
-
-            <div class="filter-group">
-                <div class="filter-selects">
-                    <select id="sortSelect">
-                        <option value="name">가나다순</option>
-                        <option value="views">인기순(조회수)</option>
-                    </select>
-                    <select id="limitSelect">
-                        <option value="30">30개 보기</option>
-                        <option value="50">50개 보기</option>
-                        <option value="100">100개 보기</option>
-                    </select>
+        <!-- 1. 장르 / 분위기 필터 알약 버튼 (suhamo.com/play 완벽 이식) -->
+        <div class="filter-section">
+            <div class="filter-row">
+                <div class="filter-label">🎼 장르</div>
+                <div class="pill-group" id="genrePills">
+                    <button class="pill-btn active" data-genre="전체">전체</button>
+                    <button class="pill-btn" data-genre="가요/트롯">가요/트롯</button>
+                    <button class="pill-btn" data-genre="동요/가곡">동요/가곡</button>
+                    <button class="pill-btn" data-genre="팝/외국곡">팝/외국곡</button>
+                    <button class="pill-btn" data-genre="클래식">클래식</button>
                 </div>
-
-                <div class="play-controls">
-                    <button class="btn btn-secondary" id="playSelectedBtn">☑ 선택 재생</button>
-                    <button class="btn btn-primary" id="playAllBtn">▶ 전체 연속 재생</button>
-                    <button class="btn btn-secondary" id="loopToggleBtn">🔁 반복: 전체</button>
+            </div>
+            <div class="filter-row">
+                <div class="filter-label">🎶 분위기</div>
+                <div class="pill-group" id="moodPills">
+                    <button class="pill-btn active" data-mood="전체">전체</button>
+                    <button class="pill-btn" data-mood="서정/슬로우">🎻 서정/슬로우</button>
+                    <button class="pill-btn" data-mood="정통트롯">🪗 정통트롯</button>
+                    <button class="pill-btn" data-mood="경쾌한">🎷 경쾌한</button>
                 </div>
             </div>
         </div>
 
-        <!-- 음원 목록 테이블 -->
+        <!-- 2. 오디오 플레이어 카드 -->
+        <div class="player-card">
+            <div class="player-status-text" id="playerStatus">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
+            <audio id="audioPlayer" controls controlsList="nodownload"></audio>
+            <div class="battery-notice">
+                💡 화면이 꺼진 후 음악이 멈추면 스마트폰 [배터리 절전 모드]를 해제해 주세요.
+            </div>
+        </div>
+
+        <!-- 3. 선택 및 검색/정렬 도구 모음 -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="btn btn-outline" id="btnSelectAll">전체선택</button>
+                <button class="btn btn-navy" id="btnPlaySelected">선택듣기</button>
+                <button class="btn btn-outline" id="btnLoopToggle">🔁 전체반복</button>
+                <span class="total-count" id="totalCountDisplay">총 0곡</span>
+            </div>
+            <div class="toolbar-right">
+                <input type="text" id="searchInput" class="search-input" placeholder="곡명 검색...">
+                <select id="sortSelect">
+                    <option value="name">가나다순</option>
+                    <option value="views">인기순(조회수)</option>
+                </select>
+                <select id="limitSelect">
+                    <option value="30">30개</option>
+                    <option value="50">50개</option>
+                    <option value="100">100개</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 4. 음원 목록 테이블 -->
         <div class="table-wrapper">
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 40px;"><input type="checkbox" id="selectAll"></th>
-                        <th style="width: 60px;" class="col-mobile-hide">No</th>
-                        <th style="width: 90px;" class="col-mobile-hide">장르</th>
-                        <th>곡명</th>
-                        <th style="width: 90px;">Key</th>
-                        <th style="width: 80px;" class="col-mobile-hide">조회수</th>
-                        <th style="width: 80px;">듣기</th>
+                        <th style="width: 36px;"><input type="checkbox" id="selectAllCheckbox"></th>
+                        <th style="width: 50px;" class="col-mobile-hide">No</th>
+                        <th style="width: 110px;" class="col-mobile-hide">장르</th>
+                        <th>연주곡명</th>
+                        <th style="width: 60px;" class="col-mobile-hide">조회</th>
+                        <th style="width: 65px;">듣기</th>
                     </tr>
                 </thead>
                 <tbody id="songTableBody">
@@ -423,38 +501,26 @@
         <!-- 페이지네이션 -->
         <div class="pagination" id="pagination"></div>
 
-        <!-- 실시간 댓글 게시판 -->
+        <!-- 5. 댓글 및 반주 요청 게시판 -->
         <div class="comment-section">
-            <h3>💬 연습 소감 및 반주 요청 댓글</h3>
+            <h3>💬 연습 소감 및 반주 요청</h3>
             <form class="comment-form" id="commentForm">
                 <div class="comment-inputs">
                     <input type="text" id="cAuthor" placeholder="성함 (필수)" required style="flex: 1;">
-                    <input type="password" id="cPw" placeholder="비밀번호 (수정/삭제용)" required style="flex: 1;">
+                    <input type="password" id="cPw" placeholder="비밀번호" required style="flex: 1;">
                 </div>
-                <textarea id="cContent" placeholder="선생님께 드릴 말씀이나 필요한 반주를 남겨주세요..." required></textarea>
-                <button type="submit" class="btn btn-primary" style="align-self: flex-end;">댓글 등록</button>
+                <textarea id="cContent" placeholder="필요하신 반주 키(Key)나 요청사항을 남겨주세요..." required></textarea>
+                <button type="submit" class="btn btn-navy" style="align-self: flex-end;">댓글 등록</button>
             </form>
-            <ul class="comment-list" id="commentList">
-                <!-- 댓글 항목 렌더링 -->
-            </ul>
+            <ul class="comment-list" id="commentList"></ul>
         </div>
-    </div>
-
-    <!-- 고정 하단 재생바 -->
-    <div class="player-bar">
-        <div class="player-info">
-            <span class="player-title" id="currentSongTitle">재생 중인 곡이 없습니다</span>
-            <span class="player-mode" id="repeatModeText">모드: 전체 반복</span>
-        </div>
-        <audio id="audioPlayer" controls controlsList="nodownload"></audio>
     </div>
 
     <!-- Firebase SDK (v10 모듈) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, increment, query, orderBy, onSnapshot, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, updateDoc, increment, query, orderBy, onSnapshot, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Firebase 설정 (기존 suhamo.com 프로젝트 설정 적용 필요)
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "suhamo-project.firebaseapp.com",
@@ -467,37 +533,46 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- 샘플 반주 음원 데이터 (서버 연동 전 기본 가상 데이터) ---
+        // --- 샘플 반주 음원 데이터 ---
         let songs = [
-            { id: "1", title: "목포의 눈물", genre: "트롯", key: "A", views: 120, url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-            { id: "2", title: "오빠생각", genre: "동요", key: "C", views: 95, url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-            { id: "3", title: "베사메무쵸", genre: "외국곡", key: "Am", views: 210, url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-            { id: "4", title: "동숙의 노래", genre: "트롯", key: "Em", views: 145, url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
-            { id: "5", title: "클레멘타인", genre: "세계민요", key: "G", views: 80, url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" }
+            { id: "1", title: "혼자가아닌나", key: "Bb", genre: "가요/트롯", mood: "경쾌한", views: 2, url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+            { id: "2", title: "눈물을감추고", key: "Bb", genre: "가요/트롯", mood: "서정/슬로우", views: 13, url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+            { id: "3", title: "고향의푸른잔디", key: "Bb", genre: "가요/트롯", mood: "경쾌한", views: 10, url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+            { id: "4", title: "목포의 눈물", key: "A", genre: "가요/트롯", mood: "정통트롯", views: 120, url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
+            { id: "5", title: "오빠생각", key: "C", genre: "동요/가곡", mood: "서정/슬로우", views: 95, url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
+            { id: "6", title: "베사메무쵸", key: "Am", genre: "팝/외국곡", mood: "경쾌한", views: 210, url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" }
         ];
 
-        // --- 상태 변수 ---
+        // --- 필터 및 상태 변수 ---
+        let selectedGenre = '전체';
+        let selectedMood = '전체';
+        let searchQuery = '';
         let filteredSongs = [...songs];
         let currentPlaylist = [];
         let currentIndex = -1;
         let currentPage = 1;
         let itemsPerPage = 30;
-        let loopMode = 'ALL'; // 'ALL': 전체반복, 'ONE': 한곡무한반복
+        let loopMode = 'ALL'; // 'ALL': 전체반복, 'ONE': 한곡반복
         const isMobile = window.innerWidth <= 600;
 
-        // --- DOM 엘리먼트 ---
+        // --- DOM 요소 ---
         const audioPlayer = document.getElementById('audioPlayer');
-        const currentSongTitle = document.getElementById('currentSongTitle');
+        const playerStatus = document.getElementById('playerStatus');
         const songTableBody = document.getElementById('songTableBody');
         const searchInput = document.getElementById('searchInput');
         const sortSelect = document.getElementById('sortSelect');
         const limitSelect = document.getElementById('limitSelect');
-        const loopToggleBtn = document.getElementById('loopToggleBtn');
-        const repeatModeText = document.getElementById('repeatModeText');
+        const totalCountDisplay = document.getElementById('totalCountDisplay');
+        const btnLoopToggle = document.getElementById('btnLoopToggle');
 
-        // --- 1. 초기화 및 리스트 렌더링 ---
-        function renderTable() {
-            songTableBody.innerHTML = '';
+        // --- 필터링 및 테이블 렌더링 ---
+        function applyFilters() {
+            filteredSongs = songs.filter(song => {
+                const matchGenre = (selectedGenre === '전체') || (song.genre === selectedGenre);
+                const matchMood = (selectedMood === '전체') || (song.mood === selectedMood);
+                const matchSearch = song.title.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchGenre && matchMood && matchSearch;
+            });
 
             // 정렬
             const sortVal = sortSelect.value;
@@ -506,27 +581,30 @@
                 if (sortVal === 'views') return b.views - a.views;
             });
 
-            // 페이지네이션 계산
-            const start = (currentPage - 1) * itemsPerPage;
-            const paginatedSongs = filteredSongs.slice(start, start + itemsPerPage);
+            totalCountDisplay.innerText = `총 ${filteredSongs.length}곡`;
+            currentPage = 1;
+            renderTable();
+        }
 
-            paginatedSongs.forEach((song, idx) => {
+        function renderTable() {
+            songTableBody.innerHTML = '';
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const paginated = filteredSongs.slice(start, start + itemsPerPage);
+
+            paginated.forEach((song, idx) => {
                 const tr = document.createElement('tr');
                 if (currentIndex >= 0 && currentPlaylist[currentIndex]?.id === song.id) {
                     tr.classList.add('active-play');
                 }
 
-                // 모바일 곡명 축약 처리
-                const displayTitle = (isMobile && song.title.length > 12) ? song.title.substring(0, 11) + '…' : song.title;
-
                 tr.innerHTML = `
                     <td><input type="checkbox" class="song-checkbox" value="${song.id}"></td>
                     <td class="col-mobile-hide">${start + idx + 1}</td>
-                    <td class="col-mobile-hide">${song.genre}</td>
-                    <td><strong>${displayTitle}</strong></td>
-                    <td><span style="color:var(--secondary-burgundy); font-weight:bold;">${song.key}</span></td>
+                    <td class="col-mobile-hide"><span class="badge-genre">${song.genre}</span></td>
+                    <td><strong>${song.title}</strong> <span class="key-tag">${song.key}</span></td>
                     <td class="col-mobile-hide">${song.views}</td>
-                    <td><button class="btn-play-sm" data-id="${song.id}">▶ 재생</button></td>
+                    <td><button class="btn-listen" data-id="${song.id}">듣기</button></td>
                 `;
                 songTableBody.appendChild(tr);
             });
@@ -551,7 +629,7 @@
             }
         }
 
-        // --- 2. 재생 제어 & 연속/무한 반복 기능 ---
+        // --- 재생 제어 ---
         function playSongAtIndex(index) {
             if (index < 0 || index >= currentPlaylist.length) return;
             currentIndex = index;
@@ -559,42 +637,38 @@
 
             audioPlayer.src = song.url;
             audioPlayer.play();
-            currentSongTitle.innerText = `🎵 [${song.key}] ${song.title}`;
+            playerStatus.innerText = `🎵 [재생 중] ${song.title} (${song.key})`;
 
-            // PC 버전에서만 조회수 증가 (모바일 제외 제어 조건)
+            // PC 버전에서만 조회수 증가 (모바일 제외 처리)
             if (!isMobile) {
                 song.views++;
                 incrementDocView(song.id);
             }
 
-            // 미디어 세션 (백그라운드/잠금화면 제어)
+            // MediaSession 연동
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: song.title,
-                    artist: `하모니카 키: ${song.key} | 수하모 반주실`,
+                    artist: `Key: ${song.key} | 수하모 반주실`,
                     album: 'suhamo.com/mr'
                 });
             }
 
-            // 화면 꺼짐 방지 (Wake Lock)
             requestWakeLock();
             renderTable();
         }
 
-        // 음원 재생 끝났을 때 자동 연동
         audioPlayer.addEventListener('ended', () => {
             if (loopMode === 'ONE') {
-                audioPlayer.play(); // 한 곡 무한 반복
-            } else if (loopMode === 'ALL') {
-                let nextIndex = currentIndex + 1;
-                if (nextIndex >= currentPlaylist.length) nextIndex = 0; // 전체 순환
-                playSongAtIndex(nextIndex);
+                audioPlayer.play();
+            } else {
+                let nextIdx = currentIndex + 1;
+                if (nextIdx >= currentPlaylist.length) nextIdx = 0;
+                playSongAtIndex(nextIdx);
             }
         });
 
-        // 자동 에러 복구
         audioPlayer.addEventListener('error', () => {
-            console.warn("음원 재생 오류 발생. 다음 곡으로 자동 이동합니다.");
             setTimeout(() => {
                 if (currentPlaylist.length > 0) {
                     playSongAtIndex((currentIndex + 1) % currentPlaylist.length);
@@ -602,34 +676,46 @@
             }, 2000);
         });
 
-        // --- 3. 조회수 연동 (Firestore) ---
         async function incrementDocView(songId) {
             try {
                 const songRef = doc(db, "song_views", songId);
                 await updateDoc(songRef, { views: increment(1) });
-            } catch (e) {
-                // 문서 없거나 오류 시 예외 핸들링
-            }
+            } catch (e) {}
         }
 
-        // --- 4. 검색, 정렬, 버튼 이벤트 ---
-        document.getElementById('searchBtn').addEventListener('click', () => {
-            const query = searchInput.value.trim().toLowerCase();
-            filteredSongs = songs.filter(s => s.title.toLowerCase().includes(query) || s.genre.toLowerCase().includes(query));
-            currentPage = 1;
-            renderTable();
+        // --- 알약 필터 버튼 클릭 이벤트 ---
+        document.getElementById('genrePills').addEventListener('click', (e) => {
+            if (e.target.classList.contains('pill-btn')) {
+                document.querySelectorAll('#genrePills .pill-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                selectedGenre = e.target.getAttribute('data-genre');
+                applyFilters();
+            }
         });
 
-        sortSelect.addEventListener('change', renderTable);
+        document.getElementById('moodPills').addEventListener('click', (e) => {
+            if (e.target.classList.contains('pill-btn')) {
+                document.querySelectorAll('#moodPills .pill-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                selectedMood = e.target.getAttribute('data-mood');
+                applyFilters();
+            }
+        });
+
+        // --- 검색/정렬/버튼 이벤트 ---
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim();
+            applyFilters();
+        });
+
+        sortSelect.addEventListener('change', applyFilters);
         limitSelect.addEventListener('change', (e) => {
             itemsPerPage = parseInt(e.target.value);
-            currentPage = 1;
-            renderTable();
+            applyFilters();
         });
 
-        // 단일 재생 버튼 클릭
         songTableBody.addEventListener('click', (e) => {
-            if (e.target.classList.contains('btn-play-sm')) {
+            if (e.target.classList.contains('btn-listen')) {
                 const id = e.target.getAttribute('data-id');
                 currentPlaylist = [...filteredSongs];
                 const idx = currentPlaylist.findIndex(s => s.id === id);
@@ -637,60 +723,51 @@
             }
         });
 
-        // 전체 연속 재생
-        document.getElementById('playAllBtn').addEventListener('click', () => {
-            if (filteredSongs.length === 0) return alert("재생할 곡이 없습니다.");
-            currentPlaylist = [...filteredSongs];
-            playSongAtIndex(0);
-        });
-
-        // 선택 재생
-        document.getElementById('playSelectedBtn').addEventListener('click', () => {
+        document.getElementById('btnPlaySelected').addEventListener('click', () => {
             const checkedBoxes = document.querySelectorAll('.song-checkbox:checked');
             const selectedIds = Array.from(checkedBoxes).map(cb => cb.value);
 
-            if (selectedIds.length === 0) return alert("재생할 곡을 선택해주세요.");
+            if (selectedIds.length === 0) return alert("재생할 곡을 선택해 주세요.");
 
             currentPlaylist = songs.filter(s => selectedIds.includes(s.id));
             playSongAtIndex(0);
         });
 
-        // 전체 선택/해제
-        document.getElementById('selectAll').addEventListener('change', (e) => {
+        document.getElementById('btnSelectAll').addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('.song-checkbox');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+            document.getElementById('selectAllCheckbox').checked = !allChecked;
+        });
+
+        document.getElementById('selectAllCheckbox').addEventListener('change', (e) => {
             const checkboxes = document.querySelectorAll('.song-checkbox');
             checkboxes.forEach(cb => cb.checked = e.target.checked);
         });
 
-        // 무한 반복 토글 (전체반복 ↔ 한곡반복)
-        loopToggleBtn.addEventListener('click', () => {
+        btnLoopToggle.addEventListener('click', () => {
             if (loopMode === 'ALL') {
                 loopMode = 'ONE';
-                loopToggleBtn.innerText = "🔂 반복: 한곡";
-                repeatModeText.innerText = "모드: 한 곡 무한반복";
+                btnLoopToggle.innerText = "🔂 한곡반복";
             } else {
                 loopMode = 'ALL';
-                loopToggleBtn.innerText = "🔁 반복: 전체";
-                repeatModeText.innerText = "모드: 전체 반복";
+                btnLoopToggle.innerText = "🔁 전체반복";
             }
         });
 
-        // --- 5. 화면 꺼짐 방지 (Wake Lock API) ---
-        let wakeLock = null;
+        // --- Wake Lock ---
         async function requestWakeLock() {
             try {
                 if ('wakeLock' in navigator) {
-                    wakeLock = await navigator.wakeLock.request('screen');
+                    await navigator.wakeLock.request('screen');
                 }
-            } catch (err) {
-                console.log("WakeLock 설정 불가:", err.message);
-            }
+            } catch (err) {}
         }
 
-        // --- 6. 실시간 댓글 CRUD 연동 ---
+        // --- 실시간 댓글 ---
         const commentForm = document.getElementById('commentForm');
         const commentList = document.getElementById('commentList');
 
-        // 실시간 댓글 불러오기 (Firestore)
         function listenComments() {
             const q = query(collection(db, "mr_comments"), orderBy("createdAt", "desc"));
             onSnapshot(q, (snapshot) => {
@@ -699,14 +776,13 @@
                     const data = docSnap.data();
                     const li = document.createElement('li');
                     li.className = 'comment-item';
-
                     const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : '';
 
                     li.innerHTML = `
                         <div>
                             <span class="comment-author">${data.author}</span>
                             <span class="comment-date">${dateStr}</span>
-                            <p style="margin-top:4px;">${data.content}</p>
+                            <p style="margin-top:2px;">${data.content}</p>
                         </div>
                         <button class="comment-btn-del" data-id="${docSnap.id}" data-pw="${data.password}">삭제</button>
                     `;
@@ -715,7 +791,6 @@
             });
         }
 
-        // 댓글 등록
         commentForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const author = document.getElementById('cAuthor').value.trim();
@@ -734,46 +809,27 @@
                 document.getElementById('cContent').value = '';
                 alert("댓글이 등록되었습니다.");
             } catch (err) {
-                alert("댓글 등록 실패: " + err.message);
+                alert("등록 실패: " + err.message);
             }
         });
 
-        // 댓글 삭제 (선생님 전용 비번 0906 및 일반 비번 대응)
         commentList.addEventListener('click', async (e) => {
             if (e.target.classList.contains('comment-btn-del')) {
                 const docId = e.target.getAttribute('data-id');
                 const targetPw = e.target.getAttribute('data-pw');
-                const inputPw = prompt("비밀번호를 입력하세요 (선생님 삭제 관리 가능):");
+                const inputPw = prompt("비밀번호를 입력하세요 (선생님 삭제 PW 지원):");
 
                 if (inputPw === targetPw || inputPw === "0906") {
                     await deleteDoc(doc(db, "mr_comments", docId));
-                    alert("댓글이 삭제되었습니다.");
+                    alert("삭제되었습니다.");
                 } else if (inputPw !== null) {
                     alert("비밀번호가 일치하지 않습니다.");
                 }
             }
         });
 
-        // --- 7. PWA 제어 ---
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installBtn = document.getElementById('pwaInstallBtn');
-            installBtn.style.display = 'block';
-
-            installBtn.addEventListener('click', () => {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        installBtn.style.display = 'none';
-                    }
-                });
-            });
-        });
-
-        // 초기 실행
-        renderTable();
+        // 초기화 실행
+        applyFilters();
         listenComments();
     </script>
 </body>
