@@ -24,9 +24,25 @@
         body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background-color: #ffffff; color: #332d29; margin: 0; display: flex; justify-content: center; }
         .container { width: 100%; max-width: 850px; background: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* Header */
-        .header { background: linear-gradient(135deg, #5c2028, #8b3a42); color: #ffffff; padding: 10px 14px; text-align: center; }
+        /* Header & Main Button */
+        .header { position: relative; background: linear-gradient(135deg, #5c2028, #8b3a42); color: #ffffff; padding: 10px 14px; text-align: center; }
         .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: #fcf8f2; }
+        .btn-home {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            padding: 4px 8px;
+            font-size: 11.5px;
+            font-weight: bold;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .btn-home:active { background-color: rgba(255, 255, 255, 0.3); }
 
         /* Filter Section */
         .filter-section { background-color: #f5efe6; border-bottom: 1px solid #e5dccf; padding: 5px 8px; display: flex; flex-direction: column; gap: 4px; }
@@ -113,6 +129,7 @@
 <div class="container">
     <div class="header">
         <h1>수하모니카 연주 성장 기록</h1>
+        <a href="/" class="btn-home">🏠 메인으로</a>
     </div>
 
     <div class="filter-section">
@@ -574,7 +591,7 @@
             masterPlaylist = songData.map((item) => {
                 let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/${encodeURIComponent(item.fileName)}`;
                 
-                // 🔥 [핵심 수정] Firebase 조회수가 있으면 그 값을 가져오고, 없으면 songs.json의 views 기본값 사용!
+                // 🔥 Firebase 조회수가 있으면 그 값을 가져오고, 없으면 songs.json의 views 기본값 사용!
                 const initialViews = item.views !== undefined ? item.views : 0;
                 const finalViews = window.dbViews[item.id] !== undefined ? window.dbViews[item.id] : initialViews;
 
