@@ -16,7 +16,15 @@
     <meta property="og:description" content="🎶 C, A, Am 키별로 틀어놓고 혼자서도 신나게 연습하는 명품 MR 모음">
     <meta property="og:image" content="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
     <meta property="og:url" content="https://suhamo.com/mr">
-
+    
+    <!-- 미밀 링크 접속 -->
+    <script>
+    if (localStorage.getItem('suhamo_access') !== 'granted') {
+        alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
+        window.location.href = '/';
+    }
+</script>
+    
     <title>수하모 반주 연습실</title>
     <!-- 검색엔진 노출 및 링크 수집 차단 -->
     <meta name="robots" content="noindex, nofollow">
