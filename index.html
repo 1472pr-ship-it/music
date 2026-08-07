@@ -22,7 +22,6 @@
             min-height: 100vh; 
         }
         
-        /* 모바일 안잘림 레이아웃 최적화 */
         .container { 
             width: 100%; 
             max-width: 600px; 
@@ -41,7 +40,7 @@
         .menu-list { 
             display: flex; 
             flex-direction: column; 
-            gap: 8px; 
+            gap: 9px; 
             margin: 10px 0; 
             flex-grow: 1;
         }
@@ -49,26 +48,27 @@
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            padding: 12px 15px; 
-            border-radius: 10px; 
+            padding: 15px 18px; 
+            border-radius: 12px; 
             text-decoration: none; 
             color: #ffffff; 
             transition: transform 0.2s, box-shadow 0.2s; 
             cursor: pointer; 
+            min-height: 72px;
         }
         .menu-card:active { transform: scale(0.98); }
         
-        /* 게시판별 테마 컬러 */
+        /* 게시판별 테마 컬러 (3번 색상 및 대조 보완) */
         .card-play { background: linear-gradient(135deg, #5c2028, #8b3a42); }
         .card-mr { background: linear-gradient(135deg, #1c2e47, #2b4263); }
-        .card-score { background: linear-gradient(135deg, #2b3d4f, #3a536b); }
+        .card-score { background: linear-gradient(135deg, #3b2d54, #533e73); } /* 3번 보라/남색 구분 */
         .card-user { background: linear-gradient(135deg, #1e3d2f, #2d5a43); }
         .card-7080 { background: linear-gradient(135deg, #4d3323, #6e4a33); }
         .card-master { background: linear-gradient(135deg, #3d1731, #5c234a); }
 
-        .card-info h2 { font-size: 16px; font-weight: bold; margin-bottom: 2px; }
-        .card-info p { font-size: 11.5px; opacity: 0.92; line-height: 1.3; word-break: keep-all; }
-        .card-arrow { font-size: 16px; font-weight: bold; padding-left: 6px; }
+        .card-info h2 { font-size: 16.5px; font-weight: bold; margin-bottom: 3px; }
+        .card-info p { font-size: 12px; opacity: 0.92; line-height: 1.35; word-break: keep-all; }
+        .card-arrow { font-size: 17px; font-weight: bold; padding-left: 6px; }
 
         .footer { 
             text-align: center; 
