@@ -17,13 +17,13 @@
     <meta property="og:image" content="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
     <meta property="og:url" content="https://suhamo.com/mr">
     
-    <!-- 미밀 링크 접속 -->
+    <!-- 비밀 링크 접속 제어 -->
     <script>
     if (localStorage.getItem('suhamo_access') !== 'granted') {
         alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
         window.location.href = '/';
     }
-</script>
+    </script>
     
     <title>수하모 반주 연습실</title>
     <!-- 검색엔진 노출 및 링크 수집 차단 -->
@@ -33,9 +33,13 @@
         body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background-color: #ffffff; color: #222831; margin: 0; display: flex; justify-content: center; }
         .container { width: 100%; max-width: 850px; background: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* Header */
-        .header { background: linear-gradient(135deg, #1c2e47, #2b4263); color: #ffffff; padding: 10px 14px; text-align: center; }
+        /* Header (메인 이동 링크 및 버튼 추가) */
+        .header { background: linear-gradient(135deg, #1c2e47, #2b4263); color: #ffffff; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+        .header-title-link { text-decoration: none; color: #f2f5f9; display: flex; align-items: center; gap: 6px; }
         .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: #f2f5f9; }
+        
+        .btn-home { background: rgba(255, 255, 255, 0.18); color: #ffffff; text-decoration: none; padding: 4px 10px; border-radius: 14px; font-size: 12px; font-weight: bold; border: 1px solid rgba(255, 255, 255, 0.3); transition: background 0.2s; white-space: nowrap; }
+        .btn-home:active { background: rgba(255, 255, 255, 0.4); }
 
         /* Filter Section */
         .filter-section { background-color: #f0f4f8; border-bottom: 1px solid #d0dce8; padding: 5px 8px; display: flex; flex-direction: column; gap: 4px; }
@@ -86,7 +90,7 @@
             .col-views { display: none; }
             .col-key { display: table-cell; width: 50px; }
             .col-cat { width: 58px; }
-            .header h1 { font-size: 17px; }
+            .header h1 { font-size: 16px; }
             th, td { padding: 6px 3px; }
             .search-input { max-width: 130px; }
         }
@@ -126,8 +130,12 @@
 <body>
 
 <div class="container">
+    <!-- 헤더 영역: 제목 클릭 시 메인 이동 + 우측 상단 메인 버튼 -->
     <div class="header">
-        <h1>🎶 수하모 반주 연습실</h1>
+        <a href="/" class="header-title-link" title="메인 홈으로 이동">
+            <h1>🎶 수하모 반주 연습실</h1>
+        </a>
+        <a href="/" class="btn-home">🏠 메인으로</a>
     </div>
 
     <!-- 장르 / 분위기 알약 필터 -->
@@ -160,7 +168,7 @@
         <div class="bg-notice">💡 화면이 꺼진 후 음악이 멈추면 스마트폰 [배터리 절전 모드]를 해제해 주세요.</div>
     </div>
 
-    <!-- 컨트롤 바 (검색창 확장 & 목록 개수 선택셀 복원) -->
+    <!-- 컨트롤 바 -->
     <div class="control-bar">
         <div class="control-row">
             <div class="btn-group">
@@ -186,7 +194,7 @@
         </div>
     </div>
 
-    <!-- 음원 테이블 ('연주곡명' -> '곡명' 수정) -->
+    <!-- 음원 테이블 -->
     <div class="table-responsive">
         <table>
             <thead>
@@ -207,7 +215,7 @@
 
     <div class="pagination-container" id="pagination-box"></div>
 
-    <!-- 댓글/요청 영역 (문구 수정 반영) -->
+    <!-- 댓글/요청 영역 -->
     <div class="comment-section">
         <div class="comment-header">💬 연습 소감 및 반주 요청 한마디</div>
         <div class="comment-notice">
@@ -583,7 +591,6 @@
         loadSongs();
     };
 
-    /* 🔥 10글자 초과 시 말줄임표(...) 처리 로직 */
     function truncateTitle(title) {
         if (title && title.length > 10) {
             return title.substring(0, 10) + '...';
