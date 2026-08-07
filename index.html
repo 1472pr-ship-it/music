@@ -22,61 +22,68 @@
             min-height: 100vh; 
         }
         
+        /* 한 화면에 안잘리고 쏙 들어가도록 패딩 및 간격 최적화 */
         .container { 
             width: 100%; 
             max-width: 600px; 
             background: #ffffff; 
-            padding: 14px 14px 12px 14px; 
+            padding: 12px 14px 10px 14px; 
             display: flex; 
             flex-direction: column; 
             justify-content: space-between;
             box-shadow: 0 0 10px rgba(0,0,0,0.05); 
         }
         
-        .header { text-align: center; padding: 4px 0 8px 0; border-bottom: 2px solid #8b3a42; }
-        .header h1 { font-size: 21px; color: #5c2028; font-weight: bold; margin-bottom: 2px; }
-        .header p { font-size: 13px; color: #78675a; }
+        .header { text-align: center; padding: 2px 0 6px 0; border-bottom: 2px solid #8b3a42; }
+        .header h1 { font-size: 20px; color: #5c2028; font-weight: bold; margin-bottom: 2px; }
+        .header p { font-size: 12.5px; color: #78675a; }
 
         .menu-list { 
             display: flex; 
             flex-direction: column; 
-            gap: 9px; 
-            margin: 10px 0; 
+            gap: 8px; 
+            margin: 8px 0; 
             flex-grow: 1;
+            justify-content: center;
         }
         .menu-card { 
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            padding: 15px 18px; 
-            border-radius: 12px; 
+            padding: 12px 16px; 
+            border-radius: 10px; 
             text-decoration: none; 
             color: #ffffff; 
             transition: transform 0.2s, box-shadow 0.2s; 
             cursor: pointer; 
-            min-height: 72px;
         }
         .menu-card:active { transform: scale(0.98); }
         
-        /* 게시판별 테마 컬러 (3번 색상 및 대조 보완) */
+        /* 게시판별 테마 컬러 */
         .card-play { background: linear-gradient(135deg, #5c2028, #8b3a42); }
         .card-mr { background: linear-gradient(135deg, #1c2e47, #2b4263); }
-        .card-score { background: linear-gradient(135deg, #3b2d54, #533e73); } /* 3번 보라/남색 구분 */
+        .card-score { background: linear-gradient(135deg, #3b2d54, #533e73); }
         .card-user { background: linear-gradient(135deg, #1e3d2f, #2d5a43); }
         .card-7080 { background: linear-gradient(135deg, #4d3323, #6e4a33); }
         .card-master { background: linear-gradient(135deg, #3d1731, #5c234a); }
 
-        .card-info h2 { font-size: 16.5px; font-weight: bold; margin-bottom: 3px; }
-        .card-info p { font-size: 12px; opacity: 0.92; line-height: 1.35; word-break: keep-all; }
-        .card-arrow { font-size: 17px; font-weight: bold; padding-left: 6px; }
+        .card-info { overflow: hidden; }
+        .card-info h2 { font-size: 15.5px; font-weight: bold; margin-bottom: 2px; }
+        .card-info p { 
+            font-size: 11.5px; 
+            opacity: 0.92; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+        .card-arrow { font-size: 16px; font-weight: bold; padding-left: 8px; flex-shrink: 0; }
 
         .footer { 
             text-align: center; 
-            padding: 10px 0 2px 0; 
-            font-size: 11.5px; 
+            padding: 8px 0 2px 0; 
+            font-size: 11px; 
             color: #8c7b6e; 
             border-top: 1px solid #eee5da; 
-            margin-top: 4px;
         }
 
         /* 잠금 상태 화면 디자인 */
@@ -108,7 +115,7 @@
         <a href="/play" class="menu-card card-play">
             <div class="card-info">
                 <h2>🎷 수하모 연주 성장실</h2>
-                <p>입문 5개월부터 5년 차까지, 내 연주 소리의 미래를 직관적으로 확인하세요.</p>
+                <p>단계별 기록으로 보는 내 연주 소리의 미래</p>
             </div>
             <div class="card-arrow">▶</div>
         </a>
@@ -117,7 +124,7 @@
         <a href="/mr" class="menu-card card-mr">
             <div class="card-info">
                 <h2>🎶 수하모 반주 연습실</h2>
-                <p>C, A, Am 키별로 틀어놓고 혼자서도 신나게 연습하는 명품 MR 모음</p>
+                <p>C, A, Am 키별 신나는 명품 MR 모음</p>
             </div>
             <div class="card-arrow">▶</div>
         </a>
@@ -126,7 +133,7 @@
         <a href="javascript:void(0);" onclick="alert('🎼 정성껏 정돈된 하모니카 악보 보관실을 준비 중입니다. 곧 오픈하겠습니다^^');" class="menu-card card-score">
             <div class="card-info">
                 <h2>🎼 수하모 악보 보관실 (준비 중)</h2>
-                <p>언제 어디서나 편하게 펼쳐보는 C, A, Am 키별 정밀 악보 모음</p>
+                <p>언제 어디서나 편하게 펼쳐보는 정밀 악보</p>
             </div>
             <div class="card-arrow">▶</div>
         </a>
@@ -135,7 +142,7 @@
         <a href="javascript:void(0);" onclick="alert('🌱 수강생 및 동호인분들의 연주 공간을 준비하고 있습니다. 차후 개설 예정입니다^^');" class="menu-card card-user">
             <div class="card-info">
                 <h2>🌱 수강생 연주 자람실 (준비 중)</h2>
-                <p>하모니카를 향한 순수한 열정과 첫걸음, 서로를 따뜻하게 응원하는 공간</p>
+                <p>첫걸음의 열정과 따뜻한 응원을 나누는 공간</p>
             </div>
             <div class="card-arrow">▶</div>
         </a>
@@ -144,7 +151,7 @@
         <a href="javascript:void(0);" onclick="alert('📻 추억의 명곡을 담은 7080 음악실을 정성껏 준비 중입니다. 곧 오픈하겠습니다^^');" class="menu-card card-7080">
             <div class="card-info">
                 <h2>📻 수하모 7080 음악실 (준비 중)</h2>
-                <p>시대와 세대를 넘어 누구나 사랑하는 추억의 명곡 모음</p>
+                <p>시대와 세대를 넘어 사랑받는 추억의 명곡</p>
             </div>
             <div class="card-arrow">▶</div>
         </a>
@@ -153,7 +160,7 @@
         <a href="javascript:void(0);" onclick="alert('🍂 대한민국 마스터 정통 교수법의 시범 연주 공간을 정성껏 준비 중입니다. 차후 개설 예정입니다^^');" class="menu-card card-master">
             <div class="card-info">
                 <h2>🍂 수하모 울림 여운실 (준비 중)</h2>
-                <p>기초를 다지며 걸어온 배움의 시간, 마음을 담아 전하는 정통 시범 연주</p>
+                <p>마음을 담아 정성껏 전하는 정통 시범 연주</p>
             </div>
             <div class="card-arrow">▶</div>
         </a>
