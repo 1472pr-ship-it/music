@@ -599,9 +599,11 @@
             const songData = await response.json();
             
             masterPlaylist = songData.map((item) => {
-                let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/${encodeURIComponent(item.fileName)}`;
+                // 🔥 슬래시(/) 경로는 보존하고 파일명 부분만 안전하게 인코딩 처리
+                let pathParts = item.fileName.split('/');
+                let encodedPath = pathParts.map(part => encodeURIComponent(part)).join('/');
+                let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/${encodedPath}`;
                 
-                // 🔥 Firebase 조회수가 있으면 그 값을 가져오고, 없으면 songs.json의 views 기본값 사용!
                 const initialViews = item.views !== undefined ? item.views : 0;
                 const finalViews = window.dbViews[item.id] !== undefined ? window.dbViews[item.id] : initialViews;
 
