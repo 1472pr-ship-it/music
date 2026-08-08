@@ -130,7 +130,9 @@
         .reply-form { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
     </style>
 </head>
-<body>
+
+<!-- 🔥 페이지 전체 우클릭, 드래그, 영역 선택 차단 설정 적용 -->
+<body oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
 
 <div class="container">
     <!-- 헤더 영역 -->
