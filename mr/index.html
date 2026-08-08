@@ -185,6 +185,7 @@
             <div class="search-select-group">
                 <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
                 <select id="sort-select" onchange="applyFilters()">
+                    <option value="latest">최신순</option>
                     <option value="name">가나다순</option>
                     <option value="views">인기순</option>
                 </select>
@@ -518,7 +519,6 @@
 </script>
 
 <script>
-    // 💡 검증된 클라우드플레어 R2 버킷 주소
     const CLOUDFLARE_DOMAIN = "https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev"; 
 
     let masterPlaylist = [];
@@ -534,7 +534,6 @@
 
     async function loadSongs() {
         try {
-            // mr/songs.json 상대경로로 정확히 호출
             let response = await fetch('songs.json');
             if (!response.ok) {
                 response = await fetch('/mr/songs.json');
@@ -543,7 +542,6 @@
             const sampleMrData = await response.json();
 
             masterPlaylist = sampleMrData.map((item) => {
-                // 검증된 B방식 R2 경로 연결
                 let streamUrl = `${CLOUDFLARE_DOMAIN}/mr/${encodeURIComponent(item.fileName)}`;
                 
                 const initialViews = item.views !== undefined ? item.views : 0;
@@ -642,7 +640,9 @@
             return matchMain && matchMood && matchSearch;
         });
 
+        // 🔥 정렬 기준 수정: latest(최신순 - ID 큰 번호부터/등록 역순), name(가나다순), views(인기순)
         currentFilteredPlaylist.sort((a, b) => {
+            if (sortVal === 'latest') return Number(b.id) - Number(a.id);
             if (sortVal === 'name') return a.title.localeCompare(b.title, 'ko');
             if (sortVal === 'views') return b.views - a.views;
         });
@@ -680,10 +680,10 @@
         const pageData = currentFilteredPlaylist.slice(startIndex, endIndex);
 
         pageData.forEach((song, index) => {
-            const displayNum = totalItems - (startIndex + index);
-            const numStr = String(displayNum).padStart(2, '0');
+            // 🔥 No 번호를 id값 자체(01~67)로 깔끔하게 표시되도록 보완
+            const numStr = String(song.id).padStart(2, '0');
             const displayTitle = truncateTitle(song.title);
-            const isChecked = checkedSongIds.has(song.id) ? 'checked' : '';
+            const isChecked = checkedSongIds.has(String(song.id)) ? 'checked' : '';
 
             const tr = document.createElement('tr');
             tr.id = `row-${song.id}`;
@@ -742,8 +742,8 @@
         if (mainChk) mainChk.checked = shouldSelectAll;
         chks.forEach(chk => {
             chk.checked = shouldSelectAll;
-            if (shouldSelectAll) checkedSongIds.add(chk.value);
-            else checkedSongIds.delete(chk.value);
+            if (shouldSelectAll) checkedSongIds.add(String(chk.value));
+            else checkedSongIds.delete(String(chk.value));
         });
     }
 
@@ -753,8 +753,8 @@
         const isChecked = mainChk.checked;
         chks.forEach(chk => {
             chk.checked = isChecked;
-            if (isChecked) checkedSongIds.add(chk.value);
-            else checkedSongIds.delete(chk.value);
+            if (isChecked) checkedSongIds.add(String(chk.value));
+            else checkedSongIds.delete(String(chk.value));
         });
     }
 
