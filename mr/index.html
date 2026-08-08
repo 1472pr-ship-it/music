@@ -68,7 +68,7 @@
         .search-input { padding: 5px 8px; font-size: 12.5px; border: 1px solid #c2d1e0; border-radius: 4px; outline: none; flex-grow: 1; max-width: 180px; }
         select { padding: 4px 6px; font-size: 12px; border: 1px solid #c2d1e0; border-radius: 4px; background: #fff; cursor: pointer; }
 
-        /* Table Area (모바일 곡명 감춤 현상 해결 수정) */
+        /* Table Area (모바일 레이아웃 최적화) */
         .table-responsive { width: 100%; flex: 1; }
         table { width: 100%; border-collapse: collapse; font-size: 14.5px; text-align: left; table-layout: fixed; }
         thead { background-color: #e6eef7; border-bottom: 2px solid #2b4263; }
@@ -81,13 +81,13 @@
         .col-chk input { transform: scale(1.15); }
         .col-num { width: 28px; text-align: center; color: #667085; font-size: 12.5px; }
         .col-cat { width: 62px; text-align: center; }
-        .col-title { font-weight: 700; color: #1c2e47; font-size: 14px; text-align: left; } /* 곡명 열 반응형 자동 확보 */
+        .col-title { font-weight: 700; color: #1c2e47; font-size: 14px; text-align: left; }
         .col-division { width: 62px; text-align: center; font-size: 12px; color: #2b4263; font-weight: 600; }
         .col-views { width: 42px; color: #667085; text-align: center; font-size: 11.5px; }
         .col-action { width: 48px; text-align: center; }
 
         @media (max-width: 600px) {
-            .col-views { display: none; } /* 모바일에서 조회수 열 숨김 */
+            .col-views { display: none; }
             .col-chk { width: 24px; }
             .col-num { width: 24px; }
             .col-cat { width: 56px; }
@@ -518,9 +518,8 @@
 </script>
 
 <script>
-    // 💡 클라우드플레어 R2 버킷 도메인 설정 (설정하신 R2 커스텀 도메인 또는 r2.dev 주소를 입력하세요)
-    // 예시: "https://mp3.suhamo.com" 또는 "https://pub-xxxx.r2.dev"
-    const CLOUDFLARE_DOMAIN = "https://mp3.suhamo.com"; 
+    // 💡 클라우드플레어 R2 버킷 전용 도메인 적용 완료
+    const CLOUDFLARE_DOMAIN = "https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev"; 
 
     let masterPlaylist = [];
     let wakeLock = null;
@@ -545,7 +544,7 @@
             const sampleMrData = await response.json();
 
             masterPlaylist = sampleMrData.map((item) => {
-                // 클라우드플레어 R2 suhamo-mp3/mr/ 경로로 음원 주소 설정
+                // 클라우드플레어 R2 suhamo-mp3/mr/ 경로로 음원 스트리밍 주소 연결
                 let streamUrl = `${CLOUDFLARE_DOMAIN}/suhamo-mp3/mr/${encodeURIComponent(item.fileName)}`;
                 
                 const initialViews = item.views !== undefined ? item.views : 0;
