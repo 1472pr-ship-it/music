@@ -166,7 +166,8 @@
 
     <div class="player-section">
         <div class="now-playing" id="now-playing-title">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
-        <audio id="audio-player" controls controlsList="nodownload" oncontextmenu="return false;" autoplay></audio>
+        <!-- 🔥 모바일 자동재생 제한 회피를 위해 autoplay 제거 -->
+        <audio id="audio-player" controls controlsList="nodownload" oncontextmenu="return false;" preload="metadata"></audio>
         <div class="bg-notice">💡 화면이 꺼진 후 음악이 멈추면 스마트폰 [배터리 절전 모드]를 해제해 주세요.</div>
     </div>
 
@@ -849,28 +850,36 @@
             nowPlayingTitle.innerText = `▶️ [재생 중 ${currentQueueIndex + 1}/${playlistQueue.length}] ${song.title} - ${song.artist}`;
         }
 
+        // 🔥 모바일 오디오 재생 제어 안정화
         audioPlayer.src = song.src;
-        audioPlayer.play().then(() => {
-            requestWakeLock();
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: song.title,
-                    artist: song.artist,
-                    album: "수하모 연주 성장실",
-                    artwork: [{ src: 'https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png', sizes: '512x512', type: 'image/png' }]
-                });
-                navigator.mediaSession.setActionHandler('play', () => { audioPlayer.play(); });
-                navigator.mediaSession.setActionHandler('pause', () => { audioPlayer.pause(); });
-                navigator.mediaSession.setActionHandler('previoustrack', () => {
-                    if (currentQueueIndex > 0) { currentQueueIndex--; startPlayback(); }
-                });
-                navigator.mediaSession.setActionHandler('nexttrack', () => {
-                    currentQueueIndex++;
-                    if (currentQueueIndex >= playlistQueue.length) currentQueueIndex = 0;
-                    startPlayback();
-                });
-            }
-        }).catch(e => {});
+        audioPlayer.load(); // 모바일 미디어 버퍼 초기화
+        
+        const playPromise = audioPlayer.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                requestWakeLock();
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        title: song.title,
+                        artist: song.artist,
+                        album: "수하모 연주 성장실",
+                        artwork: [{ src: 'https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png', sizes: '512x512', type: 'image/png' }]
+                    });
+                    navigator.mediaSession.setActionHandler('play', () => { audioPlayer.play(); });
+                    navigator.mediaSession.setActionHandler('pause', () => { audioPlayer.pause(); });
+                    navigator.mediaSession.setActionHandler('previoustrack', () => {
+                        if (currentQueueIndex > 0) { currentQueueIndex--; startPlayback(); }
+                    });
+                    navigator.mediaSession.setActionHandler('nexttrack', () => {
+                        currentQueueIndex++;
+                        if (currentQueueIndex >= playlistQueue.length) currentQueueIndex = 0;
+                        startPlayback();
+                    });
+                }
+            }).catch(e => {
+                console.log("모바일 자동재생 제한:", e);
+            });
+        }
     }
 
     audioPlayer.onended = function() {
