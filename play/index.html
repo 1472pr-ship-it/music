@@ -599,10 +599,8 @@
             const songData = await response.json();
             
             masterPlaylist = songData.map((item) => {
-                // 🔥 슬래시(/) 경로는 보존하고 파일명 부분만 안전하게 인코딩 처리
-                let pathParts = item.fileName.split('/');
-                let encodedPath = pathParts.map(part => encodeURIComponent(part)).join('/');
-                let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/${encodedPath}`;
+                // 🔥 Cloudflare R2 전용 음원 주소로 자동 변경 (play/ 또는 mr/ 폴더 포함)
+                let streamUrl = `https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev/${item.fileName.split('/').map(encodeURIComponent).join('/')}`;
                 
                 const initialViews = item.views !== undefined ? item.views : 0;
                 const finalViews = window.dbViews[item.id] !== undefined ? window.dbViews[item.id] : initialViews;
