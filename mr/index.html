@@ -68,7 +68,7 @@
         .search-input { padding: 5px 8px; font-size: 12.5px; border: 1px solid #c2d1e0; border-radius: 4px; outline: none; flex-grow: 1; max-width: 180px; }
         select { padding: 4px 6px; font-size: 12px; border: 1px solid #c2d1e0; border-radius: 4px; background: #fff; cursor: pointer; }
 
-        /* Table Area (모바일 레이아웃 최적화) */
+        /* Table Area */
         .table-responsive { width: 100%; flex: 1; }
         table { width: 100%; border-collapse: collapse; font-size: 14.5px; text-align: left; table-layout: fixed; }
         thead { background-color: #e6eef7; border-bottom: 2px solid #2b4263; }
@@ -518,7 +518,7 @@
 </script>
 
 <script>
-    // 💡 클라우드플레어 R2 버킷 전용 도메인 적용 완료
+    // 💡 B 방식(mr/ 경로)에 맞춘 클라우드플레어 R2 버킷 주소
     const CLOUDFLARE_DOMAIN = "https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev"; 
 
     let masterPlaylist = [];
@@ -544,8 +544,8 @@
             const sampleMrData = await response.json();
 
             masterPlaylist = sampleMrData.map((item) => {
-                // 클라우드플레어 R2 suhamo-mp3/mr/ 경로로 음원 스트리밍 주소 연결
-                let streamUrl = `${CLOUDFLARE_DOMAIN}/suhamo-mp3/mr/${encodeURIComponent(item.fileName)}`;
+                // 🔥 B 방식 경로 적용: https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev/mr/파일명.mp3
+                let streamUrl = `${CLOUDFLARE_DOMAIN}/mr/${encodeURIComponent(item.fileName)}`;
                 
                 const initialViews = item.views !== undefined ? item.views : 0;
                 const finalViews = window.dbViews[item.id] !== undefined ? window.dbViews[item.id] : initialViews;
