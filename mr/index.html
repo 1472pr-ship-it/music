@@ -185,7 +185,8 @@
             <div class="search-select-group">
                 <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
                 <select id="sort-select" onchange="applyFilters()">
-                    <option value="latest">최신순</option>
+                    <!-- 🔥 기본값 최신순 설정 -->
+                    <option value="latest" selected>최신순</option>
                     <option value="name">가나다순</option>
                     <option value="views">인기순</option>
                 </select>
@@ -640,7 +641,7 @@
             return matchMain && matchMood && matchSearch;
         });
 
-        // 🔥 정렬 기준 수정: latest(최신순 - ID 큰 번호부터/등록 역순), name(가나다순), views(인기순)
+        // 🔥 최신순(latest)은 ID 역순, 가나다순(name), 인기순(views) 적용
         currentFilteredPlaylist.sort((a, b) => {
             if (sortVal === 'latest') return Number(b.id) - Number(a.id);
             if (sortVal === 'name') return a.title.localeCompare(b.title, 'ko');
@@ -680,7 +681,7 @@
         const pageData = currentFilteredPlaylist.slice(startIndex, endIndex);
 
         pageData.forEach((song, index) => {
-            // 🔥 No 번호를 id값 자체(01~67)로 깔끔하게 표시되도록 보완
+            // 🔥 No 컬럼 출력 시 무조건 해당 곡의 실제 id값(01~67)을 표시하도록 수정
             const numStr = String(song.id).padStart(2, '0');
             const displayTitle = truncateTitle(song.title);
             const isChecked = checkedSongIds.has(String(song.id)) ? 'checked' : '';
