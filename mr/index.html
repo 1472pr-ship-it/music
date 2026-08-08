@@ -529,19 +529,15 @@
         } catch (err) {}
     }
 
+    /* 🔥 mp3 폴더 및 mr_songs.json 파일 경로 연동 */
     async function loadSongs() {
         try {
-            const sampleMrData = [
-                { id: "mr1", title: "고향의푸른잔디", key: "Bb", cat: "가요/트롯", mood: "경쾌한", fileName: "고향의푸른잔디_Bb_조영남.mp3", views: 10 },
-                { id: "mr2", title: "눈물을감추고", key: "Bb", cat: "가요/트롯", mood: "서정/슬로우", fileName: "눈물을감추고.mp3", views: 13 },
-                { id: "mr3", title: "목포의 눈물", key: "A", cat: "가요/트롯", mood: "정통트롯", fileName: "목포의눈물.mp3", views: 120 },
-                { id: "mr4", title: "베사메무쵸", key: "Am", cat: "팝/외국곡", mood: "경쾌한", fileName: "베사메무쵸.mp3", views: 210 },
-                { id: "mr5", title: "오빠생각", key: "C", cat: "동요/가곡", mood: "서정/슬로우", fileName: "오빠생각.mp3", views: 95 },
-                { id: "mr6", title: "혼자가아닌나", key: "Bb", cat: "가요/트롯", mood: "경쾌한", fileName: "혼자가아닌나.mp3", views: 2 }
-            ];
+            const response = await fetch('/mr_songs.json');
+            const sampleMrData = await response.json();
 
             masterPlaylist = sampleMrData.map((item) => {
-                let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/${encodeURIComponent(item.fileName)}`;
+                // 음원 파일 주소를 mp3 폴더 경로(/main/mp3/)로 생성
+                let streamUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/mp3/${encodeURIComponent(item.fileName)}`;
                 const initialViews = item.views !== undefined ? item.views : 0;
                 const finalViews = window.dbViews[item.id] !== undefined ? window.dbViews[item.id] : initialViews;
 
@@ -559,7 +555,7 @@
 
             applyFilters();
         } catch (error) {
-            console.error("음원 데이터 로드 실패:", error);
+            console.error("mr_songs.json 반주 데이터 로드 실패:", error);
         }
     }
 
