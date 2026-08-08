@@ -518,7 +518,7 @@
 </script>
 
 <script>
-    // 💡 B 방식(mr/ 경로)에 맞춘 클라우드플레어 R2 버킷 주소
+    // 💡 검증된 클라우드플레어 R2 버킷 주소
     const CLOUDFLARE_DOMAIN = "https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev"; 
 
     let masterPlaylist = [];
@@ -534,17 +534,16 @@
 
     async function loadSongs() {
         try {
-            let response;
-            try {
-                response = await fetch('songs.json');
-            } catch (e) {
-                response = await fetch('/mr_songs.json');
+            // mr/songs.json 상대경로로 정확히 호출
+            let response = await fetch('songs.json');
+            if (!response.ok) {
+                response = await fetch('/mr/songs.json');
             }
             
             const sampleMrData = await response.json();
 
             masterPlaylist = sampleMrData.map((item) => {
-                // 🔥 B 방식 경로 적용: https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev/mr/파일명.mp3
+                // 검증된 B방식 R2 경로 연결
                 let streamUrl = `${CLOUDFLARE_DOMAIN}/mr/${encodeURIComponent(item.fileName)}`;
                 
                 const initialViews = item.views !== undefined ? item.views : 0;
@@ -760,7 +759,7 @@
     }
 
     function playSingle(id) {
-        const songIndex = currentFilteredPlaylist.findIndex(s => s.id === id);
+        const songIndex = currentFilteredPlaylist.findIndex(s => String(s.id) === String(id));
         if (songIndex !== -1) {
             playlistQueue = currentFilteredPlaylist.slice(songIndex);
             currentQueueIndex = 0;
@@ -777,7 +776,7 @@
 
         playlistQueue = [];
         masterPlaylist.forEach(song => {
-            if (checkedSongIds.has(song.id)) playlistQueue.push(song);
+            if (checkedSongIds.has(String(song.id))) playlistQueue.push(song);
         });
 
         currentQueueIndex = 0;
