@@ -32,24 +32,24 @@
             min-height: 100vh;
         }
         
-        /* 상단 헤더 (반주 연습실 동일 구조) */
+        /* 상단 헤더 (반주 연습실 동일 디자인) */
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 6px 0 10px 0;
-            border-bottom: 2px solid #1f402b;
+            border-bottom: 2px solid #8b3a42;
         }
         .header-title {
             font-size: 18px;
             font-weight: bold;
-            color: #1f402b;
+            color: #5c2028;
             display: flex;
             align-items: center;
             gap: 6px;
         }
         .btn-home {
-            background-color: #5a6e60;
+            background-color: #78675a;
             color: #ffffff;
             text-decoration: none;
             padding: 5px 10px;
@@ -58,7 +58,7 @@
             font-weight: bold;
         }
 
-        /* 필터 버튼 구역 (경력/연차별, 곡 유형별) */
+        /* 필터 버튼 구역 (반주 연습실 동일 스타일) */
         .filter-section {
             margin: 10px 0 6px 0;
             display: flex;
@@ -74,32 +74,32 @@
         .filter-label {
             font-size: 12px;
             font-weight: bold;
-            background: #eef3ed;
-            color: #1f402b;
+            background: #f4efe9;
+            color: #5c2028;
             padding: 4px 8px;
             border-radius: 4px;
             flex-shrink: 0;
         }
         .btn-filter {
             background: #ffffff;
-            border: 1px solid #d0dad2;
-            color: #4a594e;
+            border: 1px solid #dcd3ca;
+            color: #55483d;
             padding: 4px 10px;
             border-radius: 14px;
             font-size: 12px;
             cursor: pointer;
         }
         .btn-filter.active {
-            background: #1f402b;
+            background: #2b4263;
             color: #ffffff;
-            border-color: #1f402b;
+            border-color: #2b4263;
             font-weight: bold;
         }
 
-        /* 플레이어 구역 */
+        /* 플레이어 구역 (반주 연습실 동일) */
         .player-box {
-            background: #f4f7f4;
-            border: 1px solid #d0dad2;
+            background: #f7f5f2;
+            border: 1px solid #e5ded6;
             border-radius: 8px;
             padding: 10px;
             margin: 8px 0;
@@ -108,7 +108,7 @@
         .player-status {
             font-size: 13px;
             font-weight: bold;
-            color: #1f402b;
+            color: #2b4263;
             margin-bottom: 6px;
         }
         audio {
@@ -117,7 +117,7 @@
         }
         .player-notice {
             font-size: 11px;
-            color: #768a7b;
+            color: #8c7b6e;
             margin-top: 6px;
         }
 
@@ -130,7 +130,7 @@
             gap: 6px;
         }
         .btn-action {
-            background: #2d5a43;
+            background: #2b4263;
             color: #ffffff;
             border: none;
             padding: 6px 10px;
@@ -141,7 +141,7 @@
         }
         .total-count {
             font-size: 12px;
-            color: #5a6e60;
+            color: #78675a;
             font-weight: bold;
         }
         
@@ -164,17 +164,17 @@
             font-size: 12px;
         }
 
-        /* 음원 리스트 테이블 (반주 연습실 동일 스타일) */
+        /* 음원 리스트 테이블 (반주 연습실 100% 동일) */
         .track-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
         }
         .track-table th {
-            background: #eef3ed;
-            color: #1f402b;
+            background: #f0eae1;
+            color: #4a3d33;
             padding: 8px 4px;
-            border-bottom: 1px solid #d0dad2;
+            border-bottom: 1px solid #dcd3ca;
             font-weight: bold;
             text-align: center;
         }
@@ -185,28 +185,24 @@
             color: #333;
         }
         .track-table tr:hover {
-            background-color: #f9fbf9;
+            background-color: #faf8f5;
         }
 
-        /* 구분 태그 (입문3개월, 타기관5년, 수하모1년 등) */
+        /* 장르/구분 태그 */
         .tag-badge {
             display: inline-block;
-            background: #e4ebe5;
-            color: #1f402b;
+            background: #e9ecef;
+            color: #495057;
             font-size: 11px;
             padding: 2px 6px;
             border-radius: 4px;
             font-weight: bold;
         }
-        .tag-compare {
-            background: #fbeae8;
-            color: #a83232;
-        }
 
         .btn-play-sm {
             background: #ffffff;
-            border: 1px solid #1f402b;
-            color: #1f402b;
+            border: 1px solid #2b4263;
+            color: #2b4263;
             padding: 3px 8px;
             border-radius: 4px;
             font-size: 11px;
@@ -214,7 +210,7 @@
             cursor: pointer;
         }
         .btn-play-sm:hover {
-            background: #1f402b;
+            background: #2b4263;
             color: #ffffff;
         }
 
@@ -247,26 +243,28 @@
     <!-- 인증 완료 시 화면 -->
     <div id="content-area" style="display: none;">
         
-        <!-- 상단 헤더 -->
+        <!-- 상단 헤더 (반주 연습실과 동일) -->
         <div class="header-top">
             <div class="header-title">🌱 수강생 연주 자람실</div>
             <a href="/" class="btn-home">🏠 메인으로</a>
         </div>
 
-        <!-- 카테고리 필터 (경력/구분별) -->
+        <!-- 필터 카테고리 (장르 / 분위기) -->
         <div class="filter-section">
             <div class="filter-group">
-                <span class="filter-label">🌱 연차별</span>
+                <span class="filter-label">🎼 장르</span>
                 <button class="btn-filter active">전체</button>
-                <button class="btn-filter">입문(1~3개월)</button>
-                <button class="btn-filter">초급(6개월~1년)</button>
-                <button class="btn-filter">중급이상</button>
+                <button class="btn-filter">가요/트롯</button>
+                <button class="btn-filter">동요/가곡</button>
+                <button class="btn-filter">팝/외국곡</button>
+                <button class="btn-filter">클래식</button>
             </div>
             <div class="filter-group">
-                <span class="filter-label">🔊 소리비교</span>
+                <span class="filter-label">🎶 분위기</span>
                 <button class="btn-filter active">전체</button>
-                <button class="btn-filter">수하모 1년 차</button>
-                <button class="btn-filter">타기관 5년 차</button>
+                <button class="btn-filter">☕ 서정/슬로우</button>
+                <button class="btn-filter">📻 정통트롯</button>
+                <button class="btn-filter">🎷 경쾌한</button>
             </div>
         </div>
 
@@ -285,62 +283,87 @@
             <div>
                 <button class="btn-action">전체선택</button>
                 <button class="btn-action">선택듣기</button>
+                <button class="btn-action" style="background:#4a594e;">🔄 전체반복</button>
             </div>
-            <div class="total-count">총 4곡</div>
+            <div class="total-count">총 67곡</div>
         </div>
 
         <div class="search-row">
-            <input type="text" class="search-input" placeholder="곡명 또는 수강생 검색...">
+            <input type="text" class="search-input" placeholder="곡명 검색...">
             <select class="select-box">
                 <option>구분 전체</option>
-                <option>교본곡</option>
+                <option>교본책</option>
                 <option>자유곡</option>
             </select>
             <select class="select-box">
                 <option>최신순</option>
             </select>
+            <select class="select-box">
+                <option>30개</option>
+            </select>
         </div>
 
-        <!-- 음원 목록 테이블 -->
+        <!-- 음원 목록 테이블 (반주 연습실 100% 동일 레이아웃) -->
         <table class="track-table">
             <thead>
                 <tr>
                     <th style="width: 8%;"><input type="checkbox"></th>
                     <th style="width: 10%;">No</th>
-                    <th style="width: 25%;">구분/연차</th>
-                    <th style="width: 42%;">곡명 (수강생/연주)</th>
-                    <th style="width: 15%;">듣기</th>
+                    <th style="width: 20%;">장르</th>
+                    <th style="width: 37%;">곡명 (입문기간)</th>
+                    <th style="width: 15%;">구분</th>
+                    <th style="width: 10%;">듣기</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- 예시 음원 목록 (MP3 파일 링크 지정) -->
+                <!-- 예시 음원 목록 (곡명에 자연스럽게 입문 기간 표시) -->
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td>4</td>
-                    <td><span class="tag-badge">수하모 1년</span></td>
-                    <td style="text-align: left; font-weight: bold;">과수원길_C (복식호흡 완성)</td>
-                    <td><button class="btn-play-sm" onclick="playAudio('과수원길_C (수하모 1년 차)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">듣기</button></td>
+                    <td>67</td>
+                    <td><span class="tag-badge">팝/외국곡</span></td>
+                    <td style="text-align: left; font-weight: bold;">아가씨들아_C (입문 3개월)</td>
+                    <td>교본책</td>
+                    <td><button class="btn-play-sm" onclick="playAudio('아가씨들아_C (입문 3개월)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">듣기</button></td>
                 </tr>
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td>3</td>
-                    <td><span class="tag-badge tag-compare">타기관 5년</span></td>
-                    <td style="text-align: left; font-weight: bold;">과수원길_C (입모양 정체기)</td>
-                    <td><button class="btn-play-sm" onclick="playAudio('과수원길_C (타기관 5년 차)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3')">듣기</button></td>
+                    <td>66</td>
+                    <td><span class="tag-badge">팝/외국곡</span></td>
+                    <td style="text-align: left; font-weight: bold;">메기의추억_F (입문 5개월)</td>
+                    <td>교본책</td>
+                    <td><button class="btn-play-sm" onclick="playAudio('메기의추억_F (입문 5개월)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3')">듣기</button></td>
                 </tr>
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td>2</td>
-                    <td><span class="tag-badge">입문 3개월</span></td>
-                    <td style="text-align: left; font-weight: bold;">등대지기_C (첫 완곡 연주)</td>
-                    <td><button class="btn-play-sm" onclick="playAudio('등대지기_C (입문 3개월)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3')">듣기</button></td>
+                    <td>65</td>
+                    <td><span class="tag-badge">클래식</span></td>
+                    <td style="text-align: left; font-weight: bold;">산타루치아_C (입문 6개월)</td>
+                    <td>교본책</td>
+                    <td><button class="btn-play-sm" onclick="playAudio('산타루치아_C (입문 6개월)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3')">듣기</button></td>
                 </tr>
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td>1</td>
-                    <td><span class="tag-badge">입문 1개월</span></td>
-                    <td style="text-align: left; font-weight: bold;">비행기_C (기초 음쇠 다지기)</td>
-                    <td><button class="btn-play-sm" onclick="playAudio('비행기_C (입문 1개월)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3')">듣기</button></td>
+                    <td>64</td>
+                    <td><span class="tag-badge">동요/가곡</span></td>
+                    <td style="text-align: left; font-weight: bold;">어린이왈츠_C (입문 1년)</td>
+                    <td>교본책</td>
+                    <td><button class="btn-play-sm" onclick="playAudio('어린이왈츠_C (입문 1년)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3')">듣기</button></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>63</td>
+                    <td><span class="tag-badge">팝/외국곡</span></td>
+                    <td style="text-align: left; font-weight: bold;">즐거운나의집_C (입문 2년)</td>
+                    <td>교본책</td>
+                    <td><button class="btn-play-sm" onclick="playAudio('즐거운나의집_C (입문 2년)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">듣기</button></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>62</td>
+                    <td><span class="tag-badge">팝/외국곡</span></td>
+                    <td style="text-align: left; font-weight: bold;">황색리본_C (입문 3년)</td>
+                    <td>교본책</td>
+                    <td><button class="btn-play-sm" onclick="playAudio('황색리본_C (입문 3년)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3')">듣기</button></td>
                 </tr>
             </tbody>
         </table>
@@ -380,7 +403,7 @@
         const audio = document.getElementById('main-audio');
         const source = document.getElementById('audio-source');
 
-        playerTitle.innerText = "🎵 [재생 중] " + title;
+        playerTitle.innerText = "🎵 [재생] " + title;
         source.src = url;
         audio.load();
         audio.play();
