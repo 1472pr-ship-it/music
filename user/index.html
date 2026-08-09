@@ -549,6 +549,84 @@
     let masterPlaylist = [];
     let wakeLock = null;
 
+    // 닉네임 마스킹 헬퍼 (성덕윤 -> 성*윤, 애플 -> 애*플, 양산하모니카 -> 양*산)
+    function maskName(nick) {
+        if (!nick) return "";
+        let cleanNick = nick.trim();
+        if (cleanNick.length === 2) {
+            return cleanNick[0] + '*' + cleanNick[1];
+        } else if (cleanNick.length >= 3) {
+            return cleanNick[0] + '*' + cleanNick[2];
+        }
+        return cleanNick;
+    }
+
+    // 🔥 원본 파일명을 '곡명_키_마스킹연주자'로 지능형 변환하는 파서 함수
+    function processDisplayTitle(fullTitle) {
+        if (!fullTitle) return fullTitle;
+
+        let name = fullTitle.replace(/\.(mp3|m4a|wav)$/i, '').trim();
+
+        // 1. 이미 곡명_키_닉네임 양식인 경우 (언더바 구분)
+        if (name.includes('_') && !name.includes(' ')) {
+            const parts = name.split('_');
+            if (parts.length >= 2) {
+                let nick = parts[1].trim();
+                let maskedNick = maskName(nick);
+                return `${parts[0]}_${maskedNick}`;
+            }
+        }
+
+        // 2. 스크린샷 양식 (2022-11-15 05개월14일차 강남달 성덕윤 C 베이스 반주 등)
+        let clean = name.replace(/\d{4}-\d{2}-\d{2}/g, '')
+                        .replace(/[\d,]+년\s*[\d]*일/g, '')
+                        .replace(/\d+개월\d*일차/g, '')
+                        .replace(/반주|무반주/g, '')
+                        .replace(/[_,]/g, ' ')
+                        .replace(/\s+/g, ' ').trim();
+
+        const tokens = clean.split(' ').filter(t => t.length > 0);
+        if (tokens.length === 0) return fullTitle;
+
+        let key = "";
+        let keyIndex = -1;
+
+        for (let i = 0; i < tokens.length; i++) {
+            if (/^[A-G][b#]?[m]?$/i.test(tokens[i])) {
+                key = tokens[i].toUpperCase();
+                keyIndex = i;
+                break;
+            }
+        }
+
+        let songTitle = "";
+        let artist = "";
+
+        if (keyIndex !== -1) {
+            songTitle = tokens.slice(0, keyIndex).join(' ');
+            if (keyIndex + 1 < tokens.length) {
+                artist = tokens[tokens.length - 1];
+            }
+        } else {
+            songTitle = tokens[0];
+            if (tokens.length > 1) {
+                artist = tokens[tokens.length - 1];
+            }
+        }
+
+        let maskedArtist = maskName(artist);
+
+        if (songTitle && key && maskedArtist) {
+            return `${songTitle}_${key}_${maskedArtist}`;
+        } else if (songTitle && key) {
+            return `${songTitle}_${key}`;
+        } else if (songTitle && maskedArtist) {
+            return `${songTitle}_${maskedArtist}`;
+        }
+
+        return fullTitle;
+    }
+
     async function requestWakeLock() {
         try {
             if ('wakeLock' in navigator) {
@@ -574,11 +652,15 @@
 
                 const divisionText = (item.division && item.division.trim() !== "") ? item.division.trim() : (item.type && item.type.trim() !== "") ? item.type.trim() : "-";
 
+                // 지능형 파서로 곡명_키_마스킹연주자 자동 추출
+                const displayTitleText = processDisplayTitle(item.title);
+
                 return {
                     id: item.id,
                     mainCategory: item.cat,
                     mood: item.mood,
-                    title: item.title,
+                    rawTitle: item.title,       // 원본 제목
+                    title: displayTitleText,    // 화면 표시용 깔끔한 제목
                     division: divisionText,
                     defaultViews: initialViews,
                     views: finalViews,
@@ -634,8 +716,8 @@
     };
 
     function truncateTitle(title) {
-        if (title && title.length > 20) {
-            return title.substring(0, 20) + '...';
+        if (title && title.length > 22) {
+            return title.substring(0, 22) + '...';
         }
         return title;
     }
@@ -676,7 +758,7 @@
             const matchMain = (currentMainFilter === '전체') || (song.mainCategory === currentMainFilter);
             const matchMood = (currentMoodFilter === '전체') || (song.mood === currentMoodFilter);
             const matchDiv = (divVal === '전체') || (song.division.includes(divVal));
-            const matchSearch = song.title.toLowerCase().includes(searchQuery) || song.division.toLowerCase().includes(searchQuery);
+            const matchSearch = song.title.toLowerCase().includes(searchQuery) || song.rawTitle.toLowerCase().includes(searchQuery) || song.division.toLowerCase().includes(searchQuery);
             return matchMain && matchMood && matchDiv && matchSearch;
         });
 
