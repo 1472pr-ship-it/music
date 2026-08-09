@@ -655,10 +655,14 @@
                 // 지능형 파서로 곡명_키_마스킹연주자 자동 추출
                 const displayTitleText = processDisplayTitle(item.title);
 
+                // 🔥 [핵심 수정 위치] mainCategory에 연차별(cat) 대신 테크닉(mood)이 오도록 바르게 매핑
+                const techText = (item.mood && item.mood.trim() !== "") ? item.mood.trim() : (item.cat && item.cat.trim() !== "") ? item.cat.trim() : "기타";
+                const yearText = (item.cat && item.cat.trim() !== "") ? item.cat.trim() : "전체";
+
                 return {
                     id: item.id,
-                    mainCategory: item.cat,
-                    mood: item.mood,
+                    mainCategory: techText,     // 테이블 '테크닉' 열에 올바르게 출력
+                    mood: yearText,             // 연차별 필터링용 데이터
                     rawTitle: item.title,       // 원본 제목
                     title: displayTitleText,    // 화면 표시용 깔끔한 제목
                     division: divisionText,
@@ -755,11 +759,12 @@
         const sortVal = document.getElementById('sort-select').value;
 
         currentFilteredPlaylist = masterPlaylist.filter(song => {
-            const matchMain = (currentMainFilter === '전체') || (song.mainCategory === currentMainFilter);
-            const matchMood = (currentMoodFilter === '전체') || (song.mood === currentMoodFilter);
+            // 필터 교차 검색 처리
+            const matchYear = (currentMainFilter === '전체') || (song.mood === currentMainFilter) || (song.mainCategory === currentMainFilter);
+            const matchTech = (currentMoodFilter === '전체') || (song.mainCategory === currentMoodFilter) || (song.mood === currentMoodFilter);
             const matchDiv = (divVal === '전체') || (song.division.includes(divVal));
             const matchSearch = song.title.toLowerCase().includes(searchQuery) || song.rawTitle.toLowerCase().includes(searchQuery) || song.division.toLowerCase().includes(searchQuery);
-            return matchMain && matchMood && matchDiv && matchSearch;
+            return matchYear && matchTech && matchDiv && matchSearch;
         });
 
         currentFilteredPlaylist.sort((a, b) => {
