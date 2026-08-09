@@ -141,14 +141,15 @@
 
         /* Fullscreen Image Modal */
         .modal { display: none; position: fixed; z-index: 99999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center; overflow: auto; }
-        .modal-content { max-width: 96%; max-height: 92vh; object-fit: contain; }
-        .modal-close { position: absolute; top: 12px; right: 16px; color: #fff; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 100001; background: rgba(0,0,0,0.5); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+        .modal-content { max-width: 96%; max-height: 92vh; object-fit: contain; z-index: 100000; }
+        .modal-close { position: absolute; top: 12px; right: 16px; color: #fff; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 100005; background: rgba(0,0,0,0.5); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
         
-        .modal-btn { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.25); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.4); font-size: 16px; padding: 12px 6px; cursor: pointer; border-radius: 4px; z-index: 100001; opacity: 0.5; transition: opacity 0.2s; display: none; }
-        .modal-btn:active { opacity: 1; background: rgba(255, 255, 255, 0.6); }
-        .modal-prev { left: 4px; }
-        .modal-next { right: 4px; }
-        .modal-info { position: absolute; top: 12px; left: 16px; color: #ffffff; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 12px; z-index: 100001; max-width: 65%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* 💡 핵심 수정: z-index: 100005 로 악보 이미지 위로 완벽히 배치 */
+        .modal-btn { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.75); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.6); font-size: 18px; padding: 12px 8px; cursor: pointer; border-radius: 6px; z-index: 100005; opacity: 0.85; transition: opacity 0.2s; display: none; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+        .modal-btn:active { opacity: 1; background: rgba(83, 62, 115, 0.95); }
+        .modal-prev { left: 6px; }
+        .modal-next { right: 6px; }
+        .modal-info { position: absolute; top: 12px; left: 16px; color: #ffffff; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 12px; z-index: 100005; max-width: 65%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     </style>
 </head>
 
@@ -273,7 +274,6 @@
                 <input type="text" id="c-name" class="comment-input-name" placeholder="성함/닉네임 (필수)" maxlength="10">
             </div>
             <div>
-                <!-- 💡 요청해주신 힌트 문구 적용 -->
                 <textarea id="c-text" class="comment-input-textarea" placeholder="악보 이용 소감이나 요청사항, 오탈자 및 오류(곡명과 악보가 다른 경우 등)를 편하게 남겨주세요^^" oninput="autoResizeTextarea(this)"></textarea>
             </div>
             <div style="display:flex; gap:6px;">
