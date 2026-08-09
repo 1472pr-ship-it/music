@@ -184,7 +184,7 @@
     <!-- 플레이어 바 -->
     <div class="player-section">
         <div class="now-playing-container">
-            <div class="now-playing" id="now-playing-title">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
+            <div class="now-playing" id="now-playing-title">🎵 [재생] 곡 선택&[듣기], 모든 연주는 몰녹(몰래녹음) 음원입니다.</div>
         </div>
         <audio id="audio-player" controls controlsList="nodownload" oncontextmenu="return false;" autoplay></audio>
         <div class="bg-notice">💡 화면이 꺼진 후 음악이 멈추면 스마트폰 [배터리 절전 모드]를 해제해 주세요.</div>
@@ -233,7 +233,7 @@
                     <th class="col-num">No</th>
                     <th class="col-cat">테크닉</th>
                     <th class="col-title">곡명/연주자</th>
-                    <th class="col-division">입문(초보)/교정(경력)</th>
+                    <th class="col-division">입문(초보)/교정(경력자)</th>
                     <th class="col-action">듣기</th>
                 </tr>
             </thead>
@@ -248,7 +248,7 @@
     <div class="comment-section">
         <div class="comment-header">💬 따뜻한 응원 및 소감 한마디</div>
         <div class="comment-notice">
-            💡 함께 자라나는 수강생분들을 위해 따뜻한 격려와 응원의 한마디를 남겨주세요^^
+            💡 함께 자라나는 수강생분들을 위해 따뜻한 격려와 응원의 한마디...^^
         </div>
         
         <div class="comment-form" id="main-comment-form">
@@ -256,7 +256,7 @@
                 <input type="text" id="c-name" class="comment-input-name" placeholder="성함/닉네임 (필수)" maxlength="10">
             </div>
             <div>
-                <textarea id="c-text" class="comment-input-textarea" placeholder="자유롭게 편하게 소통해요^^ 연습 소감이나 따뜻한 응원의 글을 남겨주세요." oninput="autoResizeTextarea(this)"></textarea>
+                <textarea id="c-text" class="comment-input-textarea" placeholder="편하게 소통해요^^ 연습 소감이나 따뜻한 응원의 글을 남겨주세요." oninput="autoResizeTextarea(this)"></textarea>
             </div>
             <div style="display:flex; gap:6px;">
                 <button class="btn-submit-comment" id="c-submit-btn" onclick="addComment()">등록하기</button>
