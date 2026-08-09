@@ -7,7 +7,7 @@
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
     <link rel="icon" href="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
     <meta name="theme-color" content="#3b2d54">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
@@ -55,16 +55,16 @@
         .now-viewing { font-size: 13.5px; font-weight: bold; color: #3b2d54; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
         .page-indicator { font-size: 12px; font-weight: bold; color: #72559c; background: #e5dcee; padding: 2px 8px; border-radius: 10px; flex-shrink: 0; }
         
-        .sheet-preview-box { width: 100%; max-height: 420px; overflow: hidden; background: #ffffff; border: 1px solid #d2c4e2; border-radius: 6px; display: flex; justify-content: center; align-items: center; padding: 8px; position: relative; touch-action: pan-y; }
+        .sheet-preview-box { width: 100%; max-height: 420px; overflow: hidden; background: #ffffff; border: 1px solid #d2c4e2; border-radius: 6px; display: flex; justify-content: center; align-items: center; padding: 8px; position: relative; }
         .sheet-preview-img { max-width: 100%; height: auto; object-fit: contain; cursor: pointer; border-radius: 4px; user-select: none; }
         .no-sheet-msg { color: #766391; font-size: 13px; font-weight: bold; padding: 20px 0; }
         .bg-notice { font-size: 11px; color: #695682; letter-spacing: -0.3px; width: 100%; text-align: left; }
 
-        /* 상단 뷰어 화살표 버튼 */
-        .slide-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.75); color: #fff; border: 1px solid rgba(255, 255, 255, 0.4); font-size: 18px; padding: 12px 10px; cursor: pointer; border-radius: 6px; z-index: 100; display: none; }
-        .slide-btn:active { background: rgba(59, 45, 84, 0.95); }
-        .slide-prev { left: 8px; }
-        .slide-next { right: 8px; }
+        /* 상단 뷰어 슬라이드 버튼 (작고 은은한 슬림 스타일) */
+        .slide-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.35); color: #ffffff; border: none; font-size: 15px; padding: 10px 6px; cursor: pointer; border-radius: 4px; z-index: 100; display: none; transition: opacity 0.2s; }
+        .slide-btn:active { background: rgba(59, 45, 84, 0.7); }
+        .slide-prev { left: 4px; }
+        .slide-next { right: 4px; }
 
         /* Control Bar */
         .control-bar { background: #faf8fc; border-bottom: 1px solid #e2d9ec; padding: 6px 10px; display: flex; flex-direction: column; gap: 6px; }
@@ -138,17 +138,17 @@
         .reply-item { background: #f3eff8; padding: 6px 10px; border-radius: 4px; }
         .reply-form { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
 
-        /* Fullscreen Image Modal (모바일 화살표 선명 보장) */
-        .modal { display: none; position: fixed; z-index: 99999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center; touch-action: pan-y; }
-        .modal-content { max-width: 95%; max-height: 92vh; object-fit: contain; }
-        .modal-close { position: absolute; top: 12px; right: 20px; color: #fff; font-size: 32px; font-weight: bold; cursor: pointer; z-index: 100001; background: rgba(0,0,0,0.4); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+        /* Fullscreen Image Modal (악보를 전혀 가리지 않는 슬림 반투명 버튼) */
+        .modal { display: none; position: fixed; z-index: 99999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center; overflow: auto; }
+        .modal-content { max-width: 96%; max-height: 92vh; object-fit: contain; }
+        .modal-close { position: absolute; top: 12px; right: 16px; color: #fff; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 100001; background: rgba(0,0,0,0.5); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
         
-        /* 모바일 화면에서도 선명하게 보이는 모달 좌우 화살표 버튼 */
-        .modal-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.85); color: #ffffff; border: 1.5px solid rgba(255, 255, 255, 0.6); font-size: 24px; padding: 16px 12px; cursor: pointer; border-radius: 8px; z-index: 100001; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: none; }
-        .modal-btn:active { background: rgba(83, 62, 115, 1); }
-        .modal-prev { left: 12px; }
-        .modal-next { right: 12px; }
-        .modal-info { position: absolute; top: 16px; left: 16px; color: #ffffff; font-size: 13.5px; font-weight: bold; background: rgba(59, 45, 84, 0.85); padding: 6px 12px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.3); z-index: 100001; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* 악보 가림 방지: 화면 맨 가장자리에 작게 배치 + 반투명(0.35) */
+        .modal-btn { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.25); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.4); font-size: 16px; padding: 12px 6px; cursor: pointer; border-radius: 4px; z-index: 100001; opacity: 0.5; transition: opacity 0.2s; display: none; }
+        .modal-btn:active { opacity: 1; background: rgba(255, 255, 255, 0.6); }
+        .modal-prev { left: 4px; }
+        .modal-next { right: 4px; }
+        .modal-info { position: absolute; top: 12px; left: 16px; color: #ffffff; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 12px; z-index: 100001; max-width: 65%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     </style>
 </head>
 
@@ -198,7 +198,7 @@
             <img id="sheet-preview-img" class="sheet-preview-img" src="" alt="악보 이미지" style="display:none;" onclick="openModal()" title="클릭하시면 크게 볼 수 있습니다">
             <button class="slide-btn slide-next" id="btn-slide-next" onclick="nextSlide()">▶</button>
         </div>
-        <div class="bg-notice">💡 손가락으로 좌/우로 쓱 밀면(슬라이드) 다음 장이나 다음 곡 악보로 넘어갑니다.</div>
+        <div class="bg-notice">💡 두 손가락으로 악보를 늘리면 자유롭게 확대해서 보실 수 있습니다.</div>
     </div>
 
     <!-- 컨트롤 바 -->
@@ -872,11 +872,10 @@
             pageIndicator.style.display = 'none';
         }
 
-        // 상단 뷰어 화살표 제어
+        // 화살표 버튼 상태 업데이트
         btnPrev.style.display = (currentQueueIndex > 0) ? 'block' : 'none';
         btnNext.style.display = (currentQueueIndex < slideQueue.length - 1) ? 'block' : 'none';
 
-        // 전체화면 모달 화살표 제어 (모바일 보장)
         btnModalPrev.style.display = (currentQueueIndex > 0) ? 'block' : 'none';
         btnModalNext.style.display = (currentQueueIndex < slideQueue.length - 1) ? 'block' : 'none';
 
@@ -902,6 +901,7 @@
         }
     }
 
+    /* 핀치 줌(두 손가락 확대)을 방해하지 않는 터치 슬라이드 로직 */
     function initTouchEvents() {
         const touchTargets = [document.getElementById('sheet-box'), document.getElementById('image-modal')];
         
@@ -910,8 +910,14 @@
             let startY = 0;
 
             target.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
+                // 한 손가락 터치 시에만 슬라이드 동작 준비 (두 손가락 확대 시에는 터치 슬라이드 방지)
+                if (e.touches.length === 1) {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                } else {
+                    startX = 0;
+                    startY = 0;
+                }
             }, { passive: true });
 
             target.addEventListener('touchend', (e) => {
@@ -923,7 +929,8 @@
                 const diffX = startX - endX;
                 const diffY = startY - endY;
 
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+                // 좌우 이동거리가 50px 이상이고, 상하 이동보다 클 때 동작
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
                     if (diffX > 0) {
                         nextSlide();
                     } else {
