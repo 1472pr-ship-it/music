@@ -60,11 +60,11 @@
         .no-sheet-msg { color: #766391; font-size: 13px; font-weight: bold; padding: 20px 0; }
         .bg-notice { font-size: 11px; color: #695682; letter-spacing: -0.3px; width: 100%; text-align: left; }
 
-        /* Slide Navigation Buttons */
-        .slide-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.6); color: #fff; border: none; font-size: 20px; padding: 12px 8px; cursor: pointer; border-radius: 4px; z-index: 10; display: none; }
-        .slide-btn:active { background: rgba(59, 45, 84, 0.9); }
-        .slide-prev { left: 5px; }
-        .slide-next { right: 5px; }
+        /* 상단 뷰어 화살표 버튼 */
+        .slide-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.75); color: #fff; border: 1px solid rgba(255, 255, 255, 0.4); font-size: 18px; padding: 12px 10px; cursor: pointer; border-radius: 6px; z-index: 100; display: none; }
+        .slide-btn:active { background: rgba(59, 45, 84, 0.95); }
+        .slide-prev { left: 8px; }
+        .slide-next { right: 8px; }
 
         /* Control Bar */
         .control-bar { background: #faf8fc; border-bottom: 1px solid #e2d9ec; padding: 6px 10px; display: flex; flex-direction: column; gap: 6px; }
@@ -138,15 +138,17 @@
         .reply-item { background: #f3eff8; padding: 6px 10px; border-radius: 4px; }
         .reply-form { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
 
-        /* Fullscreen Image Modal */
-        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center; touch-action: pan-y; }
-        .modal-content { max-width: 95%; max-height: 95vh; object-fit: contain; }
-        .modal-close { position: absolute; top: 15px; right: 25px; color: #fff; font-size: 35px; font-weight: bold; cursor: pointer; z-index: 10000; }
-        .modal-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.2); color: #fff; border: none; font-size: 28px; padding: 15px 12px; cursor: pointer; border-radius: 4px; z-index: 10000; }
-        .modal-btn:active { background: rgba(255, 255, 255, 0.5); }
-        .modal-prev { left: 10px; }
-        .modal-next { right: 10px; }
-        .modal-info { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 14px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 12px; }
+        /* Fullscreen Image Modal (모바일 화살표 선명 보장) */
+        .modal { display: none; position: fixed; z-index: 99999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center; touch-action: pan-y; }
+        .modal-content { max-width: 95%; max-height: 92vh; object-fit: contain; }
+        .modal-close { position: absolute; top: 12px; right: 20px; color: #fff; font-size: 32px; font-weight: bold; cursor: pointer; z-index: 100001; background: rgba(0,0,0,0.4); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+        
+        /* 모바일 화면에서도 선명하게 보이는 모달 좌우 화살표 버튼 */
+        .modal-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.85); color: #ffffff; border: 1.5px solid rgba(255, 255, 255, 0.6); font-size: 24px; padding: 16px 12px; cursor: pointer; border-radius: 8px; z-index: 100001; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: none; }
+        .modal-btn:active { background: rgba(83, 62, 115, 1); }
+        .modal-prev { left: 12px; }
+        .modal-next { right: 12px; }
+        .modal-info { position: absolute; top: 16px; left: 16px; color: #ffffff; font-size: 13.5px; font-weight: bold; background: rgba(59, 45, 84, 0.85); padding: 6px 12px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.3); z-index: 100001; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     </style>
 </head>
 
@@ -184,7 +186,7 @@
         </div>
     </div>
 
-    <!-- 악보 뷰어 영역 (슬라이드 제스처 및 이전/다음 버튼 지원) -->
+    <!-- 악보 뷰어 영역 -->
     <div class="viewer-section">
         <div class="now-viewing-bar">
             <div class="now-viewing" id="now-viewing-title">🎼 [악보] 목록에서 [보기] 또는 [선택보기]를 누르세요</div>
@@ -281,10 +283,10 @@
 <!-- 전체화면 이미지 모달 -->
 <div id="image-modal" class="modal">
     <span class="modal-close" onclick="closeModal()">&times;</span>
-    <div class="modal-info" id="modal-info-text">작은별 (1/2)</div>
-    <button class="modal-btn modal-prev" onclick="prevSlide()">◀</button>
+    <div class="modal-info" id="modal-info-text">곡명</div>
+    <button class="modal-btn modal-prev" id="btn-modal-prev" onclick="prevSlide()">◀</button>
     <img class="modal-content" id="modal-img">
-    <button class="modal-btn modal-next" onclick="nextSlide()">▶</button>
+    <button class="modal-btn modal-next" id="btn-modal-next" onclick="nextSlide()">▶</button>
 </div>
 
 <!-- Firebase SDK 모듈 로드 -->
@@ -573,16 +575,18 @@
     let currentPage = 1;
     let itemsPerPage = 30; 
 
-    /* 슬라이드 큐 관련 상태 변수 */
-    let slideQueue = []; // [{ song, imgUrl, pageNum, totalPages, imgIndex }]
+    let slideQueue = [];
     let currentQueueIndex = 0;
 
     const nowViewingTitle = document.getElementById('now-viewing-title');
     const pageIndicator = document.getElementById('page-indicator');
     const sheetPreviewImg = document.getElementById('sheet-preview-img');
     const noSheetMsg = document.getElementById('no-sheet-msg');
+    
     const btnPrev = document.getElementById('btn-slide-prev');
     const btnNext = document.getElementById('btn-slide-next');
+    const btnModalPrev = document.getElementById('btn-modal-prev');
+    const btnModalNext = document.getElementById('btn-modal-next');
 
     window.onload = function() {
         loadSongs();
@@ -599,7 +603,6 @@
             const sampleMrData = await response.json();
 
             masterPlaylist = sampleMrData.map((item) => {
-                // 단일 fileName 및 복수 images 호환 지원
                 let imageList = [];
                 if (item.images && Array.isArray(item.images) && item.images.length > 0) {
                     imageList = item.images.map(fn => `${CLOUDFLARE_DOMAIN}/sheet/${encodeURIComponent(fn)}`);
@@ -803,17 +806,14 @@
         });
     }
 
-    /* 단일 곡 선택 및 전체 곡 큐 생성 */
     function playSingle(id) {
         const targetIndex = currentFilteredPlaylist.findIndex(s => String(s.id) === String(id));
         if (targetIndex !== -1) {
-            // 선택한 곡부터 그 이후의 모든 필터링된 곡을 큐로 설정
             buildSlideQueue(currentFilteredPlaylist.slice(targetIndex));
             renderSlide();
         }
     }
 
-    /* 선택보기 및 전체보기 (체크된 모든 곡들을 순서대로 연속 큐 생성) */
     function viewSelected() {
         updateCheckedSet();
         if (checkedSongIds.size === 0) {
@@ -828,7 +828,6 @@
         }
     }
 
-    /* 슬라이드할 이미지 목록(큐)을 페이지 단위로 쪼개어 구성 */
     function buildSlideQueue(songList) {
         slideQueue = [];
         songList.forEach(song => {
@@ -846,19 +845,16 @@
         currentQueueIndex = 0;
     }
 
-    /* 현재 큐 위치에 따라 뷰어 및 모달 화면 출력 */
     function renderSlide() {
         if (slideQueue.length === 0) return;
 
         const currentItem = slideQueue[currentQueueIndex];
         const song = currentItem.song;
 
-        // 곡의 첫 페이지 접속 시에만 조회수 증가
         if (currentItem.pageNum === 1 && typeof window.incrementSongView === 'function') {
             window.incrementSongView(song.id, song.defaultViews);
         }
 
-        // 테이블 선택 열 활성화 표시
         document.querySelectorAll('tr').forEach(r => r.classList.remove('active-row'));
         const activeRow = document.getElementById('row-' + song.id);
         if (activeRow) activeRow.classList.add('active-row');
@@ -869,7 +865,6 @@
         sheetPreviewImg.src = currentItem.imgUrl;
         sheetPreviewImg.style.display = 'block';
 
-        // 페이지 인디케이터 표시
         if (currentItem.totalPages > 1) {
             pageIndicator.innerText = `${currentItem.pageNum} / ${currentItem.totalPages} 페이지`;
             pageIndicator.style.display = 'inline-block';
@@ -877,19 +872,20 @@
             pageIndicator.style.display = 'none';
         }
 
-        // 화살표 버튼 노출 조건
+        // 상단 뷰어 화살표 제어
         btnPrev.style.display = (currentQueueIndex > 0) ? 'block' : 'none';
         btnNext.style.display = (currentQueueIndex < slideQueue.length - 1) ? 'block' : 'none';
 
-        // 모달창이 열려있을 경우 모달도 동시 갱신
+        // 전체화면 모달 화살표 제어 (모바일 보장)
+        btnModalPrev.style.display = (currentQueueIndex > 0) ? 'block' : 'none';
+        btnModalNext.style.display = (currentQueueIndex < slideQueue.length - 1) ? 'block' : 'none';
+
         const modal = document.getElementById('image-modal');
         if (modal.style.display === 'flex') {
             document.getElementById('modal-img').src = currentItem.imgUrl;
             const pageTxt = currentItem.totalPages > 1 ? ` (${currentItem.pageNum}/${currentItem.totalPages})` : '';
             document.getElementById('modal-info-text').innerText = `${song.title}${pageTxt}`;
         }
-
-        document.querySelector('.viewer-section').scrollIntoView({ behavior: 'smooth' });
     }
 
     function nextSlide() {
@@ -906,7 +902,6 @@
         }
     }
 
-    /* 터치 슬라이드(스와이프) 이벤트 구현 */
     function initTouchEvents() {
         const touchTargets = [document.getElementById('sheet-box'), document.getElementById('image-modal')];
         
@@ -928,13 +923,10 @@
                 const diffX = startX - endX;
                 const diffY = startY - endY;
 
-                // 좌우 좌우 스와이프가 상하 스크롤보다 클 때 동작 (50px 이상 이동 시)
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
                     if (diffX > 0) {
-                        // 손가락을 왼쪽으로 슉 밀었을 때 ➔ 다음 악보/페이지
                         nextSlide();
                     } else {
-                        // 손가락을 오른쪽으로 슉 밀었을 때 ➔ 이전 악보/페이지
                         prevSlide();
                     }
                 }
