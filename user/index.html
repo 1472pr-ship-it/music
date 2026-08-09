@@ -1,1 +1,253 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="수강생 연주 자람실 - 수하모니카">
+    <meta property="og:description" content="하모니카를 향한 첫걸음과 순수한 열정, 서로를 따뜻하게 응원하는 수강생 연주 공간">
+    <meta property="og:image" content="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
+    <meta property="og:url" content="https://suhamo.com/user">
+    <title>수강생 연주 자람실 | 수하모니카</title>
+    <!-- 검색엔진 노출 및 링크 수집 완전 차단 -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; 
+            background-color: #fcfbf9; 
+            color: #332d29; 
+            display: flex; 
+            justify-content: center; 
+        }
+        
+        .container { 
+            width: 100%; 
+            max-width: 600px; 
+            background: #ffffff; 
+            padding: 14px 16px; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.05); 
+            min-height: 100vh;
+        }
+        
+        /* 헤더 디자인 (자람실 상징 그린 테마) */
+        .header { 
+            text-align: center; 
+            padding: 10px 0 12px 0; 
+            border-bottom: 2px solid #32593d; 
+            position: relative;
+        }
+        .nav-back {
+            position: absolute;
+            left: 0;
+            top: 10px;
+            text-decoration: none;
+            color: #1f402b;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .header h1 { font-size: 20px; color: #1f402b; font-weight: bold; margin-bottom: 3px; }
+        .header p { font-size: 12.5px; color: #5a6e60; word-break: keep-all; }
+
+        /* 안내 공지 카드 */
+        .notice-box {
+            background-color: #f4f7f4;
+            border-left: 4px solid #32593d;
+            padding: 12px 14px;
+            border-radius: 6px;
+            margin: 14px 0;
+            font-size: 12.5px;
+            color: #3b4e41;
+            line-height: 1.5;
+        }
+
+        /* 수강생 연주 리스트 */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .post-card {
+            border: 1px solid #e2ebd8;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+        }
+        
+        .post-header {
+            padding: 12px 14px 8px 14px;
+            background: #fafcf9;
+            border-bottom: 1px solid #edf2e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .post-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #1f402b;
+        }
+        .post-meta {
+            font-size: 11.5px;
+            color: #768a7b;
+        }
+
+        /* 영상 응답형 컨테이너 */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 비율 */
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .post-body {
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #4a423d;
+            line-height: 1.55;
+            word-break: keep-all;
+        }
+        
+        .teacher-comment {
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: #f0f5ed;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #2b4533;
+        }
+        .teacher-comment span {
+            font-weight: bold;
+            color: #1f402b;
+        }
+
+        .footer { 
+            text-align: center; 
+            padding: 12px 0 6px 0; 
+            font-size: 11.5px; 
+            color: #8c7b6e; 
+            border-top: 1px solid #eee5da; 
+            margin-top: auto;
+        }
+
+        /* 인증 잠금 안내 화면 */
+        .lock-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            border: 1px solid #eee5da;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        }
+        .lock-icon { font-size: 50px; margin-bottom: 12px; }
+        .lock-title { font-size: 19px; font-weight: bold; color: #5c2028; margin-bottom: 10px; }
+        .lock-desc { font-size: 14px; color: #6e5d52; line-height: 1.6; word-break: keep-all; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 헤더 구역 -->
+    <div class="header">
+        <a href="/" class="nav-back">◀ 홈</a>
+        <h1>🌱 수강생 연주 자람실</h1>
+        <p>순수한 열정으로 가꾸어 가는 우리들의 소리 공간</p>
+    </div>
+
+    <!-- 1. 인증 완료 시 보이는 본문 콘텐츠 -->
+    <div id="content-area" style="display: none;">
+        
+        <!-- 자람실 따뜻한 안내문 -->
+        <div class="notice-box">
+            <b>💚 배움과 성장의 기록</b><br>
+            완벽하지 않아도 괜찮습니다. 첫 바른 호흡을 터뜨린 순간부터 곡을 완성해 가는 모든 과정이 소중한 자산입니다. 서로 따뜻한 격려와 응원을 나누어 주세요^^
+        </div>
+
+        <!-- 게시물 목록 -->
+        <div class="post-list">
+            
+            <!-- 예시 게시물 1 -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-title">🎵 [입문 6개월 차] 과수원 길 - C키 정통 복간 호흡</div>
+                    <div class="post-meta">김〇〇 수강생</div>
+                </div>
+                <!-- 유튜브 영상 삽입 위치 (SRC에 유튜브 Embed 주소 입력) -->
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                </div>
+                <div class="post-body">
+                    복식 호흡을 신경 쓰며 입술 힘을 빼고 차분하게 연주해 보았습니다. 아직 미흡하지만 끝까지 완곡할 수 있어서 기쁩니다!
+                    <div class="teacher-comment">
+                        <span>💬 선생님 격려:</span> 얕은 호흡 습관을 버리고 맑고 깊은 울림을 만들어내셨네요. 정통 음색이 아주 근사하게 잡혀가고 있습니다!
+                    </div>
+                </div>
+            </div>
+
+            <!-- 예시 게시물 2 -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-title">🎶 [1년 차 도전] 등대지기 - A키 분산음화 기법 연습</div>
+                    <div class="post-meta">이〇〇 수강생</div>
+                </div>
+                <div class="post-body">
+                    박자기에 맞춰 베이스 박자를 놓치지 않으려 연습 중입니다. 매주 소리가 조금씩 맑아지는 것을 느껴 보람차네요^^
+                    <div class="teacher-comment">
+                        <span>💬 선생님 격려:</span> 입모양 주법 교정 후 음의 명확도가 훨씬 좋아지셨습니다. 아주 멋진 성장입니다!
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 2. 미인증 접속 시 보안 잠금 화면 -->
+    <div id="lock-area" class="lock-card" style="display: none;">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-title">수강생 전용 공간입니다</div>
+        <div class="lock-desc">
+            본 페이지는 수하모니카 수강생 및 동호인 전용 학습 공간입니다.<br><br>
+            메인 페이지에서 <b>수강생 비밀 인증</b>을 먼저 진행해 주시기 바랍니다.
+        </div>
+    </div>
+
+    <div class="footer">
+        © 수하모니카 (suhamo.com) All rights reserved.
+    </div>
+</div>
+
+<script>
+    (function() {
+        // 메인 페이지 인증 확인 (localStorage 값 검증)
+        const isAuth = localStorage.getItem('suhamo_access') === 'granted';
+
+        if (isAuth) {
+            document.getElementById('content-area').style.display = 'block';
+        } else {
+            document.getElementById('lock-area').style.display = 'block';
+        }
+    })();
+</script>
+
+</body>
+</html>
