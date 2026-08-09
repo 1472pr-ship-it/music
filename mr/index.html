@@ -54,10 +54,10 @@
         /* Player Section */
         .player-section { background: #e8f0f8; border-bottom: 2px solid #2b4263; color: #1c2e47; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; }
         
-        /* 🔥 긴 곡명 슬라이드 (재생 중일 때만 애니메이션 작동) */
+        /* 🔥 정지 상태일 때는 원래 위치에 고정, 재생 중일 때만 부드럽게 슬라이드되도록 수정 */
         .now-playing-container { overflow: hidden; white-space: nowrap; width: 100%; position: relative; }
-        .now-playing { font-size: 13.5px; font-weight: bold; color: #1c2e47; display: inline-block; white-space: nowrap; padding-left: 100%; animation: marquee 15s linear infinite; }
-        .now-playing.paused { animation-play-state: paused; } /* 정지 상태일 때 멈춤 */
+        .now-playing { font-size: 13.5px; font-weight: bold; color: #1c2e47; display: inline-block; white-space: nowrap; }
+        .now-playing.playing { padding-left: 100%; animation: marquee 15s linear infinite; }
         
         @keyframes marquee {
             0% { transform: translate(0, 0); }
@@ -179,8 +179,7 @@
     <!-- 플레이어 바 -->
     <div class="player-section">
         <div class="now-playing-container">
-            <!-- 초기 상태에서는 슬라이드 멈춤(paused) 적용 -->
-            <div class="now-playing paused" id="now-playing-title">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
+            <div class="now-playing" id="now-playing-title">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
         </div>
         <audio id="audio-player" controls controlsList="nodownload" oncontextmenu="return false;" autoplay></audio>
         <div class="bg-notice">💡 화면이 꺼진 후 음악이 멈추면 스마트폰 [배터리 절전 모드]를 해제해 주세요.</div>
@@ -614,18 +613,18 @@
     const audioPlayer = document.getElementById('audio-player');
     const nowPlayingTitle = document.getElementById('now-playing-title');
 
-    // 🔥 오디오 재생/일시정지 감지 이벤트 등록 (재생할 때만 글자 흐름)
+    // 🔥 오디오 재생/일시정지 상태에 따라 슬라이드 클래스(playing) 제어
     audioPlayer.addEventListener('play', () => {
-        nowPlayingTitle.classList.remove('paused');
+        nowPlayingTitle.classList.add('playing');
     });
     audioPlayer.addEventListener('playing', () => {
-        nowPlayingTitle.classList.remove('paused');
+        nowPlayingTitle.classList.add('playing');
     });
     audioPlayer.addEventListener('pause', () => {
-        nowPlayingTitle.classList.add('paused');
+        nowPlayingTitle.classList.remove('playing');
     });
     audioPlayer.addEventListener('ended', () => {
-        nowPlayingTitle.classList.add('paused');
+        nowPlayingTitle.classList.remove('playing');
     });
 
     window.onload = function() {
@@ -856,8 +855,8 @@
         audioPlayer.play().then(() => {
             requestWakeLock();
             
-            // 재생 시작 시 애니메이션 작동
-            nowPlayingTitle.classList.remove('paused');
+            // 재생 시작될 때 슬라이드 클래스 부여
+            nowPlayingTitle.classList.add('playing');
 
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
