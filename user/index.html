@@ -91,7 +91,7 @@
         .col-num { width: 28px; text-align: center; color: #66756c; font-size: 12.5px; }
         .col-cat { width: 62px; text-align: center; }
         .col-title { font-weight: 700; color: #1e3d2f; font-size: 14px; text-align: left; }
-        .col-division { width: 62px; text-align: center; font-size: 12px; color: #2d5a43; font-weight: 600; }
+        .col-division { width: 110px; text-align: center; font-size: 12px; color: #2d5a43; font-weight: 600; } /* 가로 폭 넉넉하게 확장 */
         .col-views { width: 42px; color: #66756c; text-align: center; font-size: 11.5px; }
         .col-action { width: 48px; text-align: center; }
 
@@ -100,7 +100,7 @@
             .col-chk { width: 24px; }
             .col-num { width: 24px; }
             .col-cat { width: 56px; }
-            .col-division { width: 54px; }
+            .col-division { width: 95px; }
             .col-action { width: 46px; }
             .header h1 { font-size: 16px; }
             th, td { padding: 6px 2px; }
@@ -197,11 +197,11 @@
             <div class="search-select-group">
                 <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
                 
+                <!-- 구분 필터 드롭다운 옵션 변경 -->
                 <select id="div-select" onchange="applyFilters()">
                     <option value="전체">구분 전체</option>
-                    <option value="교본책">교본책</option>
-                    <option value="수교재">수교재</option>
-                    <option value="국민가요">국민가요</option>
+                    <option value="입문(초보)">입문(초보)</option>
+                    <option value="교정(경력)">교정(경력)</option>
                 </select>
 
                 <select id="sort-select" onchange="applyFilters()">
@@ -226,8 +226,9 @@
                     <th class="col-chk"><input type="checkbox" id="chk-all" onclick="toggleHeaderCheckbox()"></th>
                     <th class="col-num">No</th>
                     <th class="col-cat">장르</th>
-                    <th class="col-title">곡명 (입문기간)</th>
-                    <th class="col-division">구분</th>
+                    <th class="col-title">곡명</th>
+                    <!-- 열 타이틀 변경 -->
+                    <th class="col-division">입문(초보)/교정(경력)</th>
                     <th class="col-action">듣기</th>
                 </tr>
             </thead>
@@ -669,7 +670,8 @@
         currentFilteredPlaylist = masterPlaylist.filter(song => {
             const matchMain = (currentMainFilter === '전체') || (song.mainCategory === currentMainFilter);
             const matchMood = (currentMoodFilter === '전체') || (song.mood === currentMoodFilter);
-            const matchDiv = (divVal === '전체') || (song.division === divVal);
+            // 드롭다운 필터링 (입문/교정 키워드 포함 검사)
+            const matchDiv = (divVal === '전체') || (song.division.includes(divVal));
             const matchSearch = song.title.toLowerCase().includes(searchQuery) || song.division.toLowerCase().includes(searchQuery);
             return matchMain && matchMood && matchDiv && matchSearch;
         });
