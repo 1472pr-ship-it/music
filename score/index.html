@@ -57,10 +57,11 @@
         
         .sheet-preview-box { width: 100%; max-height: 420px; overflow: hidden; background: #ffffff; border: 1px solid #d2c4e2; border-radius: 6px; display: flex; justify-content: center; align-items: center; padding: 8px; position: relative; }
         .sheet-preview-img { max-width: 100%; height: auto; object-fit: contain; cursor: pointer; border-radius: 4px; user-select: none; }
-        .no-sheet-msg { color: #766391; font-size: 13px; font-weight: bold; padding: 20px 0; }
+        .no-sheet-msg { color: #3b2d54; font-size: 13.5px; font-weight: bold; padding: 20px 0; text-align: center; line-height: 1.6; }
+        .no-sheet-sub { font-size: 12px; color: #72559c; font-weight: normal; margin-top: 2px; }
         .bg-notice { font-size: 11px; color: #695682; letter-spacing: -0.3px; width: 100%; text-align: left; }
 
-        /* 상단 뷰어 슬라이드 버튼 (작고 은은한 슬림 스타일) */
+        /* 상단 뷰어 슬라이드 버튼 */
         .slide-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.35); color: #ffffff; border: none; font-size: 15px; padding: 10px 6px; cursor: pointer; border-radius: 4px; z-index: 100; display: none; transition: opacity 0.2s; }
         .slide-btn:active { background: rgba(59, 45, 84, 0.7); }
         .slide-prev { left: 4px; }
@@ -138,12 +139,11 @@
         .reply-item { background: #f3eff8; padding: 6px 10px; border-radius: 4px; }
         .reply-form { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
 
-        /* Fullscreen Image Modal (악보를 전혀 가리지 않는 슬림 반투명 버튼) */
+        /* Fullscreen Image Modal */
         .modal { display: none; position: fixed; z-index: 99999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center; overflow: auto; }
         .modal-content { max-width: 96%; max-height: 92vh; object-fit: contain; }
         .modal-close { position: absolute; top: 12px; right: 16px; color: #fff; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 100001; background: rgba(0,0,0,0.5); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
         
-        /* 악보 가림 방지: 화면 맨 가장자리에 작게 배치 + 반투명(0.35) */
         .modal-btn { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.25); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.4); font-size: 16px; padding: 12px 6px; cursor: pointer; border-radius: 4px; z-index: 100001; opacity: 0.5; transition: opacity 0.2s; display: none; }
         .modal-btn:active { opacity: 1; background: rgba(255, 255, 255, 0.6); }
         .modal-prev { left: 4px; }
@@ -194,11 +194,17 @@
         </div>
         <div class="sheet-preview-box" id="sheet-box">
             <button class="slide-btn slide-prev" id="btn-slide-prev" onclick="prevSlide()">◀</button>
-            <div class="no-sheet-msg" id="no-sheet-msg">곡을 선택하면 이곳에 악보가 표시됩니다.</div>
+            
+            <!-- 요청해주신 2줄 정돈 문구 적용 -->
+            <div class="no-sheet-msg" id="no-sheet-msg">
+                곡을 선택하면 이곳에 악보가 표시됩니다.<br>
+                <div class="no-sheet-sub">(터치시 전체화면 큰 악보로 확대됩니다)</div>
+            </div>
+
             <img id="sheet-preview-img" class="sheet-preview-img" src="" alt="악보 이미지" style="display:none;" onclick="openModal()" title="클릭하시면 크게 볼 수 있습니다">
             <button class="slide-btn slide-next" id="btn-slide-next" onclick="nextSlide()">▶</button>
         </div>
-        <div class="bg-notice">💡 두 손가락으로 악보를 늘리면 자유롭게 확대해서 보실 수 있습니다.</div>
+        <div class="bg-notice">💡 손가락으로 좌/우로 쓱 밀면(슬라이드) 다음 장이나 다음 곡 악보로 넘어갑니다.</div>
     </div>
 
     <!-- 컨트롤 바 -->
@@ -872,7 +878,6 @@
             pageIndicator.style.display = 'none';
         }
 
-        // 화살표 버튼 상태 업데이트
         btnPrev.style.display = (currentQueueIndex > 0) ? 'block' : 'none';
         btnNext.style.display = (currentQueueIndex < slideQueue.length - 1) ? 'block' : 'none';
 
@@ -901,7 +906,6 @@
         }
     }
 
-    /* 핀치 줌(두 손가락 확대)을 방해하지 않는 터치 슬라이드 로직 */
     function initTouchEvents() {
         const touchTargets = [document.getElementById('sheet-box'), document.getElementById('image-modal')];
         
@@ -910,7 +914,6 @@
             let startY = 0;
 
             target.addEventListener('touchstart', (e) => {
-                // 한 손가락 터치 시에만 슬라이드 동작 준비 (두 손가락 확대 시에는 터치 슬라이드 방지)
                 if (e.touches.length === 1) {
                     startX = e.touches[0].clientX;
                     startY = e.touches[0].clientY;
@@ -929,7 +932,6 @@
                 const diffX = startX - endX;
                 const diffY = startY - endY;
 
-                // 좌우 이동거리가 50px 이상이고, 상하 이동보다 클 때 동작
                 if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
                     if (diffX > 0) {
                         nextSlide();
