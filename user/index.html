@@ -233,8 +233,8 @@
                     <th class="col-num">No</th>
                     <th class="col-cat">테크닉</th>
                     <th class="col-title">곡명/연주자</th>
-                    <!-- 🔥 요청해주신 헤더 2줄 + 여백 최소화 구조 적용 -->
-                    <th class="col-division">연습량<br>입문(초보)/교정(경력)</th>
+                    <!-- 🔥 헤더 2줄 + 여백 최소화 구조 적용 -->
+                    <th class="col-division">연습량(적극,보통,소극)<br>입문(초보)/교정(경력)</th>
                     <th class="col-action">듣기</th>
                 </tr>
             </thead>
@@ -651,7 +651,11 @@
 
                 const divisionText = (item.division && item.division.trim() !== "") ? item.division.trim() : (item.type && item.type.trim() !== "") ? item.type.trim() : "-";
 
-                const displayTitleText = processDisplayTitle(item.title);
+                // 🔥 JSON의 title에 이미 마스킹이 적용된 경우 그대로 출력하도록 처리 (Ab 키 오적용 방지)
+                let displayTitleText = item.title;
+                if (item.title && !item.title.includes('*') && item.title.includes(' ')) {
+                    displayTitleText = processDisplayTitle(item.title);
+                }
 
                 const techText = (item.mood && item.mood.trim() !== "") ? item.mood.trim() : (item.cat && item.cat.trim() !== "") ? item.cat.trim() : "기타";
                 const yearText = (item.cat && item.cat.trim() !== "") ? item.cat.trim() : "전체";
