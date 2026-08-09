@@ -81,18 +81,19 @@
         .table-responsive { width: 100%; flex: 1; }
         table { width: 100%; border-collapse: collapse; font-size: 14.5px; text-align: left; table-layout: fixed; }
         thead { background-color: #e6f0ea; border-bottom: 2px solid #2d5a43; }
-        th, td { padding: 7px 4px; border-bottom: 1px solid #e1ebe5; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        th { color: #1e3d2f; font-weight: 700; font-size: 13.5px; }
+        th, td { padding: 6px 3px; border-bottom: 1px solid #e1ebe5; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        th { color: #1e3d2f; font-weight: 700; font-size: 13px; }
         tr:hover { background-color: #f0f7f3; }
         tr.active-row { background-color: #e2f0e7; }
         
         .col-chk { width: 28px; text-align: center; }
         .col-chk input { transform: scale(1.15); }
         .col-num { width: 28px; text-align: center; color: #66756c; font-size: 12.5px; }
-        .col-cat { width: 62px; text-align: center; }
+        .col-cat { width: 56px; text-align: center; }
         .col-title { font-weight: 700; color: #1e3d2f; font-size: 14px; text-align: left; }
-        /* 열 가로폭 자동 확장 설정 적용 */
-        .col-division { width: auto; min-width: 125px; text-align: center; font-size: 12px; color: #2d5a43; font-weight: 600; }
+        
+        /* 🔥 구분을 2줄 가로폭 최적화로 적용 */
+        .col-division { width: auto; min-width: 105px; text-align: center; font-size: 11.5px; color: #2d5a43; font-weight: 600; line-height: 1.25; }
         .col-views { width: 42px; color: #66756c; text-align: center; font-size: 11.5px; }
         .col-action { width: 48px; text-align: center; }
 
@@ -100,12 +101,11 @@
             .col-views { display: none; }
             .col-chk { width: 24px; }
             .col-num { width: 24px; }
-            .col-cat { width: 54px; }
-            /* 모바일 전용 반응형 폭 및 폰트 미세 조정 (잘림 완전 방지) */
-            .col-division { width: auto; min-width: 115px; font-size: 11.5px; letter-spacing: -0.4px; }
+            .col-cat { width: 52px; }
+            .col-division { width: auto; min-width: 100px; font-size: 11px; letter-spacing: -0.5px; }
             .col-action { width: 46px; }
             .header h1 { font-size: 16px; }
-            th, td { padding: 6px 1px; }
+            th, td { padding: 5px 1px; }
             .search-input { max-width: 110px; }
         }
 
@@ -184,7 +184,7 @@
     <!-- 플레이어 바 -->
     <div class="player-section">
         <div class="now-playing-container">
-            <div class="now-playing" id="now-playing-title">🎵 [재생] 곡 선택 & [듣기] (모든 연주는 몰래녹음 원음입니다)</div>
+            <div class="now-playing" id="now-playing-title">🎵 [재생] 곡 선택&[듣기] (모든 음원은 몰래녹음 원음입니다)</div>
         </div>
         <audio id="audio-player" controls controlsList="nodownload" oncontextmenu="return false;" autoplay></audio>
         <div class="bg-notice">💡 화면이 꺼진 후 음악이 멈추면 스마트폰 [배터리 절전 모드]를 해제해 주세요.</div>
@@ -233,7 +233,8 @@
                     <th class="col-num">No</th>
                     <th class="col-cat">테크닉</th>
                     <th class="col-title">곡명/연주자</th>
-                    <th class="col-division">입문(초보)/교정(경력자)</th>
+                    <!-- 🔥 요청해주신 헤더 2줄 + 여백 최소화 구조 적용 -->
+                    <th class="col-division">입문(초보)<br>교정(경력) / 연습량</th>
                     <th class="col-action">듣기</th>
                 </tr>
             </thead>
@@ -561,13 +562,12 @@
         return cleanNick;
     }
 
-    // 🔥 원본 파일명을 '곡명_키_마스킹연주자'로 지능형 변환하는 파서 함수
+    // 원본 파일명을 '곡명_키_마스킹연주자'로 변환하는 파서 함수
     function processDisplayTitle(fullTitle) {
         if (!fullTitle) return fullTitle;
 
         let name = fullTitle.replace(/\.(mp3|m4a|wav)$/i, '').trim();
 
-        // 1. 이미 곡명_키_닉네임 양식인 경우 (언더바 구분)
         if (name.includes('_') && !name.includes(' ')) {
             const parts = name.split('_');
             if (parts.length >= 2) {
@@ -577,7 +577,6 @@
             }
         }
 
-        // 2. 스크린샷 양식 (2022-11-15 05개월14일차 강남달 성덕윤 C 베이스 반주 등)
         let clean = name.replace(/\d{4}-\d{2}-\d{2}/g, '')
                         .replace(/[\d,]+년\s*[\d]*일/g, '')
                         .replace(/\d+개월\d*일차/g, '')
@@ -652,19 +651,17 @@
 
                 const divisionText = (item.division && item.division.trim() !== "") ? item.division.trim() : (item.type && item.type.trim() !== "") ? item.type.trim() : "-";
 
-                // 지능형 파서로 곡명_키_마스킹연주자 자동 추출
                 const displayTitleText = processDisplayTitle(item.title);
 
-                // 🔥 [핵심 수정 위치] mainCategory에 연차별(cat) 대신 테크닉(mood)이 오도록 바르게 매핑
                 const techText = (item.mood && item.mood.trim() !== "") ? item.mood.trim() : (item.cat && item.cat.trim() !== "") ? item.cat.trim() : "기타";
                 const yearText = (item.cat && item.cat.trim() !== "") ? item.cat.trim() : "전체";
 
                 return {
                     id: item.id,
-                    mainCategory: techText,     // 테이블 '테크닉' 열에 올바르게 출력
-                    mood: yearText,             // 연차별 필터링용 데이터
-                    rawTitle: item.title,       // 원본 제목
-                    title: displayTitleText,    // 화면 표시용 깔끔한 제목
+                    mainCategory: techText,     
+                    mood: yearText,             
+                    rawTitle: item.title,       
+                    title: displayTitleText,    
                     division: divisionText,
                     defaultViews: initialViews,
                     views: finalViews,
@@ -759,7 +756,6 @@
         const sortVal = document.getElementById('sort-select').value;
 
         currentFilteredPlaylist = masterPlaylist.filter(song => {
-            // 필터 교차 검색 처리
             const matchYear = (currentMainFilter === '전체') || (song.mood === currentMainFilter) || (song.mainCategory === currentMainFilter);
             const matchTech = (currentMoodFilter === '전체') || (song.mainCategory === currentMoodFilter) || (song.mood === currentMoodFilter);
             const matchDiv = (divVal === '전체') || (song.division.includes(divVal));
