@@ -195,7 +195,6 @@
         <div class="sheet-preview-box" id="sheet-box">
             <button class="slide-btn slide-prev" id="btn-slide-prev" onclick="prevSlide()">◀</button>
             
-            <!-- 요청해주신 2줄 정돈 문구 적용 -->
             <div class="no-sheet-msg" id="no-sheet-msg">
                 곡을 선택하면 이곳에 악보가 표시됩니다.<br>
                 <div class="no-sheet-sub">(터치시 전체화면 큰 악보로 확대됩니다)</div>
@@ -274,7 +273,8 @@
                 <input type="text" id="c-name" class="comment-input-name" placeholder="성함/닉네임 (필수)" maxlength="10">
             </div>
             <div>
-                <textarea id="c-text" class="comment-input-textarea" placeholder="자유롭게 편하게 소통해요^^ 악보 보관실 이용 소감이나 요청사항을 남겨주세요." oninput="autoResizeTextarea(this)"></textarea>
+                <!-- 💡 요청해주신 힌트 문구 적용 -->
+                <textarea id="c-text" class="comment-input-textarea" placeholder="악보 이용 소감이나 요청사항, 오탈자 및 오류(곡명과 악보가 다른 경우 등)를 편하게 남겨주세요^^" oninput="autoResizeTextarea(this)"></textarea>
             </div>
             <div style="display:flex; gap:6px;">
                 <button class="btn-submit-comment" id="c-submit-btn" onclick="addComment()">등록하기</button>
