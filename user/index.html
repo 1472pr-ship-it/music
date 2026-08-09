@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -6,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:type" content="website">
     <meta property="og:title" content="수강생 연주 자람실 - 수하모니카">
-    <meta property="og:description" content="하모니카를 향한 첫걸음과 순수한 열정, 서로를 따뜻하게 응원하는 수강생 연주 공간">
+    <meta property="og:description" content="수강생 연주 자람실 공간입니다.">
     <meta property="og:image" content="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
     <meta property="og:url" content="https://suhamo.com/user">
-    <title>수강생 연주 자람실 | 수하모니카</title>
-    <!-- 검색엔진 노출 및 링크 수집 완전 차단 -->
+    <title>수강생 연주 자람실 - 수하모니카</title>
+    <!-- 검색엔진 노출 차단 -->
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,118 +25,197 @@
             width: 100%; 
             max-width: 600px; 
             background: #ffffff; 
-            padding: 14px 16px; 
+            padding: 12px 14px; 
             display: flex; 
             flex-direction: column; 
             box-shadow: 0 0 10px rgba(0,0,0,0.05); 
             min-height: 100vh;
         }
         
-        /* 헤더 디자인 (자람실 상징 그린 테마) */
-        .header { 
-            text-align: center; 
-            padding: 10px 0 12px 0; 
-            border-bottom: 2px solid #32593d; 
-            position: relative;
-        }
-        .nav-back {
-            position: absolute;
-            left: 0;
-            top: 10px;
-            text-decoration: none;
-            color: #1f402b;
-            font-weight: bold;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 2px;
-        }
-        .header h1 { font-size: 20px; color: #1f402b; font-weight: bold; margin-bottom: 3px; }
-        .header p { font-size: 12.5px; color: #5a6e60; word-break: keep-all; }
-
-        /* 안내 공지 카드 */
-        .notice-box {
-            background-color: #f4f7f4;
-            border-left: 4px solid #32593d;
-            padding: 12px 14px;
-            border-radius: 6px;
-            margin: 14px 0;
-            font-size: 12.5px;
-            color: #3b4e41;
-            line-height: 1.5;
-        }
-
-        /* 수강생 연주 리스트 */
-        .post-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .post-card {
-            border: 1px solid #e2ebd8;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #ffffff;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            transition: transform 0.2s;
-        }
-        
-        .post-header {
-            padding: 12px 14px 8px 14px;
-            background: #fafcf9;
-            border-bottom: 1px solid #edf2e8;
+        /* 상단 헤더 (반주 연습실 동일 구조) */
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 6px 0 10px 0;
+            border-bottom: 2px solid #1f402b;
         }
-        .post-title {
-            font-size: 15px;
+        .header-title {
+            font-size: 18px;
             font-weight: bold;
             color: #1f402b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .post-meta {
-            font-size: 11.5px;
-            color: #768a7b;
-        }
-
-        /* 영상 응답형 컨테이너 */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 비율 */
-            height: 0;
-            overflow: hidden;
-            background: #000;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-
-        .post-body {
-            padding: 12px 14px;
-            font-size: 13px;
-            color: #4a423d;
-            line-height: 1.55;
-            word-break: keep-all;
-        }
-        
-        .teacher-comment {
-            margin-top: 8px;
-            padding: 8px 10px;
-            background: #f0f5ed;
+        .btn-home {
+            background-color: #5a6e60;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 5px 10px;
             border-radius: 6px;
             font-size: 12px;
-            color: #2b4533;
+            font-weight: bold;
         }
-        .teacher-comment span {
+
+        /* 필터 버튼 구역 (경력/연차별, 곡 유형별) */
+        .filter-section {
+            margin: 10px 0 6px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .filter-label {
+            font-size: 12px;
+            font-weight: bold;
+            background: #eef3ed;
+            color: #1f402b;
+            padding: 4px 8px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .btn-filter {
+            background: #ffffff;
+            border: 1px solid #d0dad2;
+            color: #4a594e;
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .btn-filter.active {
+            background: #1f402b;
+            color: #ffffff;
+            border-color: #1f402b;
+            font-weight: bold;
+        }
+
+        /* 플레이어 구역 */
+        .player-box {
+            background: #f4f7f4;
+            border: 1px solid #d0dad2;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 8px 0;
+            text-align: center;
+        }
+        .player-status {
+            font-size: 13px;
             font-weight: bold;
             color: #1f402b;
+            margin-bottom: 6px;
+        }
+        audio {
+            width: 100%;
+            height: 36px;
+        }
+        .player-notice {
+            font-size: 11px;
+            color: #768a7b;
+            margin-top: 6px;
+        }
+
+        /* 컨트롤 및 검색바 구역 */
+        .ctrl-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+            gap: 6px;
+        }
+        .btn-action {
+            background: #2d5a43;
+            color: #ffffff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .total-count {
+            font-size: 12px;
+            color: #5a6e60;
+            font-weight: bold;
+        }
+        
+        .search-row {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .select-box {
+            padding: 6px 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        /* 음원 리스트 테이블 (반주 연습실 동일 스타일) */
+        .track-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .track-table th {
+            background: #eef3ed;
+            color: #1f402b;
+            padding: 8px 4px;
+            border-bottom: 1px solid #d0dad2;
+            font-weight: bold;
+            text-align: center;
+        }
+        .track-table td {
+            padding: 9px 4px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+            color: #333;
+        }
+        .track-table tr:hover {
+            background-color: #f9fbf9;
+        }
+
+        /* 구분 태그 (입문3개월, 타기관5년, 수하모1년 등) */
+        .tag-badge {
+            display: inline-block;
+            background: #e4ebe5;
+            color: #1f402b;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .tag-compare {
+            background: #fbeae8;
+            color: #a83232;
+        }
+
+        .btn-play-sm {
+            background: #ffffff;
+            border: 1px solid #1f402b;
+            color: #1f402b;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-play-sm:hover {
+            background: #1f402b;
+            color: #ffffff;
         }
 
         .footer { 
@@ -149,7 +227,7 @@
             margin-top: auto;
         }
 
-        /* 인증 잠금 안내 화면 */
+        /* 잠금 화면 */
         .lock-card {
             background: #ffffff;
             border-radius: 16px;
@@ -159,7 +237,6 @@
             margin: 20px 0;
             box-shadow: 0 4px 15px rgba(0,0,0,0.04);
         }
-        .lock-icon { font-size: 50px; margin-bottom: 12px; }
         .lock-title { font-size: 19px; font-weight: bold; color: #5c2028; margin-bottom: 10px; }
         .lock-desc { font-size: 14px; color: #6e5d52; line-height: 1.6; word-break: keep-all; }
     </style>
@@ -167,67 +244,116 @@
 <body>
 
 <div class="container">
-    <!-- 헤더 구역 -->
-    <div class="header">
-        <a href="/" class="nav-back">◀ 홈</a>
-        <h1>🌱 수강생 연주 자람실</h1>
-        <p>순수한 열정으로 가꾸어 가는 우리들의 소리 공간</p>
-    </div>
-
-    <!-- 1. 인증 완료 시 보이는 본문 콘텐츠 -->
+    <!-- 인증 완료 시 화면 -->
     <div id="content-area" style="display: none;">
         
-        <!-- 자람실 따뜻한 안내문 -->
-        <div class="notice-box">
-            <b>💚 배움과 성장의 기록</b><br>
-            완벽하지 않아도 괜찮습니다. 첫 바른 호흡을 터뜨린 순간부터 곡을 완성해 가는 모든 과정이 소중한 자산입니다. 서로 따뜻한 격려와 응원을 나누어 주세요^^
+        <!-- 상단 헤더 -->
+        <div class="header-top">
+            <div class="header-title">🌱 수강생 연주 자람실</div>
+            <a href="/" class="btn-home">🏠 메인으로</a>
         </div>
 
-        <!-- 게시물 목록 -->
-        <div class="post-list">
-            
-            <!-- 예시 게시물 1 -->
-            <div class="post-card">
-                <div class="post-header">
-                    <div class="post-title">🎵 [입문 6개월 차] 과수원 길 - C키 정통 복간 호흡</div>
-                    <div class="post-meta">김〇〇 수강생</div>
-                </div>
-                <!-- 유튜브 영상 삽입 위치 (SRC에 유튜브 Embed 주소 입력) -->
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                </div>
-                <div class="post-body">
-                    복식 호흡을 신경 쓰며 입술 힘을 빼고 차분하게 연주해 보았습니다. 아직 미흡하지만 끝까지 완곡할 수 있어서 기쁩니다!
-                    <div class="teacher-comment">
-                        <span>💬 선생님 격려:</span> 얕은 호흡 습관을 버리고 맑고 깊은 울림을 만들어내셨네요. 정통 음색이 아주 근사하게 잡혀가고 있습니다!
-                    </div>
-                </div>
+        <!-- 카테고리 필터 (경력/구분별) -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <span class="filter-label">🌱 연차별</span>
+                <button class="btn-filter active">전체</button>
+                <button class="btn-filter">입문(1~3개월)</button>
+                <button class="btn-filter">초급(6개월~1년)</button>
+                <button class="btn-filter">중급이상</button>
             </div>
-
-            <!-- 예시 게시물 2 -->
-            <div class="post-card">
-                <div class="post-header">
-                    <div class="post-title">🎶 [1년 차 도전] 등대지기 - A키 분산음화 기법 연습</div>
-                    <div class="post-meta">이〇〇 수강생</div>
-                </div>
-                <div class="post-body">
-                    박자기에 맞춰 베이스 박자를 놓치지 않으려 연습 중입니다. 매주 소리가 조금씩 맑아지는 것을 느껴 보람차네요^^
-                    <div class="teacher-comment">
-                        <span>💬 선생님 격려:</span> 입모양 주법 교정 후 음의 명확도가 훨씬 좋아지셨습니다. 아주 멋진 성장입니다!
-                    </div>
-                </div>
+            <div class="filter-group">
+                <span class="filter-label">🔊 소리비교</span>
+                <button class="btn-filter active">전체</button>
+                <button class="btn-filter">수하모 1년 차</button>
+                <button class="btn-filter">타기관 5년 차</button>
             </div>
-
         </div>
+
+        <!-- 메인 음원 플레이어 -->
+        <div class="player-box">
+            <div id="player-title" class="player-status">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
+            <audio id="main-audio" controls>
+                <source id="audio-source" src="" type="audio/mpeg">
+                브라우저가 오디오 요소를 지원하지 않습니다.
+            </audio>
+            <div class="player-notice">💡 화면이 꺼진 후 음악이 멈추면 스마트폰 [배터리 절전 모드]를 해제해 주세요.</div>
+        </div>
+
+        <!-- 컨트롤 버튼 및 검색 구역 -->
+        <div class="ctrl-bar">
+            <div>
+                <button class="btn-action">전체선택</button>
+                <button class="btn-action">선택듣기</button>
+            </div>
+            <div class="total-count">총 4곡</div>
+        </div>
+
+        <div class="search-row">
+            <input type="text" class="search-input" placeholder="곡명 또는 수강생 검색...">
+            <select class="select-box">
+                <option>구분 전체</option>
+                <option>교본곡</option>
+                <option>자유곡</option>
+            </select>
+            <select class="select-box">
+                <option>최신순</option>
+            </select>
+        </div>
+
+        <!-- 음원 목록 테이블 -->
+        <table class="track-table">
+            <thead>
+                <tr>
+                    <th style="width: 8%;"><input type="checkbox"></th>
+                    <th style="width: 10%;">No</th>
+                    <th style="width: 25%;">구분/연차</th>
+                    <th style="width: 42%;">곡명 (수강생/연주)</th>
+                    <th style="width: 15%;">듣기</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 예시 음원 목록 (MP3 파일 링크 지정) -->
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>4</td>
+                    <td><span class="tag-badge">수하모 1년</span></td>
+                    <td style="text-align: left; font-weight: bold;">과수원길_C (복식호흡 완성)</td>
+                    <td><button class="btn-play-sm" onclick="playAudio('과수원길_C (수하모 1년 차)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">듣기</button></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>3</td>
+                    <td><span class="tag-badge tag-compare">타기관 5년</span></td>
+                    <td style="text-align: left; font-weight: bold;">과수원길_C (입모양 정체기)</td>
+                    <td><button class="btn-play-sm" onclick="playAudio('과수원길_C (타기관 5년 차)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3')">듣기</button></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>2</td>
+                    <td><span class="tag-badge">입문 3개월</span></td>
+                    <td style="text-align: left; font-weight: bold;">등대지기_C (첫 완곡 연주)</td>
+                    <td><button class="btn-play-sm" onclick="playAudio('등대지기_C (입문 3개월)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3')">듣기</button></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>1</td>
+                    <td><span class="tag-badge">입문 1개월</span></td>
+                    <td style="text-align: left; font-weight: bold;">비행기_C (기초 음쇠 다지기)</td>
+                    <td><button class="btn-play-sm" onclick="playAudio('비행기_C (입문 1개월)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3')">듣기</button></td>
+                </tr>
+            </tbody>
+        </table>
+
     </div>
 
-    <!-- 2. 미인증 접속 시 보안 잠금 화면 -->
+    <!-- 미인증 외부인 접근 차단 화면 -->
     <div id="lock-area" class="lock-card" style="display: none;">
-        <div class="lock-icon">🔒</div>
+        <div style="font-size: 50px; margin-bottom: 12px;">🔒</div>
         <div class="lock-title">수강생 전용 공간입니다</div>
         <div class="lock-desc">
-            본 페이지는 수하모니카 수강생 및 동호인 전용 학습 공간입니다.<br><br>
-            메인 페이지에서 <b>수강생 비밀 인증</b>을 먼저 진행해 주시기 바랍니다.
+            본 웹사이트는 수하모니카 수강생분들을 위한 전용 공간입니다.<br><br>
+            메인 페이지에서 <b>수강생 전용 비밀 링크</b>를 통해 접속해 주시기 바랍니다.
         </div>
     </div>
 
@@ -238,7 +364,7 @@
 
 <script>
     (function() {
-        // 메인 페이지 인증 확인 (localStorage 값 검증)
+        // 비밀키 인증 여부 확인
         const isAuth = localStorage.getItem('suhamo_access') === 'granted';
 
         if (isAuth) {
@@ -247,6 +373,18 @@
             document.getElementById('lock-area').style.display = 'block';
         }
     })();
+
+    // 음원 재생 함수
+    function playAudio(title, url) {
+        const playerTitle = document.getElementById('player-title');
+        const audio = document.getElementById('main-audio');
+        const source = document.getElementById('audio-source');
+
+        playerTitle.innerText = "🎵 [재생 중] " + title;
+        source.src = url;
+        audio.load();
+        audio.play();
+    }
 </script>
 
 </body>
