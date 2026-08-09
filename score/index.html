@@ -62,10 +62,10 @@
         .bg-notice { font-size: 11px; color: #695682; letter-spacing: -0.3px; width: 100%; text-align: left; }
 
         /* 상단 뷰어 슬라이드 버튼 */
-        .slide-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.35); color: #ffffff; border: none; font-size: 15px; padding: 10px 6px; cursor: pointer; border-radius: 4px; z-index: 100; display: none; transition: opacity 0.2s; }
+        .slide-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.35); color: #ffffff; border: none; font-size: 14px; padding: 10px 3px; cursor: pointer; border-radius: 3px; z-index: 100; display: none; transition: opacity 0.2s; }
         .slide-btn:active { background: rgba(59, 45, 84, 0.7); }
-        .slide-prev { left: 4px; }
-        .slide-next { right: 4px; }
+        .slide-prev { left: 2px; }
+        .slide-next { right: 2px; }
 
         /* Control Bar */
         .control-bar { background: #faf8fc; border-bottom: 1px solid #e2d9ec; padding: 6px 10px; display: flex; flex-direction: column; gap: 6px; }
@@ -144,11 +144,11 @@
         .modal-content { max-width: 96%; max-height: 92vh; object-fit: contain; z-index: 100000; }
         .modal-close { position: absolute; top: 12px; right: 16px; color: #fff; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 100005; background: rgba(0,0,0,0.5); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
         
-        /* 💡 핵심 수정: z-index: 100005 로 악보 이미지 위로 완벽히 배치 */
-        .modal-btn { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.75); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.6); font-size: 18px; padding: 12px 8px; cursor: pointer; border-radius: 6px; z-index: 100005; opacity: 0.85; transition: opacity 0.2s; display: none; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+        /* 💡 슬림 슬라이드 버튼 (좌우 여백 10px 3px로 8px 축소 및 화살표 크기 조정) */
+        .modal-btn { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.75); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.5); font-size: 15px; padding: 10px 3px; cursor: pointer; border-radius: 4px; z-index: 100005; opacity: 0.85; transition: opacity 0.2s; display: none; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
         .modal-btn:active { opacity: 1; background: rgba(83, 62, 115, 0.95); }
-        .modal-prev { left: 6px; }
-        .modal-next { right: 6px; }
+        .modal-prev { left: 2px; }
+        .modal-next { right: 2px; }
         .modal-info { position: absolute; top: 12px; left: 16px; color: #ffffff; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 12px; z-index: 100005; max-width: 65%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     </style>
 </head>
