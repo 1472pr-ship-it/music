@@ -13,7 +13,7 @@
     <!-- 카카오톡 및 SNS 공유용 오픈 그래프(OG) 태그 -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="수하모 7080 음악실">
-    <meta property="og:description" content="🎸 7080 추억의 가요 및 명곡들을 함께 감상하고 연습하는 레트로 음악실">
+    <meta property="og:description" content="🎶 C, A, Am 키별로 틀어놓고 혼자서도 신나게 연습하는 명품 MR 모음">
     <meta property="og:image" content="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
     <meta property="og:url" content="https://suhamo.com/7080">
     
@@ -33,7 +33,7 @@
         body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background-color: #ffffff; color: #222831; margin: 0; display: flex; justify-content: center; }
         .container { width: 100%; max-width: 850px; background: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* Header - 메인페이지 7080 버튼과 동일한 다크 브라운 그라데이션 적용 */
+        /* Header - 메인 7080 카드 다크 브라운 톤 */
         .header { background: linear-gradient(135deg, #4d3323, #6e4a33); color: #ffffff; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; position: relative; }
         .header-title-link { text-decoration: none; color: #f7eedf; display: flex; align-items: center; gap: 6px; }
         .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: #f7eedf; }
@@ -41,7 +41,7 @@
         .btn-home { background: rgba(255, 255, 255, 0.18); color: #ffffff; text-decoration: none; padding: 4px 10px; border-radius: 14px; font-size: 12px; font-weight: bold; border: 1px solid rgba(255, 255, 255, 0.3); transition: background 0.2s; white-space: nowrap; }
         .btn-home:active { background: rgba(255, 255, 255, 0.4); }
 
-        /* Filter Section - 차분한 웜 베이지 베이스 */
+        /* Filter Section */
         .filter-section { background-color: #f7f3ee; border-bottom: 1px solid #e3d7cb; padding: 5px 8px; display: flex; flex-direction: column; gap: 4px; }
         .filter-row { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; width: 100%; }
         .filter-label { font-size: 11px; font-weight: bold; color: #4d3323; min-width: 50px; background: #e3d7cb; padding: 3px 4px; border-radius: 4px; text-align: center; flex-shrink: 0; white-space: nowrap; }
@@ -140,6 +140,7 @@
     </style>
 </head>
 
+<!-- 페이지 전체 우클릭, 드래그, 영역 선택 차단 설정 적용 -->
 <body oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
 
 <div class="container">
@@ -151,7 +152,7 @@
         <a href="/" class="btn-home">🏠 메인으로</a>
     </div>
 
-    <!-- 알약 필터 (반주 연습실과 100% 동일하게 통일) -->
+    <!-- 🔥 알약 필터 (반주 연습실과 100% 동일하게 교체) -->
     <div class="filter-section">
         <div class="filter-row">
             <span class="filter-label">🎼 장르</span>
@@ -197,6 +198,7 @@
             <div class="search-select-group">
                 <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
                 
+                <!-- 🔥 구분 선택도 반주 연습실과 100% 동일하게 통일 -->
                 <select id="div-select" onchange="applyFilters()">
                     <option value="전체">구분 전체</option>
                     <option value="교본책">교본책</option>
@@ -241,9 +243,9 @@
 
     <!-- 댓글 영역 -->
     <div class="comment-section">
-        <div class="comment-header">💬 7080 음악실 추억 공유 및 감상 소감</div>
+        <div class="comment-header">💬 7080 음악실 연습 소감 및 반주 요청 한마디</div>
         <div class="comment-notice">
-            💡 함께 나누고 싶은 음악 이야기나 신청곡이 있으시다면 편하게 남겨주세요^^
+            💡 필요하신 반주 요청해 주시면 준비되는 대로 올려드리겠습니다^^
         </div>
         
         <div class="comment-form" id="main-comment-form">
@@ -251,7 +253,7 @@
                 <input type="text" id="c-name" class="comment-input-name" placeholder="성함/닉네임 (필수)" maxlength="10">
             </div>
             <div>
-                <textarea id="c-text" class="comment-input-textarea" placeholder="자유롭게 편하게 소통해요^^ 음악 감상 이야기나 신청곡을 편하게 남겨주세요." oninput="autoResizeTextarea(this)"></textarea>
+                <textarea id="c-text" class="comment-input-textarea" placeholder="자유롭게 편하게 소통해요^^ 연습 소감이나 잘 활용하고 계신 이야기 등 편하게 남겨주세요." oninput="autoResizeTextarea(this)"></textarea>
             </div>
             <div style="display:flex; gap:6px;">
                 <button class="btn-submit-comment" id="c-submit-btn" onclick="addComment()">등록하기</button>
