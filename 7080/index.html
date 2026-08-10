@@ -1,206 +1,885 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <!-- PWA 웹앱 설정 -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
+    <link rel="icon" href="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#d97706">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- 카카오톡 및 SNS 공유용 오픈 그래프(OG) 태그 -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="수하모니카 - 수강생 전용 음악 공간">
-    <meta property="og:description" content="수하모니카 수강생 전용 공간입니다.">
+    <meta property="og:title" content="수하모 7080 음악실">
+    <meta property="og:description" content="🎸 7080 추억의 가요 및 명곡들을 함께 감상하고 연습하는 레트로 음악실">
     <meta property="og:image" content="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
-    <meta property="og:url" content="https://suhamo.com/">
-    <title>수하모니카 (suhamo.com)</title>
-    <!-- 검색엔진 노출 및 링크 수집 완전 차단 -->
-    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta property="og:url" content="https://suhamo.com/7080">
+    
+    <!-- 비밀 링크 접속 제어 -->
+    <script>
+    if (localStorage.getItem('suhamo_access') !== 'granted') {
+        alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
+        window.location.href = '/';
+    }
+    </script>
+    
+    <title>수하모 7080 음악실</title>
+    <!-- 검색엔진 노출 및 링크 수집 차단 -->
+    <meta name="robots" content="noindex, nofollow">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; 
-            background-color: #fcfbf9; 
-            color: #332d29; 
-            display: flex; 
-            justify-content: center; 
-        }
+        body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background-color: #ffffff; color: #222831; margin: 0; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 850px; background: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
         
-        .container { 
-            width: 100%; 
-            max-width: 600px; 
-            background: #ffffff; 
-            padding: 12px 14px; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 0 10px rgba(0,0,0,0.05); 
-        }
+        /* Header - 7080 레트로 웜 테마 */
+        .header { background: linear-gradient(135deg, #d97706, #b45309); color: #ffffff; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+        .header-title-link { text-decoration: none; color: #fffbeb; display: flex; align-items: center; gap: 6px; }
+        .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: #fffbeb; }
         
-        .header { text-align: center; padding: 4px 0 8px 0; border-bottom: 2px solid #8b3a42; }
-        .header h1 { font-size: 21px; color: #5c2028; font-weight: bold; margin-bottom: 2px; }
-        .header p { font-size: 13px; color: #78675a; }
+        .btn-home { background: rgba(255, 255, 255, 0.18); color: #ffffff; text-decoration: none; padding: 4px 10px; border-radius: 14px; font-size: 12px; font-weight: bold; border: 1px solid rgba(255, 255, 255, 0.3); transition: background 0.2s; white-space: nowrap; }
+        .btn-home:active { background: rgba(255, 255, 255, 0.4); }
 
-        .menu-list { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 9px; 
-            margin: 10px 0; 
-        }
-        .menu-card { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 12px 16px; 
-            border-radius: 12px; 
-            text-decoration: none; 
-            color: #ffffff; 
-            transition: transform 0.2s, box-shadow 0.2s; 
-            cursor: pointer; 
-        }
-        .menu-card:active { transform: scale(0.98); }
+        /* Filter Section */
+        .filter-section { background-color: #fef3c7; border-bottom: 1px solid #fde68a; padding: 5px 8px; display: flex; flex-direction: column; gap: 4px; }
+        .filter-row { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; width: 100%; }
+        .filter-label { font-size: 11px; font-weight: bold; color: #78350f; min-width: 50px; background: #fde68a; padding: 3px 4px; border-radius: 4px; text-align: center; flex-shrink: 0; white-space: nowrap; }
+        .filter-buttons { display: flex; gap: 3px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 1px; flex-grow: 1; }
+        .filter-buttons::-webkit-scrollbar { display: none; }
+        .btn-filter { padding: 3px 8px; font-size: 11.5px; font-weight: 600; color: #92400e; background: #ffffff; border: 1px solid #fcd34d; border-radius: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+        .btn-filter.active { background-color: #b45309; color: #ffffff; border-color: #b45309; }
+        .btn-filter-sub.active { background-color: #d97706; color: #ffffff; border-color: #d97706; }
+
+        /* Player Section */
+        .player-section { background: #fffbeb; border-bottom: 2px solid #b45309; color: #78350f; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; }
         
-        /* 게시판별 테마 컬러 */
-        .card-play { background: linear-gradient(135deg, #5c2028, #8b3a42); }
-        .card-mr { background: linear-gradient(135deg, #1c2e47, #2b4263); }
-        .card-score { background: linear-gradient(135deg, #3b2d54, #533e73); }
-        .card-user { background: linear-gradient(135deg, #1f402b, #32593d); } /* 자람실 차분한 그린 테마 */
-        .card-7080 { background: linear-gradient(135deg, #4d3323, #6e4a33); }
-        .card-master { background: linear-gradient(135deg, #3d1731, #5c234a); }
-
-        .card-info h2 { font-size: 16px; font-weight: bold; margin-bottom: 3px; }
-        .card-info p { 
-            font-size: 12px; 
-            opacity: 0.92; 
-            line-height: 1.35; 
-            word-break: keep-all;
-        }
-        .card-arrow { font-size: 16px; font-weight: bold; padding-left: 8px; flex-shrink: 0; }
-
-        .footer { 
-            text-align: center; 
-            padding: 8px 0 4px 0; 
-            font-size: 11.5px; 
-            color: #8c7b6e; 
-            border-top: 1px solid #eee5da; 
-            margin-top: 4px;
+        .now-playing-container { overflow: hidden; white-space: nowrap; width: 100%; position: relative; }
+        .now-playing { font-size: 13.5px; font-weight: bold; color: #78350f; display: inline-block; white-space: nowrap; }
+        .now-playing.playing { padding-left: 100%; animation: marquee 15s linear infinite; }
+        
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
         }
 
-        /* 잠금 상태 화면 디자인 */
-        .lock-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 30px 20px;
-            text-align: center;
-            border: 1px solid #eee5da;
-            margin: 20px 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        audio { width: 100%; height: 38px; outline: none; border-radius: 6px; }
+        .bg-notice { font-size: 11px; color: #92400e; letter-spacing: -0.3px; margin-top: 1px; }
+
+        /* Control Bar */
+        .control-bar { background: #fffdf5; border-bottom: 1px solid #fde68a; padding: 6px 10px; display: flex; flex-direction: column; gap: 6px; }
+        .control-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; }
+        .btn-group { display: flex; gap: 4px; align-items: center; }
+        .btn { background-color: #ffffff; border: 1px solid #fcd34d; color: #78350f; padding: 5px 10px; font-size: 12.5px; border-radius: 4px; cursor: pointer; font-weight: bold; white-space: nowrap; }
+        .btn-primary { background-color: #b45309; color: #ffffff; border-color: #b45309; }
+
+        .search-select-group { display: flex; gap: 4px; align-items: center; flex-grow: 1; justify-content: flex-end; }
+        .search-input { padding: 5px 8px; font-size: 12.5px; border: 1px solid #fcd34d; border-radius: 4px; outline: none; flex-grow: 1; max-width: 160px; }
+        select { padding: 4px 6px; font-size: 12px; border: 1px solid #fcd34d; border-radius: 4px; background: #fff; cursor: pointer; font-weight: 600; color: #78350f; }
+
+        /* Table Area */
+        .table-responsive { width: 100%; flex: 1; }
+        table { width: 100%; border-collapse: collapse; font-size: 14.5px; text-align: left; table-layout: fixed; }
+        thead { background-color: #fef3c7; border-bottom: 2px solid #b45309; }
+        th, td { padding: 7px 4px; border-bottom: 1px solid #fde68a; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        th { color: #78350f; font-weight: 700; font-size: 13.5px; }
+        tr:hover { background-color: #fffdf5; }
+        tr.active-row { background-color: #fde68a; }
+        
+        .col-chk { width: 28px; text-align: center; }
+        .col-chk input { transform: scale(1.15); }
+        .col-num { width: 28px; text-align: center; color: #b45309; font-size: 12.5px; }
+        .col-cat { width: 62px; text-align: center; }
+        .col-title { font-weight: 700; color: #78350f; font-size: 14px; text-align: left; }
+        .col-division { width: 62px; text-align: center; font-size: 12px; color: #b45309; font-weight: 600; }
+        .col-views { width: 42px; color: #b45309; text-align: center; font-size: 11.5px; }
+        .col-action { width: 48px; text-align: center; }
+
+        @media (max-width: 600px) {
+            .col-views { display: none; }
+            .col-chk { width: 24px; }
+            .col-num { width: 24px; }
+            .col-cat { width: 56px; }
+            .col-division { width: 54px; }
+            .col-action { width: 46px; }
+            .header h1 { font-size: 16px; }
+            th, td { padding: 6px 2px; }
+            .search-input { max-width: 110px; }
         }
-        .lock-icon { font-size: 50px; margin-bottom: 12px; }
-        .lock-title { font-size: 19px; font-weight: bold; color: #5c2028; margin-bottom: 10px; }
-        .lock-desc { font-size: 14px; color: #6e5d52; line-height: 1.6; word-break: keep-all; }
+
+        .badge-main { display: inline-block; padding: 2px 4px; border-radius: 3px; font-size: 10.5px; background-color: #fde68a; color: #78350f; font-weight: bold; }
+        .btn-play-single { padding: 4px 6px; font-size: 11.5px; background-color: #ffffff; border: 1px solid #b45309; border-radius: 4px; cursor: pointer; color: #b45309; font-weight: bold; white-space: nowrap; }
+        .btn-play-single:hover { background-color: #b45309; color: #ffffff; }
+
+        .pagination-container { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 12px; background-color: #fffdf5; border-top: 2px solid #b45309; }
+        .page-btn { padding: 6px 14px; font-size: 14px; font-weight: bold; color: #78350f; background: #ffffff; border: 1px solid #fcd34d; border-radius: 5px; cursor: pointer; }
+        .page-btn.active { background-color: #b45309; color: #ffffff; border-color: #b45309; }
+
+        /* Comment Section */
+        .comment-section { background-color: #fffdf5; border-top: 3px solid #b45309; padding: 16px 12px; margin-top: 10px; }
+        .comment-header { font-size: 15px; font-weight: bold; color: #78350f; margin-bottom: 6px; }
+        .comment-notice { font-size: 12px; color: #92400e; margin-bottom: 12px; line-height: 1.4; }
+        .comment-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; background: #fff; padding: 12px; border: 1px solid #fde68a; border-radius: 6px; }
+        
+        .comment-input-name { width: 140px; padding: 8px 10px; font-size: 13.5px; border: 1px solid #fcd34d; border-radius: 4px; }
+        .comment-input-textarea { width: 100%; min-height: 70px; padding: 8px 10px; font-size: 14px; font-family: inherit; border: 1px solid #fcd34d; border-radius: 4px; resize: vertical; line-height: 1.4; }
+        .btn-submit-comment { width: 100%; padding: 11px; background-color: #b45309; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 15px; }
+        
+        .comment-list { display: flex; flex-direction: column; gap: 10px; }
+        .comment-item { background: #ffffff; border: 1px solid #fde68a; border-radius: 6px; padding: 10px 12px; }
+        .comment-author { font-size: 13px; font-weight: bold; color: #78350f; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .comment-date { font-size: 11px; color: #92400e; font-weight: normal; margin-left: 6px; }
+        .comment-body { font-size: 14px; color: #222831; line-height: 1.5; word-break: break-all; margin-top: 2px; white-space: pre-wrap; }
+        .action-btns { display: flex; gap: 8px; margin-top: 6px; }
+        .reply-btn { font-size: 11.5px; background: none; border: none; cursor: pointer; text-decoration: underline; font-weight: bold; color: #d97706; }
+        .edit-btn { font-size: 11px; background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-weight: bold; margin-right: 4px; }
+        .del-btn { font-size: 11px; background: #f2d7d7; color: #900; border: 1px solid #e0b0b0; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-weight: bold; }
+        .reply-list { margin-top: 8px; padding-left: 10px; border-left: 2px solid #fde68a; display: flex; flex-direction: column; gap: 6px; }
+        .reply-item { background: #fffdf5; padding: 6px 10px; border-radius: 4px; }
+        .reply-form { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
     </style>
 </head>
-<body>
+
+<body oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
 
 <div class="container">
+    <!-- 헤더 영역 -->
     <div class="header">
-        <h1>🎷 수하모니카</h1>
-        <p>평생 곁을 지켜줄 가장 따뜻한 친구, 하모니카</p>
+        <a href="/" class="header-title-link" title="메인 홈으로 이동">
+            <h1>🎸 수하모 7080 음악실</h1>
+        </a>
+        <a href="/" class="btn-home">🏠 메인으로</a>
     </div>
 
-    <!-- 1. 인증 완료 시 보이는 정상 메뉴 목록 -->
-    <div id="content-area" class="menu-list" style="display: none;">
-        <!-- [1] 수하모 연주 성장실 -->
-        <a href="/play" class="menu-card card-play">
-            <div class="card-info">
-                <h2>🎷 수하모 연주 성장실</h2>
-                <p>입문 5개월부터 5년 차까지, 내 연주 소리의 미래를 직관적으로 확인하세요.</p>
+    <!-- 알약 필터 -->
+    <div class="filter-section">
+        <div class="filter-row">
+            <span class="filter-label">🎼 장르</span>
+            <div class="filter-buttons">
+                <button class="btn-filter btn-main active" onclick="setMainCategory('전체', this)">전체</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('7080가요', this)">7080가요</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('포크/통기타', this)">포크/통기타</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('명품트롯', this)">명품트롯</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('팝/팝송', this)">팝/팝송</button>
             </div>
-            <div class="card-arrow">▶</div>
-        </a>
-
-        <!-- [2] 수하모 반주 연습실 -->
-        <a href="/mr" class="menu-card card-mr">
-            <div class="card-info">
-                <h2>🎶 수하모 반주 연습실</h2>
-                <p>C, A, Am 키별로 틀어놓고 혼자서도 신나게 연습하는 명품 MR 모음</p>
+        </div>
+        <div class="filter-row">
+            <span class="filter-label">🎶 분위기</span>
+            <div class="filter-buttons">
+                <button class="btn-filter btn-filter-sub btn-sub active" onclick="setMoodCategory('전체', this)">전체</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('통기타/서정', this)">☕ 통기타/서정</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('신나는/고고', this)">📻 신나는/고고</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('추억의명곡', this)">🎷 추억의명곡</button>
             </div>
-            <div class="card-arrow">▶</div>
-        </a>
-
-        <!-- [3] 수하모 악보 보관실 -->
-        <a href="/score" class="menu-card card-score">
-            <div class="card-info">
-                <h2>🎼 수하모 악보 보관실</h2>
-                <p>언제 어디서나 스마트폰으로 편하게 펼쳐보는 C, A, Am 키별 정밀 악보 모음</p>
-            </div>
-            <div class="card-arrow">▶</div>
-        </a>
-
-        <!-- [4] 수강생 연주 자람실 (정식 링크 /user 로 연결 완료) -->
-        <a href="/user" class="menu-card card-user">
-            <div class="card-info">
-                <h2>🌱 수강생 연주 자람실</h2>
-                <p>하모니카를 향한 첫걸음과 순수한 열정, 서로를 따뜻하게 응원하는 공간</p>
-            </div>
-            <div class="card-arrow">▶</div>
-        </a>
-
-        <!-- [5] 수하모 7080 음악실 -->
-        <a href="javascript:void(0);" onclick="alert('📻 추억의 명곡을 담은 7080 음악실을 정성껏 준비 중입니다. 곧 오픈하겠습니다^^');" class="menu-card card-7080">
-            <div class="card-info">
-                <h2>📻 수하모 7080 음악실 (준비 중)</h2>
-                <p>시대와 세대를 넘어 하모니카를 사랑하는 모든 분을 위한 추억의 명곡 모음</p>
-            </div>
-            <div class="card-arrow">▶</div>
-        </a>
-
-        <!-- [6] 수하모 울림 여운실 -->
-        <a href="javascript:void(0);" onclick="alert('🍂 대한민국 마스터 정통 교수법의 시범 연주 공간을 정성껏 준비 중입니다. 차후 개설 예정입니다^^');" class="menu-card card-master">
-            <div class="card-info">
-                <h2>🍂 수하모 울림 여운실 (준비 중)</h2>
-                <p>기초를 다지며 걸어온 배움의 시간, 마음을 담아 전하는 정통 시범 연주</p>
-            </div>
-            <div class="card-arrow">▶</div>
-        </a>
-    </div>
-
-    <!-- 2. 미인증 외부인 접속 시 보이는 잠금 화면 -->
-    <div id="lock-area" class="lock-card" style="display: none;">
-        <div class="lock-icon">🔒</div>
-        <div class="lock-title">수강생 전용 공간입니다</div>
-        <div class="lock-desc">
-            본 웹사이트는 수하모니카 수강생분들을 위한 전용 학습 공간입니다.<br><br>
-            선생님께서 단톡방에 안내해 드린 <b>수강생 전용 비밀 링크</b>를 통해 접속해 주시기 바랍니다.
         </div>
     </div>
 
-    <div class="footer">
-        © 수하모니카 (suhamo.com) All rights reserved.
+    <!-- 플레이어 바 -->
+    <div class="player-section">
+        <div class="now-playing-container">
+            <div class="now-playing" id="now-playing-title">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
+        </div>
+        <audio id="audio-player" controls controlsList="nodownload" oncontextmenu="return false;" autoplay></audio>
+        <div class="bg-notice">💡 화면이 꺼진 후 음악이 멈추면 스마트폰 [배터리 절전 모드]를 해제해 주세요.</div>
+    </div>
+
+    <!-- 컨트롤 바 -->
+    <div class="control-bar">
+        <div class="control-row">
+            <div class="btn-group">
+                <button class="btn" onclick="toggleSelectAll()">전체선택</button>
+                <button class="btn btn-primary" onclick="playSelected()">선택듣기</button>
+                <button class="btn" id="btn-loop-toggle" onclick="toggleLoopMode()">🔁 전체반복</button>
+            </div>
+            <div style="font-size: 12.5px; color: #92400e; font-weight: bold;" id="total-count">총 0곡</div>
+        </div>
+        <div class="control-row">
+            <div class="search-select-group">
+                <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
+                
+                <select id="div-select" onchange="applyFilters()">
+                    <option value="전체">구분 전체</option>
+                    <option value="7080명곡">7080명곡</option>
+                    <option value="통기타교본">통기타교본</option>
+                    <option value="추억의가요">추억의가요</option>
+                </select>
+
+                <select id="sort-select" onchange="applyFilters()">
+                    <option value="latest" selected>최신순</option>
+                    <option value="name">가나다순</option>
+                    <option value="views">인기순</option>
+                </select>
+                <select id="limit-select" onchange="changeItemsPerPage(this.value)">
+                    <option value="30">30개</option>
+                    <option value="50">50개</option>
+                    <option value="100">100개</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- 음원 테이블 -->
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-chk"><input type="checkbox" id="chk-all" onclick="toggleHeaderCheckbox()"></th>
+                    <th class="col-num">No</th>
+                    <th class="col-cat">장르</th>
+                    <th class="col-title">곡명</th>
+                    <th class="col-division">구분</th>
+                    <th class="col-views">조회</th>
+                    <th class="col-action">듣기</th>
+                </tr>
+            </thead>
+            <tbody id="playlist-body">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-container" id="pagination-box"></div>
+
+    <!-- 댓글 영역 -->
+    <div class="comment-section">
+        <div class="comment-header">💬 7080 음악실 추억 공유 및 신청곡</div>
+        <div class="comment-notice">
+            💡 7080 추억의 가요/팝송 등 듣고 싶으신 음악이나 신청곡이 있다면 편하게 남겨주세요^^
+        </div>
+        
+        <div class="comment-form" id="main-comment-form">
+            <div>
+                <input type="text" id="c-name" class="comment-input-name" placeholder="성함/닉네임 (필수)" maxlength="10">
+            </div>
+            <div>
+                <textarea id="c-text" class="comment-input-textarea" placeholder="자유롭게 편하게 소통해요^^ 추억 이야기나 신청곡을 편하게 남겨주세요." oninput="autoResizeTextarea(this)"></textarea>
+            </div>
+            <div style="display:flex; gap:6px;">
+                <button class="btn-submit-comment" id="c-submit-btn" onclick="addComment()">등록하기</button>
+                <button class="btn-submit-comment" id="c-cancel-btn" style="display:none; background-color:#92400e;" onclick="cancelEditComment()">취소</button>
+            </div>
+        </div>
+
+        <div class="comment-list" id="comment-list-box"></div>
     </div>
 </div>
 
-<script>
-    (function() {
-        const SECRET_KEY = "suha2026"; // 수강생 비밀 열쇠 키
+<!-- Firebase SDK 모듈 로드 -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove, setDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAw8hem90scCf0X_NNpvQxXdaTy1XIiE84",
+        authDomain: "suharmo.firebaseapp.com",
+        projectId: "suharmo",
+        storageBucket: "suharmo.firebasestorage.app",
+        messagingSenderId: "479461638228",
+        appId: "1:479461638228:web:0c6665c9aa659cc7d62dc1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const ADMIN_PW = "0906";
+
+    let editingCommentId = null;
+    let commentsCache = {};
+
+    window.dbViews = {};
+
+    window.loadFirebaseViews = async function() {
+        try {
+            const querySnapshot = await getDocs(collection(db, "7080_song_views"));
+            querySnapshot.forEach((docSnap) => {
+                window.dbViews[docSnap.id] = docSnap.data().count || 0;
+            });
+            if (typeof window.applyViewsToPlaylist === 'function') {
+                window.applyViewsToPlaylist();
+            }
+        } catch (e) {
+            console.error("조회수 로드 실패:", e);
+        }
+    };
+
+    window.incrementSongView = async function(songId, defaultViews = 0) {
+        try {
+            const viewRef = doc(db, "7080_song_views", String(songId));
+            if (window.dbViews[songId] === undefined && defaultViews > 0) {
+                await setDoc(viewRef, { count: defaultViews + 1 }, { merge: true });
+                window.dbViews[songId] = defaultViews + 1;
+            } else {
+                await setDoc(viewRef, { count: increment(1) }, { merge: true });
+                window.dbViews[songId] = (window.dbViews[songId] || 0) + 1;
+            }
+            
+            if (typeof window.applyViewsToPlaylist === 'function') {
+                window.applyViewsToPlaylist();
+            }
+        } catch (e) {
+            console.error("조회수 증가 실패:", e);
+        }
+    };
+
+    window.loadFirebaseViews();
+
+    function isSpamText(text) {
+        const spamKeywords = ['http://', 'https://', 'www.', '카지노', '바카라', '대출', '토토', '성인'];
+        const lowerText = text.toLowerCase();
+        return spamKeywords.some(keyword => lowerText.includes(keyword));
+    }
+
+    window.autoResizeTextarea = function(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+    };
+
+    window.addComment = async function() {
+        const nameInput = document.getElementById('c-name');
+        const textInput = document.getElementById('c-text');
         
-        // 1. URL 주소에서 ?key=... 값 확인
-        const urlParams = new URLSearchParams(window.location.search);
-        const inputKey = urlParams.get('key');
+        const name = nameInput.value.trim();
+        const text = textInput.value.trim();
 
-        // 2. 비밀 링크로 들어왔을 경우 열쇠 자동 저장
-        if (inputKey === SECRET_KEY) {
-            localStorage.setItem('suhamo_access', 'granted');
-            alert('🔑 수하모 수강생 인증이 완료되었습니다.\n언제든 편하게 이용하세요^^');
-            // 주소창의 ?key=... 파라미터 깔끔하게 제거
-            window.history.replaceState({}, document.title, window.location.pathname);
+        if (!name) {
+            alert('성함이나 닉네임을 입력해 주세요^^');
+            nameInput.focus();
+            return;
         }
 
-        // 3. 인증 여부 판단
-        const isAuth = localStorage.getItem('suhamo_access') === 'granted';
+        if (!text) {
+            alert('내용을 입력해 주세요^^');
+            textInput.focus();
+            return;
+        }
 
-        if (isAuth) {
-            document.getElementById('content-area').style.display = 'flex';
+        if (isSpamText(text) || isSpamText(name)) {
+            alert('광고성 문구는 입력할 수 없습니다.');
+            return;
+        }
+
+        try {
+            if (editingCommentId) {
+                const commentRef = doc(db, "7080_comments", editingCommentId);
+                await updateDoc(commentRef, {
+                    name: name,
+                    text: text,
+                    isEdited: true
+                });
+                alert('댓글이 수정되었습니다!');
+                cancelEditComment();
+            } else {
+                await addDoc(collection(db, "7080_comments"), {
+                    name: name,
+                    text: text,
+                    createdAt: new Date(),
+                    dateStr: new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                    replies: []
+                });
+                textInput.value = '';
+                textInput.style.height = '70px';
+            }
+        } catch (e) {
+            console.error("댓글 실패:", e);
+        }
+    };
+
+    window.startEditComment = function(commentId) {
+        const item = commentsCache[commentId];
+        if (!item) return;
+
+        editingCommentId = commentId;
+        const nameInput = document.getElementById('c-name');
+        const textInput = document.getElementById('c-text');
+        const submitBtn = document.getElementById('c-submit-btn');
+        const cancelBtn = document.getElementById('c-cancel-btn');
+
+        nameInput.value = item.name;
+        textInput.value = item.text;
+        autoResizeTextarea(textInput);
+
+        submitBtn.innerText = "수정 완료";
+        submitBtn.style.backgroundColor = "#d97706";
+        cancelBtn.style.display = "inline-block";
+
+        document.getElementById('main-comment-form').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.cancelEditComment = function() {
+        editingCommentId = null;
+        const nameInput = document.getElementById('c-name');
+        const textInput = document.getElementById('c-text');
+        const submitBtn = document.getElementById('c-submit-btn');
+        const cancelBtn = document.getElementById('c-cancel-btn');
+
+        nameInput.value = '';
+        textInput.value = '';
+        textInput.style.height = '70px';
+
+        submitBtn.innerText = "등록하기";
+        submitBtn.style.backgroundColor = "#b45309";
+        cancelBtn.style.display = "none";
+    };
+
+    window.deleteComment = async function(commentId, replyObject = null) {
+        const inputPw = prompt('선생님 전용 비밀번호를 입력해 주세요:');
+        if (inputPw !== ADMIN_PW) {
+            alert('비밀번호가 올바르지 않습니다.');
+            return;
+        }
+
+        try {
+            if (replyObject) {
+                const commentRef = doc(db, "7080_comments", commentId);
+                await updateDoc(commentRef, {
+                    replies: arrayRemove(replyObject)
+                });
+            } else {
+                await deleteDoc(doc(db, "7080_comments", commentId));
+            }
+        } catch (e) {
+            console.error("삭제 실패:", e);
+        }
+    };
+
+    window.toggleReplyForm = function(commentId) {
+        const form = document.getElementById(`reply-form-box-${commentId}`);
+        if (form) form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+    };
+
+    window.addReply = async function(commentId) {
+        const replyInput = document.getElementById(`reply-input-${commentId}`);
+        const replyNameInput = document.getElementById(`reply-name-${commentId}`);
+        const text = replyInput.value.trim();
+        const name = replyNameInput.value.trim();
+
+        if (!name || !text) return alert('성함과 답글 내용을 작성해 주세요.');
+
+        try {
+            const commentRef = doc(db, "7080_comments", commentId);
+            const replyData = {
+                id: String(Date.now()),
+                name: name,
+                text: text,
+                dateStr: new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+            await updateDoc(commentRef, {
+                replies: arrayUnion(replyData)
+            });
+        } catch (e) {}
+    };
+
+    const q = query(collection(db, "7080_comments"), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+        const box = document.getElementById('comment-list-box');
+        if (snapshot.empty) {
+            box.innerHTML = `<div style="text-align:center; padding:20px; color:#92400e; font-size:13px;">아직 작성된 글이 없습니다. 편하게 추억의 음악 이야기를 남겨보세요!</div>`;
+            return;
+        }
+
+        box.innerHTML = '';
+        commentsCache = {};
+
+        snapshot.forEach((docSnap) => {
+            const item = docSnap.data();
+            const id = docSnap.id;
+            commentsCache[id] = item;
+
+            const div = document.createElement('div');
+            div.className = 'comment-item';
+
+            let repliesHtml = '';
+            if (item.replies && item.replies.length > 0) {
+                repliesHtml += `<div class="reply-list">`;
+                item.replies.forEach(r => {
+                    const rJson = JSON.stringify(r).replace(/"/g, '&quot;');
+                    repliesHtml += `
+                        <div class="reply-item" id="reply-item-${r.id}">
+                            <div class="comment-author">
+                                <span>↪ ${r.name} <span class="comment-date">${r.dateStr}</span></span>
+                                <div>
+                                    <button class="del-btn" onclick="deleteComment('${id}', ${rJson})">삭제</button>
+                                </div>
+                            </div>
+                            <div class="comment-body">${r.text}</div>
+                        </div>
+                    `;
+                });
+                repliesHtml += `</div>`;
+            }
+
+            const editedTag = item.isEdited ? `<span style="font-size:10.5px; color:#d97706;"> (수정됨)</span>` : '';
+
+            div.innerHTML = `
+                <div class="comment-author">
+                    <span>👤 ${item.name} <span class="comment-date">${item.dateStr}${editedTag}</span></span>
+                    <div>
+                        <button class="edit-btn" onclick="startEditComment('${id}')">수정</button>
+                        <button class="del-btn" onclick="deleteComment('${id}')">삭제</button>
+                    </div>
+                </div>
+                <div class="comment-body">${item.text}</div>
+                
+                <div class="action-btns">
+                    <button class="reply-btn" onclick="toggleReplyForm('${id}')">답글 달기</button>
+                </div>
+
+                <div id="reply-form-box-${id}" class="reply-form" style="display:none;">
+                    <div>
+                        <input type="text" id="reply-name-${id}" class="comment-input-name" style="width:110px;" value="수하모">
+                    </div>
+                    <div>
+                        <textarea id="reply-input-${id}" class="comment-input-textarea" style="min-height:50px;" placeholder="답글 작성..." oninput="autoResizeTextarea(this)"></textarea>
+                    </div>
+                    <button class="btn-submit-comment" style="padding:8px; font-size:13px;" onclick="addReply('${id}')">답글 등록</button>
+                </div>
+                ${repliesHtml}
+            `;
+            box.appendChild(div);
+        });
+    });
+</script>
+
+<script>
+    const CLOUDFLARE_DOMAIN = "https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev"; 
+
+    let masterPlaylist = [];
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+            }
+        } catch (err) {}
+    }
+
+    async function loadSongs() {
+        try {
+            let response = await fetch('songs.json');
+            if (!response.ok) {
+                response = await fetch('/7080/songs.json');
+            }
+            
+            const sampleMrData = await response.json();
+
+            masterPlaylist = sampleMrData.map((item) => {
+                let streamUrl = `${CLOUDFLARE_DOMAIN}/7080/${encodeURIComponent(item.fileName)}`;
+                
+                const initialViews = item.views !== undefined ? item.views : 0;
+                const finalViews = window.dbViews[item.id] !== undefined ? window.dbViews[item.id] : initialViews;
+
+                const divisionText = (item.division && item.division.trim() !== "") ? item.division.trim() : (item.type && item.type.trim() !== "") ? item.type.trim() : "-";
+
+                return {
+                    id: item.id,
+                    mainCategory: item.cat,
+                    mood: item.mood,
+                    title: item.title,
+                    division: divisionText,
+                    defaultViews: initialViews,
+                    views: finalViews,
+                    src: streamUrl
+                };
+            });
+
+            applyFilters();
+        } catch (error) {
+            console.error("음원 데이터 로드 실패:", error);
+        }
+    }
+
+    window.applyViewsToPlaylist = function() {
+        if (!masterPlaylist) return;
+        masterPlaylist.forEach(song => {
+            if (window.dbViews[song.id] !== undefined) {
+                song.views = window.dbViews[song.id];
+            }
+        });
+        renderPlaylist();
+    };
+
+    let currentMainFilter = '전체';
+    let currentMoodFilter = '전체';
+    let currentFilteredPlaylist = [];
+
+    let currentPage = 1;
+    let itemsPerPage = 30; 
+
+    let playlistQueue = [];
+    let currentQueueIndex = 0;
+    let loopMode = 'ALL';
+
+    const audioPlayer = document.getElementById('audio-player');
+    const nowPlayingTitle = document.getElementById('now-playing-title');
+
+    audioPlayer.addEventListener('play', () => {
+        nowPlayingTitle.classList.add('playing');
+    });
+    audioPlayer.addEventListener('playing', () => {
+        nowPlayingTitle.classList.add('playing');
+    });
+    audioPlayer.addEventListener('pause', () => {
+        nowPlayingTitle.classList.remove('playing');
+    });
+    audioPlayer.addEventListener('ended', () => {
+        nowPlayingTitle.classList.remove('playing');
+    });
+
+    window.onload = function() {
+        loadSongs();
+    };
+
+    function truncateTitle(title) {
+        if (title && title.length > 12) {
+            return title.substring(0, 12) + '...';
+        }
+        return title;
+    }
+
+    function changeItemsPerPage(val) {
+        itemsPerPage = parseInt(val);
+        currentPage = 1;
+        renderPlaylist();
+    }
+
+    window.onresize = function() { renderPlaylist(); };
+
+    function setMainCategory(categoryName, btn) {
+        document.querySelectorAll('.btn-main').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        currentMainFilter = categoryName;
+        currentPage = 1;
+        applyFilters();
+    }
+
+    function setMoodCategory(moodName, btn) {
+        document.querySelectorAll('.btn-sub').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        currentMoodFilter = moodName;
+        currentPage = 1;
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const chkAll = document.getElementById('chk-all');
+        if (chkAll) chkAll.checked = false;
+
+        const searchQuery = document.getElementById('search-input').value.trim().toLowerCase();
+        const divVal = document.getElementById('div-select').value;
+        const sortVal = document.getElementById('sort-select').value;
+
+        currentFilteredPlaylist = masterPlaylist.filter(song => {
+            const matchMain = (currentMainFilter === '전체') || (song.mainCategory === currentMainFilter);
+            const matchMood = (currentMoodFilter === '전체') || (song.mood === currentMoodFilter);
+            const matchDiv = (divVal === '전체') || (song.division === divVal);
+            const matchSearch = song.title.toLowerCase().includes(searchQuery) || song.division.toLowerCase().includes(searchQuery);
+            return matchMain && matchMood && matchDiv && matchSearch;
+        });
+
+        currentFilteredPlaylist.sort((a, b) => {
+            if (sortVal === 'latest') return Number(b.id) - Number(a.id);
+            if (sortVal === 'name') return a.title.localeCompare(b.title, 'ko');
+            if (sortVal === 'views') return b.views - a.views;
+        });
+
+        renderPlaylist();
+    }
+
+    let checkedSongIds = new Set();
+
+    function updateCheckedSet() {
+        document.querySelectorAll('.song-chk').forEach(chk => {
+            const val = chk.value;
+            if (chk.checked) checkedSongIds.add(val);
+            else checkedSongIds.delete(val);
+        });
+    }
+
+    function renderPlaylist() {
+        updateCheckedSet();
+
+        const tbody = document.getElementById('playlist-body');
+        tbody.innerHTML = '';
+
+        const totalItems = currentFilteredPlaylist.length;
+        document.getElementById('total-count').innerText = `총 ${totalItems}곡`;
+
+        if (totalItems === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#92400e; font-size:14px;">곡이 없습니다.</td></tr>`;
+            document.getElementById('pagination-box').innerHTML = '';
+            return;
+        }
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+        const pageData = currentFilteredPlaylist.slice(startIndex, endIndex);
+
+        pageData.forEach((song, index) => {
+            const numStr = String(song.id).padStart(2, '0');
+            const displayTitle = truncateTitle(song.title);
+            const isChecked = checkedSongIds.has(String(song.id)) ? 'checked' : '';
+
+            const tr = document.createElement('tr');
+            tr.id = `row-${song.id}`;
+            tr.innerHTML = `
+                <td class="col-chk"><input type="checkbox" class="song-chk" value="${song.id}" ${isChecked} onchange="updateCheckedSet()"></td>
+                <td class="col-num">${numStr}</td>
+                <td class="col-cat"><span class="badge-main">${song.mainCategory}</span></td>
+                <td class="col-title" title="${song.title}">${displayTitle}</td>
+                <td class="col-division">${song.division}</td>
+                <td class="col-views">${song.views}</td>
+                <td class="col-action">
+                    <button class="btn-play-single" onclick="playSingle('${song.id}')">듣기</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        renderPagination(totalItems);
+    }
+
+    function renderPagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const pageBox = document.getElementById('pagination-box');
+        pageBox.innerHTML = '';
+
+        if (totalPages <= 1) return;
+
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'page-btn';
+        prevBtn.innerText = '◀';
+        prevBtn.disabled = (currentPage === 1);
+        prevBtn.onclick = () => { currentPage--; renderPlaylist(); };
+        pageBox.appendChild(prevBtn);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const numBtn = document.createElement('button');
+            numBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+            numBtn.innerText = i;
+            numBtn.onclick = () => { currentPage = i; renderPlaylist(); };
+            pageBox.appendChild(numBtn);
+        }
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'page-btn';
+        nextBtn.innerText = '▶';
+        nextBtn.disabled = (currentPage === totalPages);
+        nextBtn.onclick = () => { currentPage++; renderPlaylist(); };
+        pageBox.appendChild(nextBtn);
+    }
+
+    function toggleSelectAll() {
+        const chks = document.querySelectorAll('.song-chk');
+        const mainChk = document.getElementById('chk-all');
+        let shouldSelectAll = false;
+        chks.forEach(chk => { if (!chk.checked) shouldSelectAll = true; });
+        if (mainChk) mainChk.checked = shouldSelectAll;
+        chks.forEach(chk => {
+            chk.checked = shouldSelectAll;
+            if (shouldSelectAll) checkedSongIds.add(String(chk.value));
+            else checkedSongIds.delete(String(chk.value));
+        });
+    }
+
+    function toggleHeaderCheckbox() {
+        const mainChk = document.getElementById('chk-all');
+        const chks = document.querySelectorAll('.song-chk');
+        const isChecked = mainChk.checked;
+        chks.forEach(chk => {
+            chk.checked = isChecked;
+            if (isChecked) checkedSongIds.add(String(chk.value));
+            else checkedSongIds.delete(String(chk.value));
+        });
+    }
+
+    function playSingle(id) {
+        const songIndex = currentFilteredPlaylist.findIndex(s => String(s.id) === String(id));
+        if (songIndex !== -1) {
+            playlistQueue = currentFilteredPlaylist.slice(songIndex);
+            currentQueueIndex = 0;
+            startPlayback();
+        }
+    }
+
+    function playSelected() {
+        updateCheckedSet();
+        if (checkedSongIds.size === 0) {
+            alert('재생할 곡을 선택해 주세요.');
+            return;
+        }
+
+        playlistQueue = [];
+        masterPlaylist.forEach(song => {
+            if (checkedSongIds.has(String(song.id))) playlistQueue.push(song);
+        });
+
+        currentQueueIndex = 0;
+        startPlayback();
+    }
+
+    function toggleLoopMode() {
+        const btn = document.getElementById('btn-loop-toggle');
+        if (loopMode === 'ALL') {
+            loopMode = 'ONE';
+            btn.innerText = "🔂 한곡반복";
         } else {
-            document.getElementById('lock-area').style.display = 'block';
+            loopMode = 'ALL';
+            btn.innerText = "🔁 전체반복";
         }
-    })();
+    }
+
+    function startPlayback() {
+        if (playlistQueue.length === 0 || currentQueueIndex >= playlistQueue.length) return;
+
+        const song = playlistQueue[currentQueueIndex];
+
+        const isMobile = window.innerWidth <= 600;
+        if (!isMobile && typeof window.incrementSongView === 'function') {
+            window.incrementSongView(song.id, song.defaultViews);
+        }
+
+        document.querySelectorAll('tr').forEach(r => r.classList.remove('active-row'));
+        const activeRow = document.getElementById('row-' + song.id);
+        if (activeRow) activeRow.classList.add('active-row');
+
+        const titleText = (loopMode === 'ONE') 
+            ? `🔂 [1곡 무한반복] ${song.title}`
+            : `▶️ [재생 중 ${currentQueueIndex + 1}/${playlistQueue.length}] ${song.title}`;
+
+        nowPlayingTitle.innerText = titleText;
+        document.title = `${song.title} - 수하모 7080`;
+
+        audioPlayer.src = song.src;
+        audioPlayer.play().then(() => {
+            requestWakeLock();
+            
+            nowPlayingTitle.classList.add('playing');
+
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: song.title,
+                    artist: `수하모 7080 음악실`,
+                    album: "수하모 7080 음악실",
+                    artwork: [{ src: 'https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png', sizes: '512x512', type: 'image/png' }]
+                });
+            }
+        }).catch(e => {});
+    }
+
+    audioPlayer.onended = function() {
+        if (loopMode === 'ONE') {
+            startPlayback();
+        } else {
+            currentQueueIndex++;
+            if (currentQueueIndex >= playlistQueue.length) currentQueueIndex = 0; 
+            startPlayback();
+        }
+    };
+
+    audioPlayer.onerror = function() {
+        setTimeout(() => {
+            if (playlistQueue.length > 0) startPlayback();
+        }, 1000);
+    };
 </script>
 
 </body>
