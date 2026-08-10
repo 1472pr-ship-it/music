@@ -1,1 +1,207 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="수하모니카 - 수강생 전용 음악 공간">
+    <meta property="og:description" content="수하모니카 수강생 전용 공간입니다.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
+    <meta property="og:url" content="https://suhamo.com/">
+    <title>수하모니카 (suhamo.com)</title>
+    <!-- 검색엔진 노출 및 링크 수집 완전 차단 -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; 
+            background-color: #fcfbf9; 
+            color: #332d29; 
+            display: flex; 
+            justify-content: center; 
+        }
+        
+        .container { 
+            width: 100%; 
+            max-width: 600px; 
+            background: #ffffff; 
+            padding: 12px 14px; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.05); 
+        }
+        
+        .header { text-align: center; padding: 4px 0 8px 0; border-bottom: 2px solid #8b3a42; }
+        .header h1 { font-size: 21px; color: #5c2028; font-weight: bold; margin-bottom: 2px; }
+        .header p { font-size: 13px; color: #78675a; }
+
+        .menu-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 9px; 
+            margin: 10px 0; 
+        }
+        .menu-card { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            text-decoration: none; 
+            color: #ffffff; 
+            transition: transform 0.2s, box-shadow 0.2s; 
+            cursor: pointer; 
+        }
+        .menu-card:active { transform: scale(0.98); }
+        
+        /* 게시판별 테마 컬러 */
+        .card-play { background: linear-gradient(135deg, #5c2028, #8b3a42); }
+        .card-mr { background: linear-gradient(135deg, #1c2e47, #2b4263); }
+        .card-score { background: linear-gradient(135deg, #3b2d54, #533e73); }
+        .card-user { background: linear-gradient(135deg, #1f402b, #32593d); } /* 자람실 차분한 그린 테마 */
+        .card-7080 { background: linear-gradient(135deg, #4d3323, #6e4a33); }
+        .card-master { background: linear-gradient(135deg, #3d1731, #5c234a); }
+
+        .card-info h2 { font-size: 16px; font-weight: bold; margin-bottom: 3px; }
+        .card-info p { 
+            font-size: 12px; 
+            opacity: 0.92; 
+            line-height: 1.35; 
+            word-break: keep-all;
+        }
+        .card-arrow { font-size: 16px; font-weight: bold; padding-left: 8px; flex-shrink: 0; }
+
+        .footer { 
+            text-align: center; 
+            padding: 8px 0 4px 0; 
+            font-size: 11.5px; 
+            color: #8c7b6e; 
+            border-top: 1px solid #eee5da; 
+            margin-top: 4px;
+        }
+
+        /* 잠금 상태 화면 디자인 */
+        .lock-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            border: 1px solid #eee5da;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        }
+        .lock-icon { font-size: 50px; margin-bottom: 12px; }
+        .lock-title { font-size: 19px; font-weight: bold; color: #5c2028; margin-bottom: 10px; }
+        .lock-desc { font-size: 14px; color: #6e5d52; line-height: 1.6; word-break: keep-all; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🎷 수하모니카</h1>
+        <p>평생 곁을 지켜줄 가장 따뜻한 친구, 하모니카</p>
+    </div>
+
+    <!-- 1. 인증 완료 시 보이는 정상 메뉴 목록 -->
+    <div id="content-area" class="menu-list" style="display: none;">
+        <!-- [1] 수하모 연주 성장실 -->
+        <a href="/play" class="menu-card card-play">
+            <div class="card-info">
+                <h2>🎷 수하모 연주 성장실</h2>
+                <p>입문 5개월부터 5년 차까지, 내 연주 소리의 미래를 직관적으로 확인하세요.</p>
+            </div>
+            <div class="card-arrow">▶</div>
+        </a>
+
+        <!-- [2] 수하모 반주 연습실 -->
+        <a href="/mr" class="menu-card card-mr">
+            <div class="card-info">
+                <h2>🎶 수하모 반주 연습실</h2>
+                <p>C, A, Am 키별로 틀어놓고 혼자서도 신나게 연습하는 명품 MR 모음</p>
+            </div>
+            <div class="card-arrow">▶</div>
+        </a>
+
+        <!-- [3] 수하모 악보 보관실 -->
+        <a href="/score" class="menu-card card-score">
+            <div class="card-info">
+                <h2>🎼 수하모 악보 보관실</h2>
+                <p>언제 어디서나 스마트폰으로 편하게 펼쳐보는 C, A, Am 키별 정밀 악보 모음</p>
+            </div>
+            <div class="card-arrow">▶</div>
+        </a>
+
+        <!-- [4] 수강생 연주 자람실 (정식 링크 /user 로 연결 완료) -->
+        <a href="/user" class="menu-card card-user">
+            <div class="card-info">
+                <h2>🌱 수강생 연주 자람실</h2>
+                <p>하모니카를 향한 첫걸음과 순수한 열정, 서로를 따뜻하게 응원하는 공간</p>
+            </div>
+            <div class="card-arrow">▶</div>
+        </a>
+
+        <!-- [5] 수하모 7080 음악실 -->
+        <a href="javascript:void(0);" onclick="alert('📻 추억의 명곡을 담은 7080 음악실을 정성껏 준비 중입니다. 곧 오픈하겠습니다^^');" class="menu-card card-7080">
+            <div class="card-info">
+                <h2>📻 수하모 7080 음악실 (준비 중)</h2>
+                <p>시대와 세대를 넘어 하모니카를 사랑하는 모든 분을 위한 추억의 명곡 모음</p>
+            </div>
+            <div class="card-arrow">▶</div>
+        </a>
+
+        <!-- [6] 수하모 울림 여운실 -->
+        <a href="javascript:void(0);" onclick="alert('🍂 대한민국 마스터 정통 교수법의 시범 연주 공간을 정성껏 준비 중입니다. 차후 개설 예정입니다^^');" class="menu-card card-master">
+            <div class="card-info">
+                <h2>🍂 수하모 울림 여운실 (준비 중)</h2>
+                <p>기초를 다지며 걸어온 배움의 시간, 마음을 담아 전하는 정통 시범 연주</p>
+            </div>
+            <div class="card-arrow">▶</div>
+        </a>
+    </div>
+
+    <!-- 2. 미인증 외부인 접속 시 보이는 잠금 화면 -->
+    <div id="lock-area" class="lock-card" style="display: none;">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-title">수강생 전용 공간입니다</div>
+        <div class="lock-desc">
+            본 웹사이트는 수하모니카 수강생분들을 위한 전용 학습 공간입니다.<br><br>
+            선생님께서 단톡방에 안내해 드린 <b>수강생 전용 비밀 링크</b>를 통해 접속해 주시기 바랍니다.
+        </div>
+    </div>
+
+    <div class="footer">
+        © 수하모니카 (suhamo.com) All rights reserved.
+    </div>
+</div>
+
+<script>
+    (function() {
+        const SECRET_KEY = "suha2026"; // 수강생 비밀 열쇠 키
+        
+        // 1. URL 주소에서 ?key=... 값 확인
+        const urlParams = new URLSearchParams(window.location.search);
+        const inputKey = urlParams.get('key');
+
+        // 2. 비밀 링크로 들어왔을 경우 열쇠 자동 저장
+        if (inputKey === SECRET_KEY) {
+            localStorage.setItem('suhamo_access', 'granted');
+            alert('🔑 수하모 수강생 인증이 완료되었습니다.\n언제든 편하게 이용하세요^^');
+            // 주소창의 ?key=... 파라미터 깔끔하게 제거
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // 3. 인증 여부 판단
+        const isAuth = localStorage.getItem('suhamo_access') === 'granted';
+
+        if (isAuth) {
+            document.getElementById('content-area').style.display = 'flex';
+        } else {
+            document.getElementById('lock-area').style.display = 'block';
+        }
+    })();
+</script>
+
+</body>
+</html>
