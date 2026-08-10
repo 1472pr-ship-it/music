@@ -146,30 +146,30 @@
     <!-- 헤더 영역 -->
     <div class="header">
         <a href="/" class="header-title-link" title="메인 홈으로 이동">
-            <h1>🎸 수하모 7080 음악실</h1>
+            <h1>📻 수하모 7080 음악실</h1>
         </a>
         <a href="/" class="btn-home">🏠 메인으로</a>
     </div>
 
-    <!-- 알약 필터 -->
+    <!-- 알약 필터 (반주 연습실과 100% 동일하게 통일) -->
     <div class="filter-section">
         <div class="filter-row">
             <span class="filter-label">🎼 장르</span>
             <div class="filter-buttons">
                 <button class="btn-filter btn-main active" onclick="setMainCategory('전체', this)">전체</button>
-                <button class="btn-filter btn-main" onclick="setMainCategory('7080가요', this)">7080가요</button>
-                <button class="btn-filter btn-main" onclick="setMainCategory('포크/통기타', this)">포크/통기타</button>
-                <button class="btn-filter btn-main" onclick="setMainCategory('명품트롯', this)">명품트롯</button>
-                <button class="btn-filter btn-main" onclick="setMainCategory('팝/팝송', this)">팝/팝송</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('가요/트롯', this)">가요/트롯</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('동요/가곡', this)">동요/가곡</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('팝/외국곡', this)">팝/외국곡</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('클래식', this)">클래식</button>
             </div>
         </div>
         <div class="filter-row">
             <span class="filter-label">🎶 분위기</span>
             <div class="filter-buttons">
                 <button class="btn-filter btn-filter-sub btn-sub active" onclick="setMoodCategory('전체', this)">전체</button>
-                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('통기타/서정', this)">☕ 통기타/서정</button>
-                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('신나는/고고', this)">📻 신나는/고고</button>
-                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('추억의명곡', this)">🎷 추억의명곡</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('서정/슬로우', this)">☕ 서정/슬로우</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('정통트롯', this)">📻 정통트롯</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('경쾌한', this)">🎷 경쾌한</button>
             </div>
         </div>
     </div>
@@ -199,9 +199,9 @@
                 
                 <select id="div-select" onchange="applyFilters()">
                     <option value="전체">구분 전체</option>
-                    <option value="7080명곡">7080명곡</option>
-                    <option value="통기타교본">통기타교본</option>
-                    <option value="추억의가요">추억의가요</option>
+                    <option value="교본책">교본책</option>
+                    <option value="수교재">수교재</option>
+                    <option value="국민가요">국민가요</option>
                 </select>
 
                 <select id="sort-select" onchange="applyFilters()">
@@ -241,9 +241,9 @@
 
     <!-- 댓글 영역 -->
     <div class="comment-section">
-        <div class="comment-header">💬 7080 음악실 추억 공유 및 신청곡</div>
+        <div class="comment-header">💬 7080 음악실 추억 공유 및 감상 소감</div>
         <div class="comment-notice">
-            💡 7080 추억의 가요/팝송 등 듣고 싶으신 음악이나 신청곡이 있다면 편하게 남겨주세요^^
+            💡 함께 나누고 싶은 음악 이야기나 신청곡이 있으시다면 편하게 남겨주세요^^
         </div>
         
         <div class="comment-form" id="main-comment-form">
@@ -251,7 +251,7 @@
                 <input type="text" id="c-name" class="comment-input-name" placeholder="성함/닉네임 (필수)" maxlength="10">
             </div>
             <div>
-                <textarea id="c-text" class="comment-input-textarea" placeholder="자유롭게 편하게 소통해요^^ 추억 이야기나 신청곡을 편하게 남겨주세요." oninput="autoResizeTextarea(this)"></textarea>
+                <textarea id="c-text" class="comment-input-textarea" placeholder="자유롭게 편하게 소통해요^^ 음악 감상 이야기나 신청곡을 편하게 남겨주세요." oninput="autoResizeTextarea(this)"></textarea>
             </div>
             <div style="display:flex; gap:6px;">
                 <button class="btn-submit-comment" id="c-submit-btn" onclick="addComment()">등록하기</button>
@@ -471,7 +471,7 @@
     onSnapshot(q, (snapshot) => {
         const box = document.getElementById('comment-list-box');
         if (snapshot.empty) {
-            box.innerHTML = `<div style="text-align:center; padding:20px; color:#705b4c; font-size:13px;">아직 작성된 글이 없습니다. 편하게 추억의 음악 이야기를 남겨보세요!</div>`;
+            box.innerHTML = `<div style="text-align:center; padding:20px; color:#705b4c; font-size:13px;">아직 작성된 글이 없습니다. 편하게 이야기를 남겨보세요!</div>`;
             return;
         }
 
