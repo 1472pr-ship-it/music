@@ -144,7 +144,6 @@
         .modal-content { max-width: 96%; max-height: 92vh; object-fit: contain; z-index: 100000; }
         .modal-close { position: absolute; top: 12px; right: 16px; color: #fff; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 100005; background: rgba(0,0,0,0.5); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
         
-        /* 💡 슬림 슬라이드 버튼 (좌우 여백 10px 3px로 8px 축소 및 화살표 크기 조정) */
         .modal-btn { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(59, 45, 84, 0.75); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.5); font-size: 15px; padding: 10px 3px; cursor: pointer; border-radius: 4px; z-index: 100005; opacity: 0.85; transition: opacity 0.2s; display: none; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
         .modal-btn:active { opacity: 1; background: rgba(83, 62, 115, 0.95); }
         .modal-prev { left: 2px; }
@@ -317,6 +316,8 @@
     let commentsCache = {};
 
     window.dbViews = {};
+    // 💡 이번 세션에서 이미 조회수가 오른 곡 ID를 기록하는 집합 (중복 방지)
+    window.viewedSongIds = new Set();
 
     window.loadFirebaseViews = async function() {
         try {
@@ -332,9 +333,16 @@
         }
     };
 
+    // 💡 [수정] PC/모바일 더블 클릭 및 슬라이드 중복 호출 완벽 차단
     window.incrementSongView = async function(songId, defaultViews = 0) {
+        const songIdStr = String(songId);
+
+        // 이미 조회수가 반영된 곡이면 재실행 차단
+        if (window.viewedSongIds.has(songIdStr)) return;
+        window.viewedSongIds.add(songIdStr);
+
         try {
-            const viewRef = doc(db, "sheet_views", String(songId));
+            const viewRef = doc(db, "sheet_views", songIdStr);
             if (window.dbViews[songId] === undefined && defaultViews > 0) {
                 await setDoc(viewRef, { count: defaultViews + 1 }, { merge: true });
                 window.dbViews[songId] = defaultViews + 1;
@@ -343,6 +351,7 @@
                 window.dbViews[songId] = (window.dbViews[songId] || 0) + 1;
             }
             
+            // UI에 바뀐 조회수 반영 (리렌더링 시 중복 호출 안되도록 안전)
             if (typeof window.applyViewsToPlaylist === 'function') {
                 window.applyViewsToPlaylist();
             }
@@ -583,6 +592,7 @@
 
     let slideQueue = [];
     let currentQueueIndex = 0;
+    let isClickProcessing = false; // 💡 연타 및 중복 클릭 실행 방지 플래그
 
     const nowViewingTitle = document.getElementById('now-viewing-title');
     const pageIndicator = document.getElementById('page-indicator');
@@ -812,12 +822,18 @@
         });
     }
 
+    // 💡 [수정] PC 더블클릭/연타 방지 적용
     function playSingle(id) {
+        if (isClickProcessing) return;
+        isClickProcessing = true;
+
         const targetIndex = currentFilteredPlaylist.findIndex(s => String(s.id) === String(id));
         if (targetIndex !== -1) {
             buildSlideQueue(currentFilteredPlaylist.slice(targetIndex));
             renderSlide();
         }
+
+        setTimeout(() => { isClickProcessing = false; }, 300);
     }
 
     function viewSelected() {
@@ -857,6 +873,7 @@
         const currentItem = slideQueue[currentQueueIndex];
         const song = currentItem.song;
 
+        // 💡 1페이지 최초 진입 시에만 조회수 +1 (viewedSongIds로 세션 중복 체크)
         if (currentItem.pageNum === 1 && typeof window.incrementSongView === 'function') {
             window.incrementSongView(song.id, song.defaultViews);
         }
@@ -945,6 +962,7 @@
         });
     }
 
+    // 💡 크게 보기(모달) 클릭 시: 조회수 카운트 전혀 없이 확대 창만 실행
     window.openModal = function() {
         if (slideQueue.length === 0) return;
         const modal = document.getElementById('image-modal');
