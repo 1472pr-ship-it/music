@@ -152,7 +152,7 @@
         <a href="/" class="btn-home">🏠 메인으로</a>
     </div>
 
-    <!-- 🔥 알약 필터 (반주 연습실과 100% 동일하게 교체) -->
+    <!-- 🔥 알약 필터 -->
     <div class="filter-section">
         <div class="filter-row">
             <span class="filter-label">🎼 장르</span>
@@ -198,7 +198,6 @@
             <div class="search-select-group">
                 <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
                 
-                <!-- 🔥 구분 선택도 반주 연습실과 100% 동일하게 통일 -->
                 <select id="div-select" onchange="applyFilters()">
                     <option value="전체">구분 전체</option>
                     <option value="교본책">교본책</option>
@@ -834,8 +833,8 @@
 
         const song = playlistQueue[currentQueueIndex];
 
-        const isMobile = window.innerWidth <= 600;
-        if (!isMobile && typeof window.incrementSongView === 'function') {
+        // 🔥 PC/모바일 구분 없이 재생 시 항상 조회수 증가 실행
+        if (typeof window.incrementSongView === 'function') {
             window.incrementSongView(song.id, song.defaultViews);
         }
 
