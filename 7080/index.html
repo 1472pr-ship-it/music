@@ -198,11 +198,13 @@
             <div class="search-select-group">
                 <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
                 
+                <!-- 🔥 구분 선택 옵션을 연대별 분류로 수정 -->
                 <select id="div-select" onchange="applyFilters()">
                     <option value="전체">구분 전체</option>
-                    <option value="교본책">교본책</option>
-                    <option value="수교재">수교재</option>
-                    <option value="국민가요">국민가요</option>
+                    <option value="70년대이전">70년대이전</option>
+                    <option value="7080">7080</option>
+                    <option value="90년대">90년대</option>
+                    <option value="2000년대">2000년대</option>
                 </select>
 
                 <select id="sort-select" onchange="applyFilters()">
@@ -833,7 +835,6 @@
 
         const song = playlistQueue[currentQueueIndex];
 
-        // 🔥 PC/모바일 구분 없이 재생 시 항상 조회수 증가 실행
         if (typeof window.incrementSongView === 'function') {
             window.incrementSongView(song.id, song.defaultViews);
         }
