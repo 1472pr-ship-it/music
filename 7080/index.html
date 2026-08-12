@@ -198,7 +198,6 @@
             <div class="search-select-group">
                 <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
                 
-                <!-- 🔥 구분 선택 옵션을 연대별 분류로 수정 -->
                 <select id="div-select" onchange="applyFilters()">
                     <option value="전체">구분 전체</option>
                     <option value="70년대이전">70년대이전</option>
@@ -565,7 +564,15 @@
             const sampleMrData = await response.json();
 
             masterPlaylist = sampleMrData.map((item) => {
-                let streamUrl = `${CLOUDFLARE_DOMAIN}/7080/${encodeURIComponent(item.fileName)}`;
+                // 🔥 장르(cat)에 따른 3개 폴더 분기 (pop / kpop / etc)
+                let subFolder = "etc/";
+                if (item.cat === "팝/외국곡") {
+                    subFolder = "pop/";
+                } else if (item.cat === "가요/트롯") {
+                    subFolder = "kpop/";
+                }
+
+                let streamUrl = `${CLOUDFLARE_DOMAIN}/7080/${subFolder}${encodeURIComponent(item.fileName)}`;
                 
                 const initialViews = item.views !== undefined ? item.views : 0;
                 const finalViews = window.dbViews[item.id] !== undefined ? window.dbViews[item.id] : initialViews;
