@@ -112,10 +112,9 @@
         .btn-play-single { padding: 4px 6px; font-size: 11.5px; background-color: #ffffff; border: 1px solid #4d3323; border-radius: 4px; cursor: pointer; color: #4d3323; font-weight: bold; white-space: nowrap; }
         .btn-play-single:hover { background-color: #4d3323; color: #ffffff; }
 
-        /* 🔥 하단 페이지 이동 바 너비 및 여백 타이트하게 조절 */
-        .pagination-container { display: flex; justify-content: center; align-items: center; gap: 3px; padding: 8px 4px; background-color: #fbf9f5; border-top: 2px solid #4d3323; overflow-x: auto; width: 100%; }
-        .pagination-container::-webkit-scrollbar { display: none; }
-        .page-btn { padding: 4px 8px; font-size: 12.5px; font-weight: bold; color: #4d3323; background: #ffffff; border: 1px solid #d4c3b3; border-radius: 4px; cursor: pointer; flex-shrink: 0; min-width: 28px; }
+        /* 🔥 하단 페이지 이동 바 5개 고정 영역 */
+        .pagination-container { display: flex; justify-content: center; align-items: center; gap: 4px; padding: 8px 4px; background-color: #fbf9f5; border-top: 2px solid #4d3323; width: 100%; }
+        .page-btn { padding: 5px 10px; font-size: 13px; font-weight: bold; color: #4d3323; background: #ffffff; border: 1px solid #d4c3b3; border-radius: 4px; cursor: pointer; flex-shrink: 0; min-width: 32px; text-align: center; }
         .page-btn.active { background-color: #4d3323; color: #ffffff; border-color: #4d3323; }
 
         /* Comment Section */
@@ -749,7 +748,7 @@
         renderPagination(totalItems);
     }
 
-    // 🔥 이전(◀), 다음(▶) 버튼 및 숫자가 타이트하게 들어가도록 구성
+    // 🔥 페이지 번호를 5개씩만 깔끔하게 끊어서 표시 (◀ 1 2 3 4 5 ▶)
     function renderPagination(totalItems) {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         const pageBox = document.getElementById('pagination-box');
@@ -757,6 +756,16 @@
 
         if (totalPages <= 1) return;
 
+        const maxButtons = 5; // 한 번에 표시할 페이지 번호 개수
+        let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+        let endPage = startPage + maxButtons - 1;
+
+        if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = Math.max(1, endPage - maxButtons + 1);
+        }
+
+        // ◀ 이전 버튼
         const prevBtn = document.createElement('button');
         prevBtn.className = 'page-btn';
         prevBtn.innerText = '◀';
@@ -764,7 +773,8 @@
         prevBtn.onclick = () => { currentPage--; renderPlaylist(); };
         pageBox.appendChild(prevBtn);
 
-        for (let i = 1; i <= totalPages; i++) {
+        // 숫자 버튼 (5개)
+        for (let i = startPage; i <= endPage; i++) {
             const numBtn = document.createElement('button');
             numBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
             numBtn.innerText = i;
@@ -772,6 +782,7 @@
             pageBox.appendChild(numBtn);
         }
 
+        // ▶ 다음 버튼
         const nextBtn = document.createElement('button');
         nextBtn.className = 'page-btn';
         nextBtn.innerText = '▶';
