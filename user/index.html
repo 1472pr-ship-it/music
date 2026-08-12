@@ -94,7 +94,7 @@
         
         .col-division { width: 160px; text-align: center; font-size: 11.5px; color: #2d5a43; font-weight: 600; line-height: 1.25; }
         
-        /* 🔥 PC 및 기본 화면에서 조회수 열을 무조건 강제 출력하도록 !important 지정 */
+        /* PC 및 기본 화면에서 조회수 열 강제 출력 */
         .col-views { width: 45px; color: #66756c; text-align: center; font-size: 12px; display: table-cell !important; }
         .col-action { width: 48px; text-align: center; }
 
@@ -235,7 +235,6 @@
                     <th class="col-cat">테크닉</th>
                     <th class="col-title">곡명/연주자</th>
                     <th class="col-division">입문(초보) | 교정(경력)<br>연습량(적극 보통 소극)</th>
-                    <!-- 🔥 PC 조회수 헤더 -->
                     <th class="col-views">조회</th>
                     <th class="col-action">듣기</th>
                 </tr>
@@ -653,7 +652,7 @@
 
                 const divisionText = (item.division && item.division.trim() !== "") ? item.division.trim() : (item.type && item.type.trim() !== "") ? item.type.trim() : "-";
 
-                // JSON의 title에 이미 마스킹이 적용된 경우 그대로 출력하도록 처리 (Ab 키 오적용 방지)
+                // JSON의 title에 이미 마스킹이 적용된 경우 그대로 출력하도록 처리
                 let displayTitleText = item.title;
                 if (item.title && !item.title.includes('*') && item.title.includes(' ')) {
                     displayTitleText = processDisplayTitle(item.title);
@@ -926,8 +925,8 @@
 
         const song = playlistQueue[currentQueueIndex];
 
-        const isMobile = window.innerWidth <= 600;
-        if (!isMobile && typeof window.incrementSongView === 'function') {
+        // 🔥 모바일/PC 구분 없이 재생 시 조회수 무조건 상승 처리
+        if (typeof window.incrementSongView === 'function') {
             window.incrementSongView(song.id, song.defaultViews);
         }
 
