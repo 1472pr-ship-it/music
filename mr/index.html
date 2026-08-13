@@ -24,6 +24,14 @@
         window.location.href = '/';
     }
     </script>
+    <!-- 게시판 HTML 파일 맨 위 <head> 안쪽에 추가 -->
+<script>
+// 수강생 권한('granted')이 없으면 차단 팝업을 띄우고 메인으로 이동
+if (localStorage.getItem('suhamo_access') !== 'granted') {
+    alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
+    window.location.href = 'https://suhamo.com'; // 메인 페이지 주소
+}
+</script>
     
     <title>수하모 반주 연습실</title>
     <!-- 검색엔진 노출 및 링크 수집 차단 -->
