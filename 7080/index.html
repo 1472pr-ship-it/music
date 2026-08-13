@@ -93,8 +93,7 @@
         .col-cat { width: 62px; text-align: center; }
         .col-title { font-weight: 700; color: #3b281b; font-size: 14px; text-align: left; }
         
-        /* 🔥 '구분' 열 왼쪽 정렬 설정 */
-        .col-division { width: 66px; text-align: left; font-size: 12px; color: #4d3323; font-weight: 600; padding-left: 2px; }
+        .col-division { width: 66px; text-align: right; font-size: 12px; color: #4d3323; font-weight: 600; padding-right: 6px; }
         .col-views { width: 42px; color: #705b4c; text-align: center; font-size: 11.5px; }
         .col-action { width: 48px; text-align: center; }
 
@@ -103,7 +102,7 @@
             .col-chk { width: 24px; }
             .col-num { width: 38px; font-size: 11.5px; }
             .col-cat { width: 56px; }
-            .col-division { width: 58px; padding-left: 1px; }
+            .col-division { width: 58px; padding-right: 4px; }
             .col-action { width: 46px; }
             .header h1 { font-size: 16px; }
             th, td { padding: 6px 2px; }
@@ -156,7 +155,7 @@
         <a href="/" class="btn-home">🏠 메인으로</a>
     </div>
 
-    <!-- 🔥 알약 필터 -->
+    <!-- 알약 필터 -->
     <div class="filter-section">
         <div class="filter-row">
             <span class="filter-label">🎼 장르</span>
@@ -548,14 +547,10 @@
     const CLOUDFLARE_DOMAIN = "https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev"; 
 
     let masterPlaylist = [];
-    let wakeLock = null;
 
+    // 🔥 절전 모드 관련 WakeLock 강제 사용 비활성화
     async function requestWakeLock() {
-        try {
-            if ('wakeLock' in navigator) {
-                wakeLock = await navigator.wakeLock.request('screen');
-            }
-        } catch (err) {}
+        // 화면꺼짐 정상 유지를 위해 동작 해제
     }
 
     async function loadSongs() {
@@ -871,8 +866,7 @@
 
         audioPlayer.src = song.src;
         audioPlayer.play().then(() => {
-            requestWakeLock();
-            
+            // WakeLock 호출 제거로 지정된 자동 화면꺼짐(절전모드) 동작
             nowPlayingTitle.classList.add('playing');
 
             if ('mediaSession' in navigator) {
