@@ -201,7 +201,6 @@
             <div class="search-select-group">
                 <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
                 
-                <!-- 🔥 연대별 구분 선택 옵션 수정 완료 -->
                 <select id="div-select" onchange="applyFilters()">
                     <option value="전체">구분 전체</option>
                     <option value="~70년">~70년</option>
@@ -473,6 +472,49 @@
         } catch (e) {}
     };
 
+    // 🔥 답글 수정 폼 토글 및 시작 함수 추가
+    window.toggleReplyEditForm = function(commentId, replyId) {
+        const form = document.getElementById(`reply-edit-box-${commentId}-${replyId}`);
+        if (form) {
+            form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+        }
+    };
+
+    // 🔥 답글 수정 기능 실행 함수 추가
+    window.updateReply = async function(commentId, replyId) {
+        const textInput = document.getElementById(`reply-edit-input-${commentId}-${replyId}`);
+        const nameInput = document.getElementById(`reply-edit-name-${commentId}-${replyId}`);
+        const newText = textInput.value.trim();
+        const newName = nameInput.value.trim();
+
+        if (!newName || !newText) return alert('성함과 답글 내용을 작성해 주세요.');
+
+        try {
+            const commentRef = doc(db, "7080_comments", commentId);
+            const parentComment = commentsCache[commentId];
+            if (!parentComment || !parentComment.replies) return;
+
+            const updatedReplies = parentComment.replies.map(r => {
+                if (String(r.id) === String(replyId)) {
+                    return {
+                        ...r,
+                        name: newName,
+                        text: newText,
+                        isEdited: true
+                    };
+                }
+                return r;
+            });
+
+            await updateDoc(commentRef, {
+                replies: updatedReplies
+            });
+            alert('답글이 수정되었습니다!');
+        } catch (e) {
+            console.error("답글 수정 실패:", e);
+        }
+    };
+
     const q = query(collection(db, "7080_comments"), orderBy("createdAt", "desc"));
     onSnapshot(q, (snapshot) => {
         const box = document.getElementById('comment-list-box');
@@ -497,15 +539,33 @@
                 repliesHtml += `<div class="reply-list">`;
                 item.replies.forEach(r => {
                     const rJson = JSON.stringify(r).replace(/"/g, '&quot;');
+                    const rEditedTag = r.isEdited ? `<span style="font-size:10.5px; color:#6e4a33;"> (수정됨)</span>` : '';
+                    
                     repliesHtml += `
                         <div class="reply-item" id="reply-item-${r.id}">
                             <div class="comment-author">
-                                <span>↪ ${r.name} <span class="comment-date">${r.dateStr}</span></span>
+                                <span>↪ ${r.name} <span class="comment-date">${r.dateStr}${rEditedTag}</span></span>
                                 <div>
+                                    <!-- 🔥 답글에 [수정] 버튼 생성 추가 -->
+                                    <button class="edit-btn" onclick="toggleReplyEditForm('${id}', '${r.id}')">수정</button>
                                     <button class="del-btn" onclick="deleteComment('${id}', ${rJson})">삭제</button>
                                 </div>
                             </div>
                             <div class="comment-body">${r.text}</div>
+                            
+                            <!-- 🔥 답글 수정 폼 영역 생성 -->
+                            <div id="reply-edit-box-${id}-${r.id}" class="reply-form" style="display:none; margin-top:6px;">
+                                <div>
+                                    <input type="text" id="reply-edit-name-${id}-${r.id}" class="comment-input-name" style="width:110px;" value="${r.name}">
+                                </div>
+                                <div>
+                                    <textarea id="reply-edit-input-${id}-${r.id}" class="comment-input-textarea" style="min-height:50px;" oninput="autoResizeTextarea(this)">${r.text}</textarea>
+                                </div>
+                                <div style="display:flex; gap:4px;">
+                                    <button class="btn-submit-comment" style="padding:6px; font-size:12.5px; background-color:#6e4a33;" onclick="updateReply('${id}', '${r.id}')">수정 완료</button>
+                                    <button class="btn-submit-comment" style="padding:6px; font-size:12.5px; background-color:#705b4c;" onclick="toggleReplyEditForm('${id}', '${r.id}')">취소</button>
+                                </div>
+                            </div>
                         </div>
                     `;
                 });
@@ -867,7 +927,6 @@
 
         audioPlayer.src = song.src;
         audioPlayer.play().then(() => {
-            // WakeLock 호출 제거로 지정된 자동 화면꺼짐(절전모드) 동작
             nowPlayingTitle.classList.add('playing');
 
             if ('mediaSession' in navigator) {
