@@ -5,17 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:type" content="website">
     <meta property="og:title" content="수하모니카 - 수강생 전용 음악 공간">
-    <meta property="og:description" content="수하모니카 수강생 전용 공간입니다.">
+    <meta property="og:description" content="수하모니카 공간입니다.">
     <meta property="og:image" content="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
     <meta property="og:url" content="https://suhamo.com/">
-    <!-- 메인 index.html 맨 아래 </body 바로 전에 추가 -->
-<script>
-// URL에 ?key=suha2026 이 포함되어 올라오면 브라우저에 권한 저장
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('key') === 'suha2026') {
-    localStorage.setItem('suhamo_access', 'granted');
-}
-</script>
     <title>수하모니카 (suhamo.com)</title>
     <!-- 검색엔진 노출 및 링크 수집 완전 차단 -->
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
@@ -87,20 +79,6 @@ if (urlParams.get('key') === 'suha2026') {
             border-top: 1px solid #eee5da; 
             margin-top: 4px;
         }
-
-        /* 잠금 상태 화면 디자인 */
-        .lock-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 30px 20px;
-            text-align: center;
-            border: 1px solid #eee5da;
-            margin: 20px 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-        }
-        .lock-icon { font-size: 50px; margin-bottom: 12px; }
-        .lock-title { font-size: 19px; font-weight: bold; color: #5c2028; margin-bottom: 10px; }
-        .lock-desc { font-size: 14px; color: #6e5d52; line-height: 1.6; word-break: keep-all; }
     </style>
 </head>
 <body>
@@ -111,8 +89,8 @@ if (urlParams.get('key') === 'suha2026') {
         <p>평생 곁을 지켜줄 가장 따뜻한 친구, 하모니카</p>
     </div>
 
-    <!-- 1. 인증 완료 시 보이는 정상 메뉴 목록 -->
-    <div id="content-area" class="menu-list" style="display: none;">
+    <!-- 공개 메뉴 목록 (기본 노출) -->
+    <div id="content-area" class="menu-list">
         <!-- [1] 수하모 연주 성장실 -->
         <a href="/play" class="menu-card card-play">
             <div class="card-info">
@@ -158,7 +136,7 @@ if (urlParams.get('key') === 'suha2026') {
             <div class="card-arrow">▶</div>
         </a>
 
-        <!-- [6] 수하모 울림 여운실 (링크 수정 완료) -->
+        <!-- [6] 수하모 울림 여운실 -->
         <a href="/master" class="menu-card card-master">
             <div class="card-info">
                 <h2>🍂 수하모 울림 여운실</h2>
@@ -168,16 +146,6 @@ if (urlParams.get('key') === 'suha2026') {
         </a>
     </div>
 
-    <!-- 2. 미인증 외부인 접속 시 보이는 잠금 화면 -->
-    <div id="lock-area" class="lock-card" style="display: none;">
-        <div class="lock-icon">🔒</div>
-        <div class="lock-title">수강생 전용 공간입니다</div>
-        <div class="lock-desc">
-            본 웹사이트는 수하모니카 수강생분들을 위한 전용 학습 공간입니다.<br><br>
-            선생님께서 단톡방에 안내해 드린 <b>수강생 전용 비밀 링크</b>를 통해 접속해 주시기 바랍니다.
-        </div>
-    </div>
-
     <div class="footer">
         © 수하모니카 (suhamo.com) All rights reserved.
     </div>
@@ -185,27 +153,17 @@ if (urlParams.get('key') === 'suha2026') {
 
 <script>
     (function() {
-        const SECRET_KEY = "suha2026"; // 수강생 비밀 열쇠 키
+        const SECRET_KEY = "suha2026"; 
         
-        // 1. URL 주소에서 ?key=... 값 확인
+        // URL 주소에서 ?key=... 값 확인
         const urlParams = new URLSearchParams(window.location.search);
         const inputKey = urlParams.get('key');
 
-        // 2. 비밀 링크로 들어왔을 경우 열쇠 자동 저장
+        // 비밀 링크로 들어왔을 경우 권한 자동 저장
         if (inputKey === SECRET_KEY) {
             localStorage.setItem('suhamo_access', 'granted');
-            alert('🔑 수하모 수강생 인증이 완료되었습니다.\n언제든 편하게 이용하세요^^');
-            // 주소창의 ?key=... 파라미터 깔끔하게 제거
+            alert('🔑 수하모 수강생 인증이 완료되었습니다.\n전용 공간을 편하게 이용하세요^^');
             window.history.replaceState({}, document.title, window.location.pathname);
-        }
-
-        // 3. 인증 여부 판단
-        const isAuth = localStorage.getItem('suhamo_access') === 'granted';
-
-        if (isAuth) {
-            document.getElementById('content-area').style.display = 'flex';
-        } else {
-            document.getElementById('lock-area').style.display = 'block';
         }
     })();
 </script>
