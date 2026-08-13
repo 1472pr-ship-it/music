@@ -17,13 +17,13 @@
     <meta property="og:image" content="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
     <meta property="og:url" content="https://suhamo.com/user">
     
-    <!-- 비밀 링크 접속 제어 -->
-    <script>
-    if (localStorage.getItem('suhamo_access') !== 'granted') {
-        alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
-        window.location.href = '/';
-    }
-    </script>
+    <!-- 수강생 전용 비공개 게시판에 들어갈 코드 (단 1개만 남기기) -->
+<script>
+if (localStorage.getItem('suhamo_access') !== 'granted') {
+    alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
+    window.location.href = 'https://suhamo.com'; // 권한 없으면 메인으로 이동
+}
+</script>
     
     <title>수강생 연주 자람실 - 수하모니카</title>
     <!-- 검색엔진 노출 및 링크 수집 차단 -->
