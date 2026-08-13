@@ -201,12 +201,13 @@
             <div class="search-select-group">
                 <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
                 
+                <!-- 🔥 연대별 구분 선택 옵션 수정 완료 -->
                 <select id="div-select" onchange="applyFilters()">
                     <option value="전체">구분 전체</option>
-                    <option value="70년대이전">70년대이전</option>
+                    <option value="~70년">~70년</option>
                     <option value="7080">7080</option>
                     <option value="90년대">90년대</option>
-                    <option value="2000년대">2000년대</option>
+                    <option value="2000~">2000~</option>
                 </select>
 
                 <select id="sort-select" onchange="applyFilters()">
@@ -548,7 +549,7 @@
 
     let masterPlaylist = [];
 
-    // 🔥 절전 모드 관련 WakeLock 강제 사용 비활성화
+    // 절전 모드 관련 WakeLock 강제 사용 비활성화
     async function requestWakeLock() {
         // 화면꺼짐 정상 유지를 위해 동작 해제
     }
