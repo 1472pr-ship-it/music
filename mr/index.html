@@ -833,7 +833,6 @@
 
         const song = playlistQueue[currentQueueIndex];
 
-        // 🔥 모바일/PC 상관없이 모든 기기에서 재생 시 조회수 1 증가
         if (typeof window.incrementSongView === 'function') {
             window.incrementSongView(song.id, song.defaultViews);
         }
