@@ -8,6 +8,14 @@
     <meta property="og:description" content="수하모니카 수강생 전용 공간입니다.">
     <meta property="og:image" content="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
     <meta property="og:url" content="https://suhamo.com/">
+    <!-- 메인 index.html 맨 아래 </body 바로 전에 추가 -->
+<script>
+// URL에 ?key=suha2026 이 포함되어 올라오면 브라우저에 권한 저장
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('key') === 'suha2026') {
+    localStorage.setItem('suhamo_access', 'granted');
+}
+</script>
     <title>수하모니카 (suhamo.com)</title>
     <!-- 검색엔진 노출 및 링크 수집 완전 차단 -->
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
