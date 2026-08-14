@@ -24,14 +24,15 @@
         body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background-color: #ffffff; color: #332d29; margin: 0; display: flex; justify-content: center; }
         .container { width: 100%; max-width: 850px; background: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* Header & Main Button (반주실 스타일 적용) */
+        /* Header & Main Button (상단 박스 세로 높이 및 타이틀 규격 고정) */
         .header { 
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
             background: linear-gradient(135deg, #5c2028, #8b3a42); 
             color: #ffffff; 
-            padding: 10px 14px; 
+            padding: 8px 14px; 
+            height: 48px; /* 세로 높이 타 게시판과 동일하게 정밀 고정 */
         }
         .header h1 { 
             font-size: 18px; 
@@ -39,7 +40,19 @@
             letter-spacing: -0.5px; 
             color: #fcf8f2; 
             margin: 0;
+            display: flex;
+            align-items: center;
         }
+        
+        /* 하모니카 아이콘 전용 스타일 (아이콘만 시원하게 키우고 박스 높이에 영향을 주지 않음) */
+        .icon-hamo {
+            height: 28px; /* 아이콘 크기를 시원하게 확장 */
+            width: auto;
+            margin-right: 7px;
+            vertical-align: middle;
+            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.25));
+        }
+
         .btn-home {
             background-color: rgba(255, 255, 255, 0.2);
             color: #ffffff;
@@ -99,7 +112,9 @@
             .col-views, .col-artist { display: none; }
             .col-period { display: table-cell; width: 65px; }
             .col-cat { width: 58px; }
+            .header { height: 44px; padding: 6px 12px; }
             .header h1 { font-size: 17px; }
+            .icon-hamo { height: 25px; }
             th, td { padding: 6px 3px; }
         }
 
@@ -140,9 +155,10 @@
 
 <div class="container">
     <div class="header">
-<h1>
-    <img src="https://raw.githubusercontent.com/1472pr-ship-it/music/main/hamo.png" alt="하모니카" style="height: 22px; vertical-align: middle; margin-right: 6px;">수하모 연주 성장실
-</h1>
+        <h1>
+            <img src="https://raw.githubusercontent.com/1472pr-ship-it/music/main/hamo.png" alt="하모니카" class="icon-hamo">
+            수하모 연주 성장실
+        </h1>
         <a href="/" class="btn-home">🏠 메인으로</a>
     </div>
 
