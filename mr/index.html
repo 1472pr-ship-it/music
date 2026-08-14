@@ -99,7 +99,7 @@
         @media (max-width: 600px) {
             .col-views { display: none; }
             .col-chk { width: 24px; }
-            .col-num { width: 36px; } /* 모바일도 너비 약간 확보 */
+            .col-num { width: 36px; }
             .col-cat { width: 56px; }
             .col-division { width: 54px; }
             .col-action { width: 46px; }
@@ -162,7 +162,7 @@
                 <button class="btn-filter btn-main active" onclick="setMainCategory('전체', this)">전체</button>
                 <button class="btn-filter btn-main" onclick="setMainCategory('가요/트롯', this)">가요/트롯</button>
                 <button class="btn-filter btn-main" onclick="setMainCategory('동요/가곡', this)">동요/가곡</button>
-                <button class="btn-filter btn-main" onclick="setMainCategory('팝/외국곡', this)">팝/외국곡</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('팝/외곡곡', this)">팝/외국곡</button>
                 <button class="btn-filter btn-main" onclick="setMainCategory('클래식', this)">클래식</button>
             </div>
         </div>
@@ -200,7 +200,6 @@
             <div class="search-select-group">
                 <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
                 
-                <!-- 💡 요청하신 구분 옵션으로 수정 완료 -->
                 <select id="div-select" onchange="applyFilters()">
                     <option value="전체">구분 전체</option>
                     <option value="교본책">교본책</option>
@@ -289,7 +288,7 @@
     const ADMIN_PW = "0906";
 
     let editingCommentId = null;
-    let editingReplyData = null; // 답글 수정 관리용 변수
+    let editingReplyData = null;
     let commentsCache = {};
 
     window.dbViews = {};
@@ -331,8 +330,7 @@
 
     function isSpamText(text) {
         const spamKeywords = ['http://', 'https://', 'www.', '카지노', '바카라', '대출', '토토', '성인'];
-        const lowerText = text.toLowerCase();
-        return spamKeywords.some(keyword => lowerText.includes(keyword));
+        return spamKeywords.some(keyword => text.toLowerCase().includes(keyword));
     }
 
     window.autoResizeTextarea = function(textarea) {
@@ -444,7 +442,6 @@
         }
     };
 
-    /* 💡 답글 수정 시작 기능 */
     window.startEditReply = function(commentId, reply) {
         const inputPw = prompt('선생님 전용 비밀번호를 입력해 주세요:');
         if (inputPw !== ADMIN_PW) return alert('비밀번호가 올바르지 않습니다.');
@@ -464,7 +461,6 @@
         }
     };
 
-    /* 💡 답글 등록 및 수정 처리 기능 */
     window.addOrUpdateReply = async function(commentId) {
         const replyInput = document.getElementById(`reply-input-${commentId}`);
         const replyNameInput = document.getElementById(`reply-name-${commentId}`);
@@ -591,7 +587,10 @@
             const sampleMrData = await response.json();
 
             masterPlaylist = sampleMrData.map((item) => {
-                let streamUrl = `${CLOUDFLARE_DOMAIN}/mr/${encodeURIComponent(item.fileName)}`;
+                // 🔥 하위 폴더(kpop/, pop/, etc/) 및 기존 단일 파일명 모두 지원하도록 경로 생성
+                let filePath = item.fileName.trim();
+                let encodedPath = filePath.split('/').map(part => encodeURIComponent(part)).join('/');
+                let streamUrl = `${CLOUDFLARE_DOMAIN}/mr/${encodedPath}`;
                 
                 const initialViews = item.views !== undefined ? item.views : 0;
                 const finalViews = window.dbViews[item.id] !== undefined ? window.dbViews[item.id] : initialViews;
@@ -657,7 +656,6 @@
         loadSongs();
     };
 
-    /* 💡 곡명 16글자 제한 포맷팅 */
     function truncateTitle(title) {
         if (title && title.length > 16) {
             return title.substring(0, 16) + '...';
@@ -767,7 +765,6 @@
         renderPagination(totalItems);
     }
 
-    /* 💡 하단 페이지 번호 최대 5개 고정 슬라이딩 처리 */
     function renderPagination(totalItems) {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         const pageBox = document.getElementById('pagination-box');
