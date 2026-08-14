@@ -32,7 +32,7 @@
         }
         
         .header { text-align: center; padding: 4px 0 8px 0; border-bottom: 2px solid #8b3a42; }
-        .header h1 { font-size: 21px; color: #5c2028; font-weight: bold; margin-bottom: 2px; }
+        .header h1 { font-size: 21px; color: #5c2028; font-weight: bold; margin-bottom: 2px; display: flex; align-items: center; justify-content: center; }
         .header p { font-size: 13px; color: #78675a; }
 
         .menu-list { 
@@ -62,7 +62,7 @@
         .card-7080 { background: linear-gradient(135deg, #4d3323, #6e4a33); }
         .card-master { background: linear-gradient(135deg, #4a253b, #622f4e); }
 
-        .card-info h2 { font-size: 16px; font-weight: bold; margin-bottom: 3px; }
+        .card-info h2 { font-size: 16px; font-weight: bold; margin-bottom: 3px; display: flex; align-items: center; }
         .card-info p { 
             font-size: 12px; 
             opacity: 0.92; 
@@ -79,22 +79,40 @@
             border-top: 1px solid #eee5da; 
             margin-top: 4px;
         }
+
+        /* 하모니카 아이콘 스타일 */
+        .icon-hamo {
+            height: 24px;
+            width: auto;
+            margin-right: 8px;
+            vertical-align: middle;
+            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.2));
+        }
+        .header .icon-hamo {
+            height: 28px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>🎷 수하모니카</h1>
+        <h1>
+            <img src="https://raw.githubusercontent.com/1472pr-ship-it/music/main/hamo.png" alt="하모니카" class="icon-hamo">
+            수하모니카
+        </h1>
         <p>평생 곁을 지켜줄 가장 따뜻한 친구, 하모니카</p>
     </div>
 
-    <!-- 공개 메뉴 목록 (기본 노출) -->
+    <!-- 공개 메뉴 목록 -->
     <div id="content-area" class="menu-list">
         <!-- [1] 수하모 연주 성장실 -->
         <a href="/play" class="menu-card card-play">
             <div class="card-info">
-                <h2>🎷 수하모 연주 성장실</h2>
+                <h2>
+                    <img src="https://raw.githubusercontent.com/1472pr-ship-it/music/main/hamo.png" alt="하모니카" class="icon-hamo">
+                    수하모 연주 성장실
+                </h2>
                 <p>입문 5개월부터 5년 차까지, 내 연주 소리의 미래를 직관적으로 확인하세요.</p>
             </div>
             <div class="card-arrow">▶</div>
@@ -103,7 +121,7 @@
         <!-- [2] 수하모 반주 연습실 -->
         <a href="/mr" class="menu-card card-mr">
             <div class="card-info">
-                <h2>🎶 수하모 반주 연습실</h2>
+                <h2>🎵 수하모 반주 연습실</h2>
                 <p>C, A, Am 키별로 틀어놓고 혼자서도 신나게 연습하는 명품 MR 모음</p>
             </div>
             <div class="card-arrow">▶</div>
