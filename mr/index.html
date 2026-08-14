@@ -19,10 +19,9 @@
     
     <!-- 게시판 HTML 파일 맨 위 <head> 안쪽에 추가 -->
     <script>
-    // 수강생 권한('granted')이 없으면 차단 팝업을 띄우고 메인으로 이동
     if (localStorage.getItem('suhamo_access') !== 'granted') {
         alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
-        window.location.href = 'https://suhamo.com'; // 메인 페이지 주소
+        window.location.href = 'https://suhamo.com';
     }
     </script>
     
@@ -89,7 +88,7 @@
         
         .col-chk { width: 28px; text-align: center; }
         .col-chk input { transform: scale(1.15); }
-        .col-num { width: 40px; text-align: center; color: #667085; font-size: 12.5px; } /* 4자리 확보 */
+        .col-num { width: 40px; text-align: center; color: #667085; font-size: 12.5px; }
         .col-cat { width: 62px; text-align: center; }
         .col-title { font-weight: 700; color: #1c2e47; font-size: 14px; text-align: left; }
         .col-division { width: 62px; text-align: center; font-size: 12px; color: #2b4263; font-weight: 600; }
@@ -112,7 +111,6 @@
         .btn-play-single { padding: 4px 6px; font-size: 11.5px; background-color: #ffffff; border: 1px solid #2b4263; border-radius: 4px; cursor: pointer; color: #2b4263; font-weight: bold; white-space: nowrap; }
         .btn-play-single:hover { background-color: #2b4263; color: #ffffff; }
 
-        /* 모바일 타이트한 여백의 5개 고정 페이지네이션 스타일 */
         .pagination-container { display: flex; justify-content: center; align-items: center; gap: 4px; padding: 8px 4px; background-color: #f7fafc; border-top: 2px solid #2b4263; }
         .page-btn { padding: 5px 10px; font-size: 13px; font-weight: bold; color: #2c3e50; background: #ffffff; border: 1px solid #c2d1e0; border-radius: 4px; cursor: pointer; }
         .page-btn.active { background-color: #2b4263; color: #ffffff; border-color: #2b4263; }
@@ -142,7 +140,6 @@
     </style>
 </head>
 
-<!-- 페이지 전체 우클릭, 드래그, 영역 선택 차단 설정 적용 -->
 <body oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
 
 <div class="container">
@@ -162,7 +159,7 @@
                 <button class="btn-filter btn-main active" onclick="setMainCategory('전체', this)">전체</button>
                 <button class="btn-filter btn-main" onclick="setMainCategory('가요/트롯', this)">가요/트롯</button>
                 <button class="btn-filter btn-main" onclick="setMainCategory('동요/가곡', this)">동요/가곡</button>
-                <button class="btn-filter btn-main" onclick="setMainCategory('팝/외곡곡', this)">팝/외국곡</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('팝/외국곡', this)">팝/외국곡</button>
                 <button class="btn-filter btn-main" onclick="setMainCategory('클래식', this)">클래식</button>
             </div>
         </div>
@@ -330,7 +327,8 @@
 
     function isSpamText(text) {
         const spamKeywords = ['http://', 'https://', 'www.', '카지노', '바카라', '대출', '토토', '성인'];
-        return spamKeywords.some(keyword => text.toLowerCase().includes(keyword));
+        const lowerText = text.toLowerCase();
+        return spamKeywords.some(keyword => lowerText.includes(keyword));
     }
 
     window.autoResizeTextarea = function(textarea) {
@@ -587,10 +585,10 @@
             const sampleMrData = await response.json();
 
             masterPlaylist = sampleMrData.map((item) => {
-                // 🔥 하위 폴더(kpop/, pop/, etc/) 및 기존 단일 파일명 모두 지원하도록 경로 생성
-                let filePath = item.fileName.trim();
-                let encodedPath = filePath.split('/').map(part => encodeURIComponent(part)).join('/');
-                let streamUrl = `${CLOUDFLARE_DOMAIN}/mr/${encodedPath}`;
+                // 💡 파일명만 적혀 있어도 클라우드플레어 R2의 mr/etc/ 폴더 경로로 자동 연결
+                let rawName = item.fileName.trim();
+                let fullPath = rawName.startsWith('etc/') ? rawName : `etc/${rawName}`;
+                let streamUrl = `${CLOUDFLARE_DOMAIN}/mr/${encodeURIComponent(fullPath.replace('etc/', '')) ? 'etc/' + encodeURIComponent(rawName.replace('etc/', '')) : ''}`;
                 
                 const initialViews = item.views !== undefined ? item.views : 0;
                 const finalViews = window.dbViews[item.id] !== undefined ? window.dbViews[item.id] : initialViews;
