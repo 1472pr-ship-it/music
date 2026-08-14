@@ -18,13 +18,13 @@
     <meta property="og:url" content="https://suhamo.com/mr">
     
     <!-- 게시판 HTML 파일 맨 위 <head> 안쪽에 추가 -->
-<script>
-// 수강생 권한('granted')이 없으면 차단 팝업을 띄우고 메인으로 이동
-if (localStorage.getItem('suhamo_access') !== 'granted') {
-    alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
-    window.location.href = 'https://suhamo.com'; // 메인 페이지 주소
-}
-</script>
+    <script>
+    // 수강생 권한('granted')이 없으면 차단 팝업을 띄우고 메인으로 이동
+    if (localStorage.getItem('suhamo_access') !== 'granted') {
+        alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
+        window.location.href = 'https://suhamo.com'; // 메인 페이지 주소
+    }
+    </script>
     
     <title>수하모 반주 연습실</title>
     <!-- 검색엔진 노출 및 링크 수집 차단 -->
@@ -200,11 +200,15 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
             <div class="search-select-group">
                 <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
                 
+                <!-- 💡 요청하신 구분 옵션으로 수정 완료 -->
                 <select id="div-select" onchange="applyFilters()">
                     <option value="전체">구분 전체</option>
                     <option value="교본책">교본책</option>
                     <option value="수교재">수교재</option>
-                    <option value="국민가요">국민가요</option>
+                    <option value="~70년">~70년</option>
+                    <option value="7080">7080</option>
+                    <option value="90년대">90년대</option>
+                    <option value="2000~">2000~</option>
                 </select>
 
                 <select id="sort-select" onchange="applyFilters()">
@@ -285,7 +289,7 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
     const ADMIN_PW = "0906";
 
     let editingCommentId = null;
-    let editingReplyData = null; // 답글 수정 관리용 변수 추가
+    let editingReplyData = null; // 답글 수정 관리용 변수
     let commentsCache = {};
 
     window.dbViews = {};
@@ -473,7 +477,6 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
             const commentRef = doc(db, "mr_comments", commentId);
             
             if (editingReplyData && editingReplyData.commentId === commentId) {
-                // 기존 답글 삭제 후 수정본 추가
                 await updateDoc(commentRef, { replies: arrayRemove(editingReplyData.oldReply) });
                 const updatedReply = {
                     id: editingReplyData.oldReply.id,
@@ -485,7 +488,6 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
                 editingReplyData = null;
                 alert('답글이 수정되었습니다!');
             } else {
-                // 신규 답글 등록
                 const replyData = {
                     id: String(Date.now()),
                     name: name,
@@ -742,7 +744,6 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
         const pageData = currentFilteredPlaylist.slice(startIndex, endIndex);
 
         pageData.forEach((song) => {
-            /* 💡 원본 ID 그대로 출력 (천단위 지원) */
             const numStr = String(song.id);
             const displayTitle = truncateTitle(song.title);
             const isChecked = checkedSongIds.has(String(song.id)) ? 'checked' : '';
@@ -885,7 +886,6 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
 
         audioPlayer.src = song.src;
         audioPlayer.play().then(() => {
-            /* 💡 자동 절전 모드 작동을 위해 requestWakeLock() 비활성화 적용 */
             nowPlayingTitle.classList.add('playing');
 
             if ('mediaSession' in navigator) {
