@@ -17,13 +17,13 @@
     <meta property="og:image" content="https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png">
     <meta property="og:url" content="https://suhamo.com/score">
 
-    <!-- 수강생 전용 비공개 게시판에 들어갈 코드 (단 1개만 남기기) -->
-<script>
-if (localStorage.getItem('suhamo_access') !== 'granted') {
-    alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
-    window.location.href = 'https://suhamo.com'; // 권한 없으면 메인으로 이동
-}
-</script>
+    <!-- 수강생 전용 비공개 게시판 제어 -->
+    <script>
+    if (localStorage.getItem('suhamo_access') !== 'granted') {
+        alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
+        window.location.href = 'https://suhamo.com';
+    }
+    </script>
     
     <title>수하모 악보 보관실</title>
     <meta name="robots" content="noindex, nofollow">
@@ -134,8 +134,11 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
         .comment-body { font-size: 14px; color: #222831; line-height: 1.5; word-break: break-all; margin-top: 2px; white-space: pre-wrap; }
         .action-btns { display: flex; gap: 8px; margin-top: 6px; }
         .reply-btn { font-size: 11.5px; background: none; border: none; cursor: pointer; text-decoration: underline; font-weight: bold; color: #72559c; }
+        
+        /* 수정/삭제 버튼 스타일 */
         .edit-btn { font-size: 11px; background: #f3eff8; color: #72559c; border: 1px solid #d2c4e2; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-weight: bold; margin-right: 4px; }
         .del-btn { font-size: 11px; background: #f2d7d7; color: #900; border: 1px solid #e0b0b0; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-weight: bold; }
+        
         .reply-list { margin-top: 8px; padding-left: 10px; border-left: 2px solid #e2d9ec; display: flex; flex-direction: column; gap: 6px; }
         .reply-item { background: #f3eff8; padding: 6px 10px; border-radius: 4px; }
         .reply-form { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
@@ -316,8 +319,10 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
     let editingCommentId = null;
     let commentsCache = {};
 
+    // 💡 답글 수정용 상태 변수
+    let editingReplyTarget = null; // { commentId, replyId }
+
     window.dbViews = {};
-    // 💡 이번 세션에서 이미 조회수가 오른 곡 ID를 기록하는 집합 (중복 방지)
     window.viewedSongIds = new Set();
 
     window.loadFirebaseViews = async function() {
@@ -334,11 +339,9 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
         }
     };
 
-    // 💡 [수정] PC/모바일 더블 클릭 및 슬라이드 중복 호출 완벽 차단
     window.incrementSongView = async function(songId, defaultViews = 0) {
         const songIdStr = String(songId);
 
-        // 이미 조회수가 반영된 곡이면 재실행 차단
         if (window.viewedSongIds.has(songIdStr)) return;
         window.viewedSongIds.add(songIdStr);
 
@@ -352,7 +355,6 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
                 window.dbViews[songId] = (window.dbViews[songId] || 0) + 1;
             }
             
-            // UI에 바뀐 조회수 반영 (리렌더링 시 중복 호출 안되도록 안전)
             if (typeof window.applyViewsToPlaylist === 'function') {
                 window.applyViewsToPlaylist();
             }
@@ -461,6 +463,28 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
         cancelBtn.style.display = "none";
     };
 
+    // 💡 [추가] 답글 수정 모드 시작
+    window.startEditReply = function(commentId, replyId) {
+        const parent = commentsCache[commentId];
+        if (!parent || !parent.replies) return;
+        const reply = parent.replies.find(r => String(r.id) === String(replyId));
+        if (!reply) return;
+
+        const formBox = document.getElementById(`reply-form-box-${commentId}`);
+        const nameInput = document.getElementById(`reply-name-${commentId}`);
+        const textInput = document.getElementById(`reply-input-${commentId}`);
+        const btn = document.getElementById(`reply-btn-${commentId}`);
+
+        formBox.style.display = 'flex';
+        nameInput.value = reply.name;
+        textInput.value = reply.text;
+        btn.innerText = "답글 수정 완료";
+        btn.style.backgroundColor = "#72559c";
+
+        editingReplyTarget = { commentId: commentId, replyId: String(replyId) };
+        formBox.scrollIntoView({ behavior: 'smooth' });
+    };
+
     window.deleteComment = async function(commentId, replyObject = null) {
         const inputPw = prompt('선생님 전용 비밀번호를 입력해 주세요:');
         if (inputPw !== ADMIN_PW) {
@@ -484,12 +508,28 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
 
     window.toggleReplyForm = function(commentId) {
         const form = document.getElementById(`reply-form-box-${commentId}`);
-        if (form) form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+        const btn = document.getElementById(`reply-btn-${commentId}`);
+        const nameInput = document.getElementById(`reply-name-${commentId}`);
+        const textInput = document.getElementById(`reply-input-${commentId}`);
+
+        if (form) {
+            const isHidden = (form.style.display === 'none');
+            form.style.display = isHidden ? 'flex' : 'none';
+            if (isHidden) {
+                editingReplyTarget = null;
+                nameInput.value = "수하모";
+                textInput.value = "";
+                btn.innerText = "답글 등록";
+                btn.style.backgroundColor = "#533e73";
+            }
+        }
     };
 
+    // 💡 [수정] 답글 등록 및 답글 수정 분기 처리
     window.addReply = async function(commentId) {
         const replyInput = document.getElementById(`reply-input-${commentId}`);
         const replyNameInput = document.getElementById(`reply-name-${commentId}`);
+        const btn = document.getElementById(`reply-btn-${commentId}`);
         const text = replyInput.value.trim();
         const name = replyNameInput.value.trim();
 
@@ -497,6 +537,30 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
 
         try {
             const commentRef = doc(db, "sheet_comments", commentId);
+
+            // 답글 수정 진행
+            if (editingReplyTarget && editingReplyTarget.commentId === commentId) {
+                const parent = commentsCache[commentId];
+                if (!parent || !parent.replies) return;
+
+                const newReplies = parent.replies.map(r => {
+                    if (String(r.id) === String(editingReplyTarget.replyId)) {
+                        return { ...r, name: name, text: text, isEdited: true };
+                    }
+                    return r;
+                });
+
+                await updateDoc(commentRef, { replies: newReplies });
+                alert('답글이 수정되었습니다!');
+                editingReplyTarget = null;
+                replyInput.value = '';
+                btn.innerText = "답글 등록";
+                btn.style.backgroundColor = "#533e73";
+                document.getElementById(`reply-form-box-${commentId}`).style.display = 'none';
+                return;
+            }
+
+            // 일반 신규 답글 등록
             const replyData = {
                 id: String(Date.now()),
                 name: name,
@@ -506,7 +570,11 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
             await updateDoc(commentRef, {
                 replies: arrayUnion(replyData)
             });
-        } catch (e) {}
+            replyInput.value = '';
+            document.getElementById(`reply-form-box-${commentId}`).style.display = 'none';
+        } catch (e) {
+            console.error("답글 저장 실패:", e);
+        }
     };
 
     const q = query(collection(db, "sheet_comments"), orderBy("createdAt", "desc"));
@@ -533,11 +601,14 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
                 repliesHtml += `<div class="reply-list">`;
                 item.replies.forEach(r => {
                     const rJson = JSON.stringify(r).replace(/"/g, '&quot;');
+                    const replyEdited = r.isEdited ? `<span style="font-size:10.5px; color:#72559c;"> (수정됨)</span>` : '';
                     repliesHtml += `
                         <div class="reply-item" id="reply-item-${r.id}">
                             <div class="comment-author">
-                                <span>↪ ${r.name} <span class="comment-date">${r.dateStr}</span></span>
+                                <span>↪ ${r.name} <span class="comment-date">${r.dateStr}${replyEdited}</span></span>
                                 <div>
+                                    <!-- 💡 답글에 [수정] 버튼 생성 -->
+                                    <button class="edit-btn" onclick="startEditReply('${id}', '${r.id}')">수정</button>
                                     <button class="del-btn" onclick="deleteComment('${id}', ${rJson})">삭제</button>
                                 </div>
                             </div>
@@ -571,7 +642,7 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
                     <div>
                         <textarea id="reply-input-${id}" class="comment-input-textarea" style="min-height:50px;" placeholder="답글 작성..." oninput="autoResizeTextarea(this)"></textarea>
                     </div>
-                    <button class="btn-submit-comment" style="padding:8px; font-size:13px;" onclick="addReply('${id}')">답글 등록</button>
+                    <button class="btn-submit-comment" id="reply-btn-${id}" style="padding:8px; font-size:13px;" onclick="addReply('${id}')">답글 등록</button>
                 </div>
                 ${repliesHtml}
             `;
@@ -593,7 +664,7 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
 
     let slideQueue = [];
     let currentQueueIndex = 0;
-    let isClickProcessing = false; // 💡 연타 및 중복 클릭 실행 방지 플래그
+    let isClickProcessing = false;
 
     const nowViewingTitle = document.getElementById('now-viewing-title');
     const pageIndicator = document.getElementById('page-indicator');
@@ -823,7 +894,6 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
         });
     }
 
-    // 💡 [수정] PC 더블클릭/연타 방지 적용
     function playSingle(id) {
         if (isClickProcessing) return;
         isClickProcessing = true;
@@ -874,7 +944,6 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
         const currentItem = slideQueue[currentQueueIndex];
         const song = currentItem.song;
 
-        // 💡 1페이지 최초 진입 시에만 조회수 +1 (viewedSongIds로 세션 중복 체크)
         if (currentItem.pageNum === 1 && typeof window.incrementSongView === 'function') {
             window.incrementSongView(song.id, song.defaultViews);
         }
@@ -963,7 +1032,6 @@ if (localStorage.getItem('suhamo_access') !== 'granted') {
         });
     }
 
-    // 💡 크게 보기(모달) 클릭 시: 조회수 카운트 전혀 없이 확대 창만 실행
     window.openModal = function() {
         if (slideQueue.length === 0) return;
         const modal = document.getElementById('image-modal');
