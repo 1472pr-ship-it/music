@@ -326,7 +326,7 @@
 
     function isSpamText(text) {
         const spamKeywords = ['http://', 'https://', 'www.', '카지노', '바카라', '대출', '토토', '성인'];
-        return spamKeywords.some(keyword => lowerText.includes(keyword));
+        return spamKeywords.some(keyword => text.toLowerCase().includes(keyword));
     }
 
     window.autoResizeTextarea = function(textarea) {
@@ -588,15 +588,26 @@
                 
                 const divisionText = (item.division && item.division.trim() !== "") ? item.division.trim() : (item.type && item.type.trim() !== "") ? item.type.trim() : "-";
                 const catText = (item.cat && item.cat.trim() !== "") ? item.cat.trim() : "";
-                
-                // 💡 [핵심] pop, kpop, etc 3개 폴더 완전 자동 분기
+                const songId = Number(item.id);
+
+                // 💡 [정확한 폴더 라우팅]
                 let subFolder = 'etc';
-                if (rawName.startsWith('pop/') || catText === '팝/외국곡') {
+                if (rawName.startsWith('pop/')) {
                     subFolder = 'pop';
-                } else if (rawName.startsWith('kpop/') || ['~70년', '7080', '90년대', '2000~'].includes(divisionText) || catText === '가요/트롯' || Number(item.id) >= 102) {
+                } else if (rawName.startsWith('kpop/')) {
                     subFolder = 'kpop';
-                } else if (rawName.startsWith('etc/') || ['교본책', '수교재'].includes(divisionText) || Number(item.id) <= 101) {
+                } else if (rawName.startsWith('etc/')) {
                     subFolder = 'etc';
+                } else if (songId <= 101) {
+                    // 1번 ~ 101번 곡은 R2의 mr/etc/ 폴더에 위치
+                    subFolder = 'etc';
+                } else {
+                    // 102번 이상 신곡 분기
+                    if (catText === '팝/외국곡') {
+                        subFolder = 'pop';
+                    } else {
+                        subFolder = 'kpop';
+                    }
                 }
 
                 let streamUrl = `${CLOUDFLARE_DOMAIN}/mr/${subFolder}/${encodeURIComponent(cleanFileName)}`;
