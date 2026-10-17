@@ -20,19 +20,21 @@
     <!-- 🔒 개인 레슨 전용 VIP 키 인증 제어 -->
     <script>
     (function() {
-        const VIP_KEY = "master2026"; // 개인 레슨 수강생 전용 비밀 열쇠 키
+        const VIP_KEY = "master2026"; // 개인 레슨 전용 비밀키
         const urlParams = new URLSearchParams(window.location.search);
         const inputVip = urlParams.get('vip');
 
-        // 전용 비밀 링크(?vip=master2026)로 접속 시 권한 부여
         if (inputVip === VIP_KEY) {
             localStorage.setItem('suhamo_master_access', 'granted');
             alert('🔑 개인 레슨 연구 공간 [수하모 명연주 모음실] 인증이 완료되었습니다.\n정통 교수법의 깊은 울림을 느껴보세요^^');
             window.history.replaceState({}, document.title, window.location.pathname);
         }
 
-        // 권한 미보유 시 접속 차단 및 메인으로 이동
-        if (localStorage.getItem('suhamo_master_access') !== 'granted') {
+        // 일반 수강생 인증 또는 레슨생 VIP 권한 체크
+        const isMasterAuth = localStorage.getItem('suhamo_master_access') === 'granted';
+        const isSuhamoAuth = localStorage.getItem('suhamo_access') === 'granted';
+
+        if (!isMasterAuth && !isSuhamoAuth) {
             alert('🔒 [수하모 명연주 모음실]은 개인 레슨 수강생 전용 연구 공간입니다.\n선생님께서 전달해 주신 전용 링크로 접속해 주세요.');
             window.location.href = 'https://suhamo.com';
         }
@@ -91,7 +93,7 @@
         .search-input { padding: 5px 8px; font-size: 12.5px; border: 1px solid #e0c4d2; border-radius: 4px; outline: none; flex-grow: 1; max-width: 160px; }
         select { padding: 4px 6px; font-size: 12px; border: 1px solid #e0c4d2; border-radius: 4px; background: #fff; cursor: pointer; font-weight: 600; color: #4a253b; }
 
-        /* Table Area - 여백 없는 100% 가로 확장 설정 */
+        /* Table Area - 100% 가로 확장 */
         .table-responsive { width: 100%; flex: 1; overflow-x: hidden; }
         table { width: 100%; border-collapse: collapse; font-size: 14.5px; text-align: left; table-layout: fixed; }
         thead { background-color: #f5e6ee; border-bottom: 2px solid #622f4e; }
@@ -131,4 +133,109 @@
 
         .pagination-container { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 12px; background-color: #fdf8fa; border-top: 2px solid #622f4e; }
         .page-btn { padding: 6px 12px; font-size: 13.5px; font-weight: bold; color: #4a253b; background: #ffffff; border: 1px solid #e0c4d2; border-radius: 5px; cursor: pointer; }
-        .page-btn.active { background-color: #622f
+        .page-btn.active { background-color: #622f4e; color: #ffffff; border-color: #622f4e; }
+
+        /* Comment Section */
+        .comment-section { background-color: #fdfbfb; border-top: 3px solid #622f4e; padding: 16px 12px; margin-top: 10px; }
+        .comment-header { font-size: 15px; font-weight: bold; color: #4a253b; margin-bottom: 6px; }
+        .comment-notice { font-size: 12px; color: #7a4f68; margin-bottom: 12px; line-height: 1.4; }
+        .comment-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; background: #fff; padding: 12px; border: 1px solid #ebd4df; border-radius: 6px; }
+        
+        .comment-input-name { width: 140px; padding: 8px 10px; font-size: 13.5px; border: 1px solid #e0c4d2; border-radius: 4px; }
+        .comment-input-textarea { width: 100%; min-height: 70px; padding: 8px 10px; font-size: 14px; font-family: inherit; border: 1px solid #e0c4d2; border-radius: 4px; resize: vertical; line-height: 1.4; }
+        .btn-submit-comment { width: 100%; padding: 11px; background-color: #622f4e; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 15px; }
+        
+        .comment-list { display: flex; flex-direction: column; gap: 10px; }
+        .comment-item { background: #ffffff; border: 1px solid #ebd4df; border-radius: 6px; padding: 10px 12px; }
+        .comment-author { font-size: 13px; font-weight: bold; color: #4a253b; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .comment-date { font-size: 11px; color: #7a6170; font-weight: normal; margin-left: 6px; }
+        .comment-body { font-size: 14px; color: #222831; line-height: 1.5; word-break: break-all; margin-top: 2px; white-space: pre-wrap; }
+        .action-btns { display: flex; gap: 8px; margin-top: 6px; }
+        .reply-btn { font-size: 11.5px; background: none; border: none; cursor: pointer; text-decoration: underline; font-weight: bold; color: #8c4873; }
+        .edit-btn { font-size: 11px; background: #fce4ec; color: #880e4f; border: 1px solid #f8bbd0; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-weight: bold; margin-right: 4px; }
+        .del-btn { font-size: 11px; background: #f2d7d7; color: #900; border: 1px solid #e0b0b0; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-weight: bold; }
+        .reply-list { margin-top: 8px; padding-left: 10px; border-left: 2px solid #f0d8e4; display: flex; flex-direction: column; gap: 6px; }
+        .reply-item { background: #fbf2f6; padding: 6px 10px; border-radius: 4px; }
+        .reply-form { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+    </style>
+</head>
+
+<body oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
+
+<div class="container">
+    <!-- 헤더 영역 -->
+    <div class="header">
+        <a href="/" class="header-title-link" title="메인 홈으로 이동">
+            <h1>🍂 수하모 명연주 모음실</h1>
+        </a>
+        <a href="/" class="btn-home">🏠 메인으로</a>
+    </div>
+
+    <!-- 알약 필터 -->
+    <div class="filter-section">
+        <div class="filter-row">
+            <span class="filter-label">🎼 장르</span>
+            <div class="filter-buttons">
+                <button class="btn-filter btn-main active" onclick="setMainCategory('전체', this)">전체</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('가요/트롯', this)">가요/트롯</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('동요/가곡', this)">동요/가곡</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('팝/외국곡', this)">팝/외국곡</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('클래식', this)">클래식</button>
+            </div>
+        </div>
+        <div class="filter-row">
+            <span class="filter-label">🎶 분위기</span>
+            <div class="filter-buttons">
+                <button class="btn-filter btn-filter-sub btn-sub active" onclick="setMoodCategory('전체', this)">전체</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('서정/슬로우', this)">☕ 서정/슬로우</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('정통트롯', this)">📻 정통트롯</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('경쾌한', this)">🎷 경쾌한</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 플레이어 바 -->
+    <div class="player-section">
+        <div class="now-playing-container">
+            <div class="now-playing" id="now-playing-title">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
+        </div>
+        <audio id="audio-player" controls controlsList="nodownload" oncontextmenu="return false;" autoplay></audio>
+        <div class="bg-notice">
+            🔒 <b>개인 레슨 연구용 연주 음원</b>으로 무단 녹음, 추출 및 외부 유출을 엄격히 금지합니다.<br>
+            💡 화면이 꺼진 후 음악이 멈추면 스마트폰 [배터리 절전 모드]를 해제해 주세요.
+        </div>
+    </div>
+
+    <!-- 컨트롤 바 -->
+    <div class="control-bar">
+        <div class="control-row">
+            <div class="btn-group">
+                <button class="btn" onclick="toggleSelectAll()">전체선택</button>
+                <button class="btn btn-primary" onclick="playSelected()">선택듣기</button>
+                <button class="btn" id="btn-loop-toggle" onclick="toggleLoopMode()">🔁 전체반복</button>
+            </div>
+            <div style="font-size: 12.5px; color: #7a4f68; font-weight: bold;" id="total-count">총 0곡</div>
+        </div>
+        <div class="control-row">
+            <div class="search-select-group">
+                <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
+                
+                <select id="div-select" onchange="applyFilters()">
+                    <option value="전체">구분 전체</option>
+                    <option value="스승님">스승님</option>
+                    <option value="선후배님">선후배님</option>
+                    <option value="기타">기타</option>
+                </select>
+
+                <select id="sort-select" onchange="applyFilters()">
+                    <option value="latest" selected>최신순</option>
+                    <option value="name">가나다순</option>
+                    <option value="views">인기순</option>
+                </select>
+                <select id="limit-select" onchange="changeItemsPerPage(this.value)">
+                    <option value="30">30개</option>
+                    <option value="50">50개</option>
+                    <option value="100">100개</option>
+                </select>
+            </div>
+        </div>
