@@ -1,9 +1,568 @@
-<script>
-    const CLOUDFLARE_DOMAIN = "https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev"; 
-    let masterPlaylist = [];
-    let wakeLock = null;
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!-- PWA 웹앱 설정 -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="[https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png](https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png)">
+    <link rel="icon" href="[https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png](https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4a253b">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- 오픈 그래프 태그 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="수하모 명연주 모음실">
+    <meta property="og:description" content="🍂 대한민국 하모니카 마스터 사사 정통 교수법의 혼이 담긴 명품 시범 연주 연구 공간">
+    <meta property="og:image" content="[https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png](https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png)">
+    <meta property="og:url" content="[https://suhamo.com/master](https://suhamo.com/master)">
+    
+    <!-- 🔒 수강생 접속 권한 제어 (비정상 차단/백지 현상 방지) -->
+    <script>
+    (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('vip') === "master2026") {
+            localStorage.setItem('suhamo_master_access', 'granted');
+            localStorage.setItem('suhamo_access', 'granted');
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
 
-    async function requestWakeLock() { return; }
+        // 수강생 인증(suhamo_access) 또는 레슨생 인증(suhamo_master_access) 확인
+        const isAuth = localStorage.getItem('suhamo_master_access') === 'granted' || localStorage.getItem('suhamo_access') === 'granted';
+        if (!isAuth) {
+            alert('🔒 수강생 전용 공간입니다. 비밀 링크로 접속해 주세요.');
+            window.location.href = '[https://suhamo.com](https://suhamo.com)';
+        }
+    })();
+    </script>
+    
+    <title>수하모 명연주 모음실</title>
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background-color: #ffffff; color: #222831; margin: 0; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 850px; background: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .header { background: linear-gradient(135deg, #4a253b, #622f4e); color: #ffffff; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+        .header-title-link { text-decoration: none; color: #fdf5f8; display: flex; align-items: center; gap: 6px; }
+        .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: #fdf5f8; }
+        .btn-home { background: rgba(255, 255, 255, 0.18); color: #ffffff; text-decoration: none; padding: 4px 10px; border-radius: 14px; font-size: 12px; font-weight: bold; border: 1px solid rgba(255, 255, 255, 0.3); transition: background 0.2s; white-space: nowrap; }
+        .btn-home:active { background: rgba(255, 255, 255, 0.4); }
+
+        .filter-section { background-color: #fcf4f7; border-bottom: 1px solid #ebd4df; padding: 5px 8px; display: flex; flex-direction: column; gap: 4px; }
+        .filter-row { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; width: 100%; }
+        .filter-label { font-size: 11px; font-weight: bold; color: #4a253b; min-width: 50px; background: #f0d8e4; padding: 3px 4px; border-radius: 4px; text-align: center; flex-shrink: 0; white-space: nowrap; }
+        .filter-buttons { display: flex; gap: 3px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 1px; flex-grow: 1; }
+        .filter-buttons::-webkit-scrollbar { display: none; }
+        .btn-filter { padding: 3px 8px; font-size: 11.5px; font-weight: 600; color: #573147; background: #ffffff; border: 1px solid #e0c4d2; border-radius: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+        .btn-filter.active { background-color: #622f4e; color: #ffffff; border-color: #622f4e; }
+        .btn-filter-sub.active { background-color: #8c4873; color: #ffffff; border-color: #8c4873; }
+
+        .player-section { background: #f9edf3; border-bottom: 2px solid #622f4e; color: #4a253b; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; }
+        .now-playing-container { overflow: hidden; white-space: nowrap; width: 100%; position: relative; }
+        .now-playing { font-size: 13.5px; font-weight: bold; color: #4a253b; display: inline-block; white-space: nowrap; }
+        .now-playing.playing { padding-left: 100%; animation: marquee 15s linear infinite; }
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+
+        audio { width: 100%; height: 38px; outline: none; border-radius: 6px; }
+        .bg-notice { font-size: 11px; color: #7a4f68; letter-spacing: -0.3px; margin-top: 1px; line-height: 1.4; }
+
+        .control-bar { background: #fdf8fa; border-bottom: 1px solid #ebd4df; padding: 6px 10px; display: flex; flex-direction: column; gap: 6px; }
+        .control-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; }
+        .btn-group { display: flex; gap: 4px; align-items: center; }
+        .btn { background-color: #ffffff; border: 1px solid #e0c4d2; color: #4a253b; padding: 5px 10px; font-size: 12.5px; border-radius: 4px; cursor: pointer; font-weight: bold; white-space: nowrap; }
+        .btn-primary { background-color: #622f4e; color: #ffffff; border-color: #622f4e; }
+
+        .search-select-group { display: flex; gap: 4px; align-items: center; flex-grow: 1; justify-content: flex-end; }
+        .search-input { padding: 5px 8px; font-size: 12.5px; border: 1px solid #e0c4d2; border-radius: 4px; outline: none; flex-grow: 1; max-width: 160px; }
+        select { padding: 4px 6px; font-size: 12px; border: 1px solid #e0c4d2; border-radius: 4px; background: #fff; cursor: pointer; font-weight: 600; color: #4a253b; }
+
+        .table-responsive { width: 100%; flex: 1; overflow-x: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: 14.5px; text-align: left; table-layout: fixed; }
+        thead { background-color: #f5e6ee; border-bottom: 2px solid #622f4e; }
+        thead tr { background-color: #f5e6ee; width: 100%; }
+        th, td { padding: 7px 4px; border-bottom: 1px solid #ebd4df; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        th { color: #4a253b; font-weight: 700; font-size: 13.5px; }
+        tr:hover { background-color: #fbf0f5; }
+        tr.active-row { background-color: #f2d8e6; }
+        
+        .col-chk { width: 28px; text-align: center; }
+        .col-chk input { transform: scale(1.15); }
+        .col-num { width: 38px; text-align: center; color: #7a6170; font-size: 12.5px; }
+        .col-cat { width: 62px; text-align: center; }
+        .col-title { font-weight: 700; color: #4a253b; font-size: 14px; text-align: left; }
+        .col-division { width: 62px; text-align: center; font-size: 12px; color: #622f4e; font-weight: 600; }
+        .col-views { width: 42px; color: #7a6170; text-align: center; font-size: 11.5px; }
+        .col-action { width: 52px; text-align: center; }
+
+        @media (max-width: 600px) {
+            .col-views { display: none !important; }
+            .col-chk { width: 24px; }
+            .col-num { width: 32px; }
+            .col-cat { width: 56px; }
+            .col-division { width: 54px; }
+            .col-action { width: 50px; }
+            .header h1 { font-size: 16px; }
+            th, td { padding: 6px 2px; }
+            .search-input { max-width: 110px; }
+            .pagination-container { gap: 3px !important; padding: 8px 4px !important; }
+            .page-btn { padding: 5px 9px !important; font-size: 12.5px !important; }
+        }
+
+        .badge-main { display: inline-block; padding: 2px 4px; border-radius: 3px; font-size: 10.5px; background-color: #f0d8e4; color: #4a253b; font-weight: bold; }
+        .btn-play-single { padding: 4px 6px; font-size: 11.5px; background-color: #ffffff; border: 1px solid #622f4e; border-radius: 4px; cursor: pointer; color: #622f4e; font-weight: bold; white-space: nowrap; }
+        .btn-play-single:hover { background-color: #622f4e; color: #ffffff; }
+
+        .pagination-container { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 12px; background-color: #fdf8fa; border-top: 2px solid #622f4e; }
+        .page-btn { padding: 6px 12px; font-size: 13.5px; font-weight: bold; color: #4a253b; background: #ffffff; border: 1px solid #e0c4d2; border-radius: 5px; cursor: pointer; }
+        .page-btn.active { background-color: #622f4e; color: #ffffff; border-color: #622f4e; }
+
+        .comment-section { background-color: #fdfbfb; border-top: 3px solid #622f4e; padding: 16px 12px; margin-top: 10px; }
+        .comment-header { font-size: 15px; font-weight: bold; color: #4a253b; margin-bottom: 6px; }
+        .comment-notice { font-size: 12px; color: #7a4f68; margin-bottom: 12px; line-height: 1.4; }
+        .comment-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; background: #fff; padding: 12px; border: 1px solid #ebd4df; border-radius: 6px; }
+        .comment-input-name { width: 140px; padding: 8px 10px; font-size: 13.5px; border: 1px solid #e0c4d2; border-radius: 4px; }
+        .comment-input-textarea { width: 100%; min-height: 70px; padding: 8px 10px; font-size: 14px; font-family: inherit; border: 1px solid #e0c4d2; border-radius: 4px; resize: vertical; line-height: 1.4; }
+        .btn-submit-comment { width: 100%; padding: 11px; background-color: #622f4e; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 15px; }
+        
+        .comment-list { display: flex; flex-direction: column; gap: 10px; }
+        .comment-item { background: #ffffff; border: 1px solid #ebd4df; border-radius: 6px; padding: 10px 12px; }
+        .comment-author { font-size: 13px; font-weight: bold; color: #4a253b; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .comment-date { font-size: 11px; color: #7a6170; font-weight: normal; margin-left: 6px; }
+        .comment-body { font-size: 14px; color: #222831; line-height: 1.5; word-break: break-all; margin-top: 2px; white-space: pre-wrap; }
+        .action-btns { display: flex; gap: 8px; margin-top: 6px; }
+        .reply-btn { font-size: 11.5px; background: none; border: none; cursor: pointer; text-decoration: underline; font-weight: bold; color: #8c4873; }
+        .edit-btn { font-size: 11px; background: #fce4ec; color: #880e4f; border: 1px solid #f8bbd0; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-weight: bold; margin-right: 4px; }
+        .del-btn { font-size: 11px; background: #f2d7d7; color: #900; border: 1px solid #e0b0b0; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-weight: bold; }
+        .reply-list { margin-top: 8px; padding-left: 10px; border-left: 2px solid #f0d8e4; display: flex; flex-direction: column; gap: 6px; }
+        .reply-item { background: #fbf2f6; padding: 6px 10px; border-radius: 4px; }
+        .reply-form { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+    </style>
+</head>
+
+<body oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
+
+<div class="container">
+    <div class="header">
+        <a href="/" class="header-title-link" title="메인 홈으로 이동">
+            <h1>🍂 수하모 명연주 모음실</h1>
+        </a>
+        <a href="/" class="btn-home">🏠 메인으로</a>
+    </div>
+
+    <div class="filter-section">
+        <div class="filter-row">
+            <span class="filter-label">🎼 장르</span>
+            <div class="filter-buttons">
+                <button class="btn-filter btn-main active" onclick="setMainCategory('전체', this)">전체</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('가요/트롯', this)">가요/트롯</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('동요/가곡', this)">동요/가곡</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('팝/외국곡', this)">팝/외국곡</button>
+                <button class="btn-filter btn-main" onclick="setMainCategory('클래식', this)">클래식</button>
+            </div>
+        </div>
+        <div class="filter-row">
+            <span class="filter-label">🎶 분위기</span>
+            <div class="filter-buttons">
+                <button class="btn-filter btn-filter-sub btn-sub active" onclick="setMoodCategory('전체', this)">전체</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('서정/슬로우', this)">☕ 서정/슬로우</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('정통트롯', this)">📻 정통트롯</button>
+                <button class="btn-filter btn-filter-sub btn-sub" onclick="setMoodCategory('경쾌한', this)">🎷 경쾌한</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="player-section">
+        <div class="now-playing-container">
+            <div class="now-playing" id="now-playing-title">🎵 [재생] 곡을 선택하거나 [듣기]를 누르세요</div>
+        </div>
+        <audio id="audio-player" controls controlsList="nodownload" oncontextmenu="return false;" autoplay></audio>
+        <div class="bg-notice">
+            🔒 <b>개인 레슨 연구용 연주 음원</b>으로 무단 녹음, 추출 및 외부 유출을 엄격히 금지합니다.<br>
+            💡 화면이 꺼진 후 음악이 멈추면 스마트폰 [배터리 절전 모드]를 해제해 주세요.
+        </div>
+    </div>
+
+    <div class="control-bar">
+        <div class="control-row">
+            <div class="btn-group">
+                <button class="btn" onclick="toggleSelectAll()">전체선택</button>
+                <button class="btn btn-primary" onclick="playSelected()">선택듣기</button>
+                <button class="btn" id="btn-loop-toggle" onclick="toggleLoopMode()">🔁 전체반복</button>
+            </div>
+            <div style="font-size: 12.5px; color: #7a4f68; font-weight: bold;" id="total-count">총 0곡</div>
+        </div>
+        <div class="control-row">
+            <div class="search-select-group">
+                <input type="text" id="search-input" class="search-input" placeholder="곡명 검색..." oninput="applyFilters()">
+                <select id="div-select" onchange="applyFilters()">
+                    <option value="전체">구분 전체</option>
+                    <option value="스승님">스승님</option>
+                    <option value="선후배님">선후배님</option>
+                    <option value="기타">기타</option>
+                </select>
+                <select id="sort-select" onchange="applyFilters()">
+                    <option value="latest" selected>최신순</option>
+                    <option value="name">가나다순</option>
+                    <option value="views">인기순</option>
+                </select>
+                <select id="limit-select" onchange="changeItemsPerPage(this.value)">
+                    <option value="30">30개</option>
+                    <option value="50">50개</option>
+                    <option value="100">100개</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-chk"><input type="checkbox" id="chk-all" onclick="toggleHeaderCheckbox()"></th>
+                    <th class="col-num">No</th>
+                    <th class="col-cat">장르</th>
+                    <th class="col-title">곡명</th>
+                    <th class="col-division">구분</th>
+                    <th class="col-views">조회</th>
+                    <th class="col-action">듣기</th>
+                </tr>
+            </thead>
+            <tbody id="playlist-body"></tbody>
+        </table>
+    </div>
+
+    <div class="pagination-container" id="pagination-box"></div>
+
+    <div class="comment-section">
+        <div class="comment-header">💬 연주 소감 및 감상 한마디</div>
+        <div class="comment-notice">
+            💡 정통 시범 연주를 듣고 느낀 감상이나 배움의 소감을 편하게 남겨주세요^^
+        </div>
+        <div class="comment-form" id="main-comment-form">
+            <div>
+                <input type="text" id="c-name" class="comment-input-name" placeholder="성함/닉네임 (필수)" maxlength="10">
+            </div>
+            <div>
+                <textarea id="c-text" class="comment-input-textarea" placeholder="자유롭게 편하게 소통해요^^ 감상 소감이나 전하고 싶은 이야기 등 편하게 남겨주세요." oninput="autoResizeTextarea(this)"></textarea>
+            </div>
+            <div style="display:flex; gap:6px;">
+                <button class="btn-submit-comment" id="c-submit-btn" onclick="addComment()">등록하기</button>
+                <button class="btn-submit-comment" id="c-cancel-btn" style="display:none; background-color:#667085;" onclick="cancelEditComment()">취소</button>
+            </div>
+        </div>
+        <div class="comment-list" id="comment-list-box"></div>
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+    import { initializeApp } from "[https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js)";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove, setDoc, increment, getDocs, getDoc } from "[https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js)";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAw8hem90scCf0X_NNpvQxXdaTy1XIiE84",
+        authDomain: "suharmo.firebaseapp.com",
+        projectId: "suharmo",
+        storageBucket: "suharmo.firebasestorage.app",
+        messagingSenderId: "479461638228",
+        appId: "1:479461638228:web:0c6665c9aa659cc7d62dc1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const ADMIN_PW = "0906";
+
+    let editingCommentId = null;
+    let editingReplyCommentId = null;
+    let editingReplyId = null;
+    let commentsCache = {};
+
+    window.dbViews = {};
+
+    window.loadFirebaseViews = async function() {
+        try {
+            const querySnapshot = await getDocs(collection(db, "master_views"));
+            querySnapshot.forEach((docSnap) => {
+                window.dbViews[docSnap.id] = docSnap.data().count || 0;
+            });
+            if (typeof window.applyViewsToPlaylist === 'function') {
+                window.applyViewsToPlaylist();
+            }
+        } catch (e) {}
+    };
+
+    window.incrementSongView = async function(songId, defaultViews = 0) {
+        try {
+            const viewRef = doc(db, "master_views", String(songId));
+            if (window.dbViews[songId] === undefined && defaultViews > 0) {
+                await setDoc(viewRef, { count: defaultViews + 1 }, { merge: true });
+                window.dbViews[songId] = defaultViews + 1;
+            } else {
+                await setDoc(viewRef, { count: increment(1) }, { merge: true });
+                window.dbViews[songId] = (window.dbViews[songId] || 0) + 1;
+            }
+            if (typeof window.applyViewsToPlaylist === 'function') {
+                window.applyViewsToPlaylist();
+            }
+        } catch (e) {}
+    };
+
+    window.loadFirebaseViews();
+
+    function isSpamText(text) {
+        const spamKeywords = ['http://', 'https://', 'www.', '카지노', '바카라', '대출', '토토', '성인'];
+        const lowerText = text.toLowerCase();
+        return spamKeywords.some(keyword => lowerText.includes(keyword));
+    }
+
+    window.autoResizeTextarea = function(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+    };
+
+    window.addComment = async function() {
+        const nameInput = document.getElementById('c-name');
+        const textInput = document.getElementById('c-text');
+        const name = nameInput.value.trim();
+        const text = textInput.value.trim();
+
+        if (!name) { alert('성함이나 닉네임을 입력해 주세요^^'); nameInput.focus(); return; }
+        if (!text) { alert('내용을 입력해 주세요^^'); textInput.focus(); return; }
+        if (isSpamText(text) || isSpamText(name)) { alert('광고성 문구는 입력할 수 없습니다.'); return; }
+
+        try {
+            if (editingCommentId) {
+                const commentRef = doc(db, "master_comments", editingCommentId);
+                await updateDoc(commentRef, { name: name, text: text, isEdited: true });
+                alert('댓글이 수정되었습니다!');
+                cancelEditComment();
+            } else {
+                await addDoc(collection(db, "master_comments"), {
+                    name: name,
+                    text: text,
+                    createdAt: new Date(),
+                    dateStr: new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                    replies: []
+                });
+                textInput.value = '';
+                textInput.style.height = '70px';
+            }
+        } catch (e) {}
+    };
+
+    window.startEditComment = function(commentId) {
+        const item = commentsCache[commentId];
+        if (!item) return;
+        editingCommentId = commentId;
+        const nameInput = document.getElementById('c-name');
+        const textInput = document.getElementById('c-text');
+        const submitBtn = document.getElementById('c-submit-btn');
+        const cancelBtn = document.getElementById('c-cancel-btn');
+
+        nameInput.value = item.name;
+        textInput.value = item.text;
+        autoResizeTextarea(textInput);
+        submitBtn.innerText = "수정 완료";
+        submitBtn.style.backgroundColor = "#8c4873";
+        cancelBtn.style.display = "inline-block";
+        document.getElementById('main-comment-form').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.cancelEditComment = function() {
+        editingCommentId = null;
+        const nameInput = document.getElementById('c-name');
+        const textInput = document.getElementById('c-text');
+        const submitBtn = document.getElementById('c-submit-btn');
+        const cancelBtn = document.getElementById('c-cancel-btn');
+
+        nameInput.value = '';
+        textInput.value = '';
+        textInput.style.height = '70px';
+        submitBtn.innerText = "등록하기";
+        submitBtn.style.backgroundColor = "#622f4e";
+        cancelBtn.style.display = "none";
+    };
+
+    window.deleteComment = async function(commentId, replyObject = null) {
+        const inputPw = prompt('선생님 전용 비밀번호를 입력해 주세요:');
+        if (inputPw !== ADMIN_PW) { alert('비밀번호가 올바르지 않습니다.'); return; }
+        try {
+            if (replyObject) {
+                const commentRef = doc(db, "master_comments", commentId);
+                await updateDoc(commentRef, { replies: arrayRemove(replyObject) });
+            } else {
+                await deleteDoc(doc(db, "master_comments", commentId));
+            }
+        } catch (e) {}
+    };
+
+    window.toggleReplyForm = function(commentId) {
+        const form = document.getElementById(`reply-form-box-${commentId}`);
+        if (form) {
+            form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+            if (form.style.display === 'flex') window.cancelEditReply(commentId);
+        }
+    };
+
+    window.addReply = async function(commentId) {
+        const replyInput = document.getElementById(`reply-input-${commentId}`);
+        const replyNameInput = document.getElementById(`reply-name-${commentId}`);
+        const text = replyInput.value.trim();
+        const name = replyNameInput.value.trim();
+        if (!name || !text) return alert('성함과 답글 내용을 작성해 주세요.');
+
+        try {
+            const commentRef = doc(db, "master_comments", commentId);
+            const replyData = {
+                id: String(Date.now()),
+                name: name,
+                text: text,
+                dateStr: new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+            await updateDoc(commentRef, { replies: arrayUnion(replyData) });
+            replyInput.value = '';
+            replyInput.style.height = '50px';
+        } catch (e) {}
+    };
+
+    window.startEditReply = function(commentId, replyId, currentName, currentText) {
+        const inputPw = prompt('선생님 전용 비밀번호를 입력해 주세요:');
+        if (inputPw !== ADMIN_PW) { alert('비밀번호가 올바르지 않습니다.'); return; }
+        editingReplyCommentId = commentId;
+        editingReplyId = replyId;
+
+        const formBox = document.getElementById(`reply-form-box-${commentId}`);
+        if (formBox) formBox.style.display = 'flex';
+        const nameInput = document.getElementById(`reply-name-${commentId}`);
+        const textInput = document.getElementById(`reply-input-${commentId}`);
+        const submitBtn = document.getElementById(`reply-submit-btn-${commentId}`);
+        const cancelBtn = document.getElementById(`reply-cancel-btn-${commentId}`);
+
+        if (nameInput) nameInput.value = currentName;
+        if (textInput) { textInput.value = currentText; autoResizeTextarea(textInput); }
+        if (submitBtn) {
+            submitBtn.innerText = "답글 수정 완료";
+            submitBtn.style.backgroundColor = "#8c4873";
+            submitBtn.onclick = function() { window.updateReply(commentId); };
+        }
+        if (cancelBtn) cancelBtn.style.display = "inline-block";
+        if (formBox) formBox.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.cancelEditReply = function(commentId) {
+        editingReplyCommentId = null;
+        editingReplyId = null;
+        const nameInput = document.getElementById(`reply-name-${commentId}`);
+        const textInput = document.getElementById(`reply-input-${commentId}`);
+        const submitBtn = document.getElementById(`reply-submit-btn-${commentId}`);
+        const cancelBtn = document.getElementById(`reply-cancel-btn-${commentId}`);
+
+        if (nameInput) nameInput.value = "수하모";
+        if (textInput) { textInput.value = ""; textInput.style.height = "50px"; }
+        if (submitBtn) {
+            submitBtn.innerText = "답글 등록";
+            submitBtn.style.backgroundColor = "#622f4e";
+            submitBtn.onclick = function() { window.addReply(commentId); };
+        }
+        if (cancelBtn) cancelBtn.style.display = "none";
+    };
+
+    window.updateReply = async function(commentId) {
+        const replyInput = document.getElementById(`reply-input-${commentId}`);
+        const replyNameInput = document.getElementById(`reply-name-${commentId}`);
+        const text = replyInput.value.trim();
+        const name = replyNameInput.value.trim();
+        if (!name || !text) return alert('성함과 답글 내용을 작성해 주세요.');
+
+        try {
+            const commentRef = doc(db, "master_comments", commentId);
+            const docSnap = await getDoc(commentRef);
+            if (!docSnap.exists()) return;
+            const item = docSnap.data();
+            let replies = item.replies || [];
+            const updatedReplies = replies.map(r => {
+                if (String(r.id) === String(editingReplyId)) {
+                    return { ...r, name: name, text: text, isEdited: true };
+                }
+                return r;
+            });
+            await updateDoc(commentRef, { replies: updatedReplies });
+            alert('답글이 수정되었습니다!');
+            window.cancelEditReply(commentId);
+        } catch (e) {}
+    };
+
+    const q = query(collection(db, "master_comments"), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+        const box = document.getElementById('comment-list-box');
+        if (snapshot.empty) {
+            box.innerHTML = `<div style="text-align:center; padding:20px; color:#7a6170; font-size:13px;">아직 작성된 글이 없습니다. 편하게 이야기를 남겨보세요!</div>`;
+            return;
+        }
+        box.innerHTML = '';
+        commentsCache = {};
+        snapshot.forEach((docSnap) => {
+            const item = docSnap.data();
+            const id = docSnap.id;
+            commentsCache[id] = item;
+            const div = document.createElement('div');
+            div.className = 'comment-item';
+
+            let repliesHtml = '';
+            if (item.replies && item.replies.length > 0) {
+                repliesHtml += `<div class="reply-list">`;
+                item.replies.forEach(r => {
+                    const rJson = JSON.stringify(r).replace(/"/g, '&quot;');
+                    const safeName = (r.name || '').replace(/'/g, "\\'");
+                    const safeText = (r.text || '').replace(/'/g, "\\'").replace(/\n/g, '\\n');
+                    const rEditedTag = r.isEdited ? `<span style="font-size:10.5px; color:#8c4873;"> (수정됨)</span>` : '';
+                    repliesHtml += `
+                        <div class="reply-item" id="reply-item-${r.id}">
+                            <div class="comment-author">
+                                <span>↪ ${r.name} <span class="comment-date">${r.dateStr}${rEditedTag}</span></span>
+                                <div>
+                                    <button class="edit-btn" onclick="startEditReply('${id}', '${r.id}', '${safeName}', '${safeText}')">수정</button>
+                                    <button class="del-btn" onclick="deleteComment('${id}', ${rJson})">삭제</button>
+                                </div>
+                            </div>
+                            <div class="comment-body">${r.text}</div>
+                        </div>`;
+                });
+                repliesHtml += `</div>`;
+            }
+
+            const editedTag = item.isEdited ? `<span style="font-size:10.5px; color:#8c4873;"> (수정됨)</span>` : '';
+            div.innerHTML = `
+                <div class="comment-author">
+                    <span>👤 ${item.name} <span class="comment-date">${item.dateStr}${editedTag}</span></span>
+                    <div>
+                        <button class="edit-btn" onclick="startEditComment('${id}')">수정</button>
+                        <button class="del-btn" onclick="deleteComment('${id}')">삭제</button>
+                    </div>
+                </div>
+                <div class="comment-body">${item.text}</div>
+                <div class="action-btns">
+                    <button class="reply-btn" onclick="toggleReplyForm('${id}')">답글 달기</button>
+                </div>
+                <div id="reply-form-box-${id}" class="reply-form" style="display:none;">
+                    <div><input type="text" id="reply-name-${id}" class="comment-input-name" style="width:110px;" value="수하모"></div>
+                    <div><textarea id="reply-input-${id}" class="comment-input-textarea" style="min-height:50px;" placeholder="답글 작성..." oninput="autoResizeTextarea(this)"></textarea></div>
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn-submit-comment" id="reply-submit-btn-${id}" style="padding:8px; font-size:13px;" onclick="addReply('${id}')">답글 등록</button>
+                        <button class="btn-submit-comment" id="reply-cancel-btn-${id}" style="padding:8px; font-size:13px; display:none; background-color:#667085;" onclick="cancelEditReply('${id}')">취소</button>
+                    </div>
+                </div>
+                ${repliesHtml}`;
+            box.appendChild(div);
+        });
+    });
+</script>
+
+<!-- 오디오 플레이어 및 데이터 로드 스크립트 -->
+<script>
+    const CLOUDFLARE_DOMAIN = "[https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev](https://pub-3d4a1704561a4f5395902cf81530c3c0.r2.dev)"; 
+    let masterPlaylist = [];
 
     async function loadSongs() {
         try {
@@ -282,7 +841,7 @@
                     title: song.title,
                     artist: `수하모 명연주실`,
                     album: "수하모 명연주 모음실",
-                    artwork: [{ src: 'https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png', sizes: '512x512', type: 'image/png' }]
+                    artwork: [{ src: '[https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png](https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png)', sizes: '512x512', type: 'image/png' }]
                 });
             }
         }).catch(e => {});
