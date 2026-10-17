@@ -565,7 +565,6 @@
 
     async function loadSongs() {
         try {
-            // 캐시 방지 타임스탬프 추가
             const cacheBuster = '?v=' + Date.now();
             let response = await fetch('songs.json' + cacheBuster);
             if (!response.ok) response = await fetch('/master/songs.json' + cacheBuster);
@@ -819,6 +818,7 @@
         }
     }
 
+    // 💡 모바일 다음 곡 자동 재생 차단 방지 적용
     function startPlayback() {
         if (playlistQueue.length === 0 || currentQueueIndex >= playlistQueue.length) return;
         const song = playlistQueue[currentQueueIndex];
@@ -838,18 +838,30 @@
         nowPlayingTitle.innerText = titleText;
         document.title = `${song.title} - 수하모`;
 
+        // 기존 오디오 일시정지 후 새 소스 로드 및 즉시 실행 보장
+        audioPlayer.pause();
         audioPlayer.src = song.src;
-        audioPlayer.play().then(() => {
-            nowPlayingTitle.classList.add('playing');
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: song.title,
-                    artist: `수하모 명연주실`,
-                    album: "수하모 명연주 모음실",
-                    artwork: [{ src: 'https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png', sizes: '512x512', type: 'image/png' }]
-                });
-            }
-        }).catch(e => {});
+        audioPlayer.load();
+
+        const playPromise = audioPlayer.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                nowPlayingTitle.classList.add('playing');
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        title: song.title,
+                        artist: `수하모 명연주실`,
+                        album: "수하모 명연주 모음실",
+                        artwork: [{ src: 'https://raw.githubusercontent.com/1472pr-ship-it/music/main/icon.png', sizes: '512x512', type: 'image/png' }]
+                    });
+                }
+            }).catch(error => {
+                console.warn("자동 재생 대기 중:", error);
+                setTimeout(() => {
+                    audioPlayer.play().catch(() => {});
+                }, 300);
+            });
+        }
     }
 
     audioPlayer.onended = function() {
